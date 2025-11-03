@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, type ChangeEvent, type FocusEvent } from 'react';
 
 interface TextFieldProps {
   id?: string;
@@ -7,9 +7,9 @@ interface TextFieldProps {
   value?: string;
   disabled?: boolean;
   maxLength?: number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
   className?: string;
   name?: string;
 }

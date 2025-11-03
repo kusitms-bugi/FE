@@ -1,11 +1,11 @@
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, type ChangeEvent } from 'react';
 import TextInput from '../../../components/InputField/TextField';
 import VisibleIcon from '../../../assets/auth/visible_icon.svg?react';
 import InvisibleIcon from '../../../assets/auth/invisible_icon.svg?react';
 
 interface PasswordFieldProps {
   hasValue?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   className?: string;
   name?: string;

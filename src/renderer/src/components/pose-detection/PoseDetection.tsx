@@ -1,12 +1,13 @@
 import { FilesetResolver, PoseLandmarker } from '@mediapipe/tasks-vision';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
+import Webcam from 'react-webcam';
 
 interface WebcamRef {
   video?: HTMLVideoElement | null;
 }
 
 interface PoseDetectionProps {
-  videoRef: React.RefObject<WebcamRef>; // Webcam 컴포넌트 ref
+  videoRef: RefObject<Webcam | WebcamRef | null>; // Webcam 컴포넌트 ref
   onPoseDetected?: (
     landmarks: PoseLandmark[],
     worldLandmarks?: PoseLandmark[],
@@ -155,7 +156,14 @@ const PoseDetection = ({
 
     const getVideoElement = () => {
       // Webcam 컴포넌트에서 video 요소 가져오기
-      return videoRef.current?.video || null;
+      const ref = videoRef.current;
+      if (!ref) return null;
+      // WebcamRef 인터페이스인 경우
+      if ('video' in ref) {
+        return ref.video || null;
+      }
+      // Webcam 컴포넌트인 경우 - video 속성이 있을 수 있음
+      return (ref as unknown as { video?: HTMLVideoElement | null })?.video || null;
     };
 
     const interval = setInterval(() => {

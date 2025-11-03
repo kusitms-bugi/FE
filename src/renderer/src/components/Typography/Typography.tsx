@@ -3,29 +3,29 @@ import { cn } from '../../utils/cn';
 
 interface TypographyProps {
   variant?:
-    | 'title-4xl-bold'
-    | 'title-4xl-semibold'
-    | 'headline-3xl-regular'
-    | 'headline-3xl-medium'
-    | 'headline-3xl-semibold'
-    | 'headline-2xl-regular'
-    | 'headline-2xl-medium'
-    | 'headline-2xl-semibold'
-    | 'body-xl-regular'
-    | 'body-xl-medium'
-    | 'body-xl-semibold'
-    | 'body-lg-regular'
-    | 'body-lg-medium'
-    | 'body-lg-semibold'
-    | 'body-md-regular'
-    | 'body-md-medium'
-    | 'body-md-semibold'
-    | 'caption-sm-regular'
-    | 'caption-sm-medium'
-    | 'caption-sm-semibold';
+  | 'title-4xl-bold'
+  | 'title-4xl-semibold'
+  | 'headline-3xl-regular'
+  | 'headline-3xl-medium'
+  | 'headline-3xl-semibold'
+  | 'headline-2xl-regular'
+  | 'headline-2xl-medium'
+  | 'headline-2xl-semibold'
+  | 'body-xl-regular'
+  | 'body-xl-medium'
+  | 'body-xl-semibold'
+  | 'body-lg-regular'
+  | 'body-lg-medium'
+  | 'body-lg-semibold'
+  | 'body-md-regular'
+  | 'body-md-medium'
+  | 'body-md-semibold'
+  | 'caption-sm-regular'
+  | 'caption-sm-medium'
+  | 'caption-sm-semibold';
   children: React.ReactNode;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: React.ElementType;
 }
 
 export function Typography({

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type RefObject } from 'react';
 import Webcam from 'react-webcam';
 import { Timer } from '../../../components/Timer/Timer';
 import {
@@ -114,7 +114,7 @@ const WebcamView = ({
             </div>
           )}
           <PoseDetection
-            videoRef={webcamRef}
+            videoRef={webcamRef as RefObject<Webcam | { video?: HTMLVideoElement | null } | null>}
             onPoseDetected={handlePoseDetected}
             isEnabled={isWebcamOn}
           />

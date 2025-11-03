@@ -1,0 +1,154 @@
+name: Deploy Web App
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 전체 git 히스토리 가져오기
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Verify package-lock.json exists
+        run: |
+          if [ ! -f package-lock.json ]; then
+            echo "❌ package-lock.json not found!"
+            echo "📁 Current directory contents:"
+            ls -la
+            exit 1
+          fi
+          echo "✅ package-lock.json found"
+          echo "📋 Lockfile version:"
+          node -p "require('./package-lock.json').lockfileVersion"
+          echo "📦 npm version:"
+          npm --version
+
+      - name: Install workspace dependencies
+        run: |
+          # 전체 workspace 의존성 설치 (husky 스크립트 무시)
+          npm ci --ignore-scripts
+
+      - name: Verify workspace setup
+        run: |
+          echo "✅ Workspace dependencies installed successfully"
+          echo "📦 Workspace packages:"
+          ls -la packages/
+          echo "🔗 Checking workspace links:"
+          cd apps/web
+          echo "Checking if ui package is accessible:"
+          node -e "try { require('ui'); console.log('✅ ui package accessible'); } catch(e) { console.log('❌ ui package not accessible:', e.message); }"
+          echo "Checking if api package is accessible:"
+          node -e "try { require('api'); console.log('✅ api package accessible'); } catch(e) { console.log('❌ api package not accessible:', e.message); }"
+
+      - name: Build web app
+        run: |
+          cd apps/web
+          npm run build
+
+      - name: Create output directory
+        run: |
+          mkdir -p output
+          cp -r apps/web/dist/* output/
+
+          # Vercel 설정 파일 생성
+          cat > output/vercel.json << 'EOF'
+          {
+            "buildCommand": "",
+            "outputDirectory": ".",
+            "devCommand": "",
+            "installCommand": "",
+            "framework": null,
+            "regions": ["icn1"],
+            "headers": [
+              {
+                "source": "/(.*)",
+                "headers": [
+                  {
+                    "key": "X-Content-Type-Options",
+                    "value": "nosniff"
+                  },
+                  {
+                    "key": "X-Frame-Options",
+                    "value": "DENY"
+                  },
+                  {
+                    "key": "X-XSS-Protection",
+                    "value": "1; mode=block"
+                  }
+                ]
+              },
+              {
+                "source": "/assets/(.*)",
+                "headers": [
+                  {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=31536000, immutable"
+                  }
+                ]
+              }
+            ],
+            "redirects": [
+              {
+                "source": "/",
+                "destination": "/index.html"
+              }
+            ],
+            "rewrites": [
+              {
+                "source": "/(.*)",
+                "destination": "/index.html"
+              }
+            ]
+          }
+          EOF
+
+      - name: Add build info
+        run: |
+          cat > output/build-info.json << EOF
+          {
+            "buildTime": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "commit": "$(git rev-parse HEAD)",
+            "branch": "$(git rev-parse --abbrev-ref HEAD)",
+            "version": "$(node -p "require('./package.json').version")"
+          }
+          EOF
+
+      - name: Deploy to repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.AUTO_ACTIONS }}
+        with:
+          source-directory: 'output'
+          destination-github-username: choihooo
+          destination-repository-name: gubugionandon-FE
+          user-email: ${{ secrets.EMAIL }}
+          commit-message: '🚀 Deploy web app: ${{ github.event.commits[0].message }}'
+          target-branch: main
+
+      - name: Deploy info
+        run: |
+          echo "✅ Web app deployed successfully!"
+          echo "📁 Source directory: output"
+          echo "🎯 Target repository: choihooo/gubugionandon-FE"
+          echo "📝 Commit message: ${{ github.event.commits[0].message }}"
+          echo ""
+          echo "🚨 IMPORTANT: Vercel 설정 확인 필요!"
+          echo "   - Root Directory를 비워두거나 '.'로 설정하세요"
+          echo "   - Build Command, Output Directory를 비워두세요"
+          echo "   - vercel.json 파일이 자동으로 생성되었습니다"

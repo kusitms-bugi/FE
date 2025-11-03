@@ -1,0 +1,29 @@
+/* 기본 스타일 및 리셋 */
+@layer base {
+  /* 기본 스타일 리셋 */
+  * {
+    box-sizing: border-box;
+  }
+
+  /* 프리텐다드 폰트 적용 */
+  body {
+    font-family:
+      'Pretendard',
+      -apple-system,
+      BlandeMacSystemFont,
+      'Segoe UI',
+      'Roboto',
+      'Oxygen',
+      'Ubuntu',
+      'Cantarell',
+      'Fira Sans',
+      'Droid Sans',
+      'Helvetica Neue',
+      sans-serif;
+  }
+
+  /* 기본 폰트 패밀리를 Pretendard로 설정 */
+  html {
+    font-family: 'Pretendard', system-ui, sans-serif;
+  }
+}

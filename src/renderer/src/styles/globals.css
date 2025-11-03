@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+@import './fonts.css';
+@import './colors.css';
+@import './base.css';
+@import './typography.css';
+@import './breakpoint.css';
+
+@custom-variant dark (&:where(.dark, .dark *));

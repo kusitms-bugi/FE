@@ -1,0 +1,110 @@
+/* 색상 시스템 */
+:root {
+  /* 기본 UI 색상 */
+  --color-ring: hsl(221.2 83.2% 53.3%);
+  --color-primary: hsl(221.2 83.2% 53.3%);
+  --color-primary-foreground: hsl(210 40% 98%);
+  --color-secondary: hsl(210 40% 96%);
+  --color-secondary-foreground: hsl(222.2 84% 4.9%);
+  --color-accent: hsl(210 40% 96%);
+  --color-accent-foreground: hsl(222.2 84% 4.9%);
+  --color-input: hsl(214.3 31.8% 91.4%);
+  --color-background: hsl(0 0% 100%);
+
+  /* Yellow 컬러 팔레트 */
+  --color-yellow-50: #fff9e6;
+  --color-yellow-100: #ffebb0;
+  --color-yellow-200: #ffe28a;
+  --color-yellow-300: #ffd454;
+  --color-yellow-400: #ffcc33;
+  --color-yellow-500: #ffbf00;
+  --color-yellow-600: #e8ae00;
+  --color-yellow-700: #d29a00;
+  --color-yellow-800: #bd8700;
+  --color-yellow-900: #a67100;
+
+  /* Grey 컬러 팔레트 */
+  --color-grey-0: #ffffff;
+  --color-grey-25: #f9f8f7;
+  --color-grey-50: #efeeed;
+  --color-grey-100: #e3e1df;
+  --color-grey-200: #c6c5c3;
+  --color-grey-300: #a8a7a4;
+  --color-grey-400: #7e7e7b;
+  --color-grey-500: #6a6966;
+  --color-grey-600: #3c3b3a;
+  --color-grey-700: #2c2c2c;
+  --color-grey-800: #212121;
+  --color-grey-900: #181817;
+  --color-grey-950: #141413;
+  --color-grey-1000: #000000;
+
+  --color-gradation: linear-gradient(
+    180deg,
+    #ffcc00 0%,
+    #ffbf00 50%,
+    #ffae00 100%
+  );
+  --color-error: #ff3232;
+  --color-success: #00bf29;
+}
+
+@theme inline {
+  /* Light mode colors */
+  --color-yellow-50: var(--color-yellow-50);
+  --color-yellow-100: var(--color-yellow-100);
+  --color-yellow-200: var(--color-yellow-200);
+  --color-yellow-300: var(--color-yellow-300);
+  --color-yellow-400: var(--color-yellow-400);
+  --color-yellow-500: var(--color-yellow-500);
+  --color-yellow-600: var(--color-yellow-600);
+  --color-yellow-700: var(--color-yellow-700);
+  --color-yellow-800: var(--color-yellow-800);
+  --color-yellow-900: var(--color-yellow-900);
+
+  --color-grey-0: var(--color-grey-0);
+  --color-grey-25: var(--color-grey-25);
+  --color-grey-50: var(--color-grey-50);
+  --color-grey-100: var(--color-grey-100);
+  --color-grey-200: var(--color-grey-200);
+  --color-grey-300: var(--color-grey-300);
+  --color-grey-400: var(--color-grey-400);
+  --color-grey-500: var(--color-grey-500);
+  --color-grey-600: var(--color-grey-600);
+  --color-grey-700: var(--color-grey-700);
+  --color-grey-800: var(--color-grey-800);
+  --color-grey-900: var(--color-grey-900);
+  --color-grey-950: var(--color-grey-950);
+  --color-grey-1000: var(--color-grey-1000);
+}
+
+/* Dark mode colors */
+.dark {
+  /* Dark mode Yellow (더 어두운 톤) */
+  --color-yellow-50: #624d0b;
+  --color-yellow-100: #806310;
+  --color-yellow-200: #9d7b13;
+  --color-yellow-300: #c59a18;
+  --color-yellow-400: #e0ae1c;
+  --color-yellow-500: #e7bd3e;
+  --color-yellow-600: #e9c34f;
+  --color-yellow-700: #edcd73;
+  --color-yellow-800: #f2da9b;
+  --color-yellow-900: #f7e5c0;
+
+  /* Dark mode Grey (역전된 스케일) */
+  --color-grey-0: #191917;
+  --color-grey-25: #131312;
+  --color-grey-50: #232323;
+  --color-grey-100: #2c2c2c;
+  --color-grey-200: #3c3b3a;
+  --color-grey-300: #6a6966;
+  --color-grey-400: #7e7e7b;
+  --color-grey-500: #a8a7a4;
+  --color-grey-600: #c6c5c3;
+  --color-grey-700: #e3e1df;
+  --color-grey-800: #efeeed;
+  --color-grey-900: #f9f8f7;
+  --color-grey-950: #fcfcfc;
+  --color-grey-1000: #ffffff;
+}

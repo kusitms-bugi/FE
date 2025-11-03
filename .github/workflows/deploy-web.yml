@@ -61,13 +61,25 @@ jobs:
         run: |
           npm run build:renderer
           echo "✅ Build completed"
-          echo "📁 Build output:"
-          ls -la dist/renderer/
+          echo "📁 Checking build output location:"
+          ls -la dist/ || echo "dist/ not found"
+          ls -la src/renderer/dist/ || echo "src/renderer/dist/ not found"
+          find . -name "index.html" -type f | head -5
 
       - name: Create output directory
         run: |
           mkdir -p output
-          cp -r dist/renderer/* output/
+          # 빌드 출력 위치 확인 및 복사
+          if [ -d "dist/renderer" ]; then
+            echo "📁 Found dist/renderer/"
+            cp -r dist/renderer/* output/
+          elif [ -d "src/renderer/dist" ]; then
+            echo "📁 Found src/renderer/dist/"
+            cp -r src/renderer/dist/* output/
+          else
+            echo "❌ Build output not found in expected locations"
+            exit 1
+          fi
 
           # Vercel 설정 파일 생성
           cat > output/vercel.json << 'EOF'

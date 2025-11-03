@@ -59,7 +59,7 @@ const LoginForm = () => {
         {/* 비밀번호 */}
         <PasswordField {...register('password')} hasValue={!!password} />
         {loginMutation.isError && (
-          <div className="text-caption-sm-regular flex items-center gap-1 self-start text-red-500">
+          <div className="text-caption-sm-regular flex items-center gap-1 self-start text-error">
             <FailIcon className="h-[16px] w-[16px]" />
             <span>이메일 또는 비밀번호가 올바르지 않습니다.</span>
           </div>

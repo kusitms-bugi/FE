@@ -45,8 +45,8 @@
     #ffbf00 50%,
     #ffae00 100%
   );
-  --color-error: #ff3232;
-  --color-success: #00bf29;
+  --color-error: #ff351f;
+  --color-success: #67b000;
 }
 
 @theme inline {
@@ -76,6 +76,10 @@
   --color-grey-900: var(--color-grey-900);
   --color-grey-950: var(--color-grey-950);
   --color-grey-1000: var(--color-grey-1000);
+
+  /* notification colors*/
+  --color-error: var(--color-error);
+  --color-success: var(--color-success);
 }
 
 /* Dark mode colors */

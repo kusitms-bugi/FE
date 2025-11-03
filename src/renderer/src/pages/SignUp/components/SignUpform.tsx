@@ -94,7 +94,7 @@ const SignUpForm = () => {
           htmlFor="email"
           className="text-body-lg-semibold hbp:text-headline-2xl-semibold text-grey-600"
         >
-          이메일 <span className="text-red-500">*</span>
+          이메일 <span className="text-error">*</span>
         </label>
         <div className="hbp:gap-[12.5px] flex w-full flex-row items-center justify-center gap-[10px]">
           <TextField
@@ -112,11 +112,11 @@ const SignUpForm = () => {
             })}
             className={`hbp:text-body-xl-regular aspect-[338/60] flex-1 ${
               errors.email
-                ? '!border-red-500'
+                ? '!border-error'
                 : duplicateSuccess === true
-                  ? '!border-green-500'
+                  ? '!border-success'
                   : duplicateSuccess === false
-                    ? '!border-red-500'
+                    ? '!border-error'
                     : ''
             }`}
           />
@@ -132,8 +132,8 @@ const SignUpForm = () => {
           <div
             className={`flex items-center gap-1.5 ${
               errors.email || duplicateSuccess === false
-                ? 'text-red-500'
-                : 'text-green-500'
+                ? 'text-error'
+                : 'text-success'
             }`}
           >
             {errors.email || duplicateSuccess === false ? (
@@ -154,7 +154,7 @@ const SignUpForm = () => {
           htmlFor="password"
           className="text-body-lg-semibold hbp:text-headline-2xl-semibold text-grey-600"
         >
-          비밀번호 <span className="text-red-500">*</span>
+          비밀번호 <span className="text-error">*</span>
         </label>
         <p className="hbp:mb-[7.5px] text-caption-sm-medium hbp:text-body-md-medium text-grey-300 mb-[6px]">
           영문, 숫자, 특수문자를 조합하여 8-16글자로 입력해주세요.
@@ -174,8 +174,8 @@ const SignUpForm = () => {
               ? '' // 아무 입력 없으면 기본
               : formValues.password === formValues.confirmPassword &&
                   !errors.password
-                ? '!border-green-500' // 입력 있음 + 비밀번호 조건 통과 + 일치시 초록색
-                : '!border-red-500' // 그 외는 모두 빨간색
+                ? '!border-success' // 입력 있음 + 비밀번호 조건 통과 + 일치시 초록색
+                : '!border-error' // 그 외는 모두 빨간색
           }
         />
 
@@ -188,7 +188,7 @@ const SignUpForm = () => {
                 formValues.password !== formValues.confirmPassword ||
                 !!errors.password;
 
-              const colorClass = isError ? 'text-red-500' : 'text-green-500';
+              const colorClass = isError ? 'text-error' : 'text-success';
               const Icon = isError ? FailIcon : SuccessIcon;
               const message = isError
                 ? errors.password?.message || '비밀번호가 일치하지 않습니다.'
@@ -210,7 +210,7 @@ const SignUpForm = () => {
           htmlFor="name"
           className="text-body-lg-semibold hbp:text-headline-2xl-semibold text-grey-600"
         >
-          이름 <span className="text-red-500">*</span>
+          이름 <span className="text-error">*</span>
         </label>
         <p className="hbp:mb-[7.5px] text-caption-sm-medium hbp:text-body-md-medium text-grey-300 mb-[6px]">
           최대 10글자 이내로 작성해주세요.
@@ -220,13 +220,13 @@ const SignUpForm = () => {
           type="text"
           placeholder="이름을 입력해주세요."
           {...register('name')}
-          className={`hbp:text-body-xl-regular ${errors.name ? '!border-red-500' : formValues.name ? '!border-green-500' : ''}`}
+          className={`hbp:text-body-xl-regular ${errors.name ? '!border-error' : formValues.name ? '!border-success' : ''}`}
         />
 
         {(formValues.name || !!errors.name) && (
           <div
             className={`mt-1 flex items-center gap-1.5 ${
-              errors.name ? 'text-red-500' : 'text-green-500'
+              errors.name ? 'text-error' : 'text-success'
             }`}
           >
             {errors.name ? <FailIcon /> : <SuccessIcon />}

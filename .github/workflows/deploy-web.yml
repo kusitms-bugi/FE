@@ -18,31 +18,43 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: |
-            package-lock.json
+          cache: 'pnpm'
 
-      - name: Enable corepack
-        run: corepack enable
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
 
-      - name: Verify package-lock.json exists
+      - name: Get pnpm store directory
+        shell: bash
         run: |
-          if [ ! -f package-lock.json ]; then
-            echo "❌ package-lock.json not found!"
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Verify pnpm-lock.yaml exists
+        run: |
+          if [ ! -f pnpm-lock.yaml ]; then
+            echo "❌ pnpm-lock.yaml not found!"
             echo "📁 Current directory contents:"
             ls -la
             exit 1
           fi
-          echo "✅ package-lock.json found"
-          echo "📋 Lockfile version:"
-          node -p "require('./package-lock.json').lockfileVersion"
-          echo "📦 npm version:"
-          npm --version
+          echo "✅ pnpm-lock.yaml found"
+          echo "📦 pnpm version:"
+          pnpm --version
 
       - name: Install dependencies
         run: |
           # 의존성 설치 (husky 스크립트 무시)
-          npm ci --ignore-scripts
+          pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Verify project setup
         run: |
@@ -59,7 +71,7 @@ jobs:
 
       - name: Build web app (renderer)
         run: |
-          npm run build:renderer
+          pnpm run build:renderer
           echo "✅ Build completed"
           echo "📁 Checking build output location:"
           ls -la dist/ || echo "dist/ not found"

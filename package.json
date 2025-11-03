@@ -11,23 +11,23 @@
   "private": true,
   "main": "dist/main/index.cjs",
   "engines": {
-    "npm": ">=8.0.0",
+    "pnpm": ">=8.0.0",
     "node": ">=18.0.0"
   },
-  "packageManager": "npm@10.0.0",
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
     "postinstall": "node scripts/update-electron-vendors.js",
     "dev": "node scripts/watch.js",
     "dev:renderer": "vite src/renderer",
-    "build": "npm run build:main && npm run build:preload && npm run build:renderer",
+    "build": "pnpm run build:main && pnpm run build:preload && pnpm run build:renderer",
     "build:main": "vite build src/main",
     "build:preload": "vite build src/preload",
     "build:renderer": "vite build src/renderer",
     "build:preload:types": "dts-cb -i \"src/preload/tsconfig.json\" -o \"src/preload/exposedInMainWorld.d.ts\"",
-    "compile": "cross-env MODE=production npm run build && electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
-    "build:mac": "cross-env MODE=production npm run build && electron-builder build --config .electron-builder.config.js --mac",
-    "build:win": "cross-env MODE=production npm run build && electron-builder build --config .electron-builder.config.js --win",
-    "build:all": "cross-env MODE=production npm run build && electron-builder build --config .electron-builder.config.js --mac --win",
+    "compile": "cross-env MODE=production pnpm run build && electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
+    "build:mac": "cross-env MODE=production pnpm run build && electron-builder build --config .electron-builder.config.js --mac",
+    "build:win": "cross-env MODE=production pnpm run build && electron-builder build --config .electron-builder.config.js --win",
+    "build:all": "cross-env MODE=production pnpm run build && electron-builder build --config .electron-builder.config.js --mac --win",
     "watch": "node scripts/watch.js",
     "lint": "eslint . --ext js,ts,tsx --fix",
     "lint:check": "eslint . --ext js,ts,tsx",
@@ -36,7 +36,7 @@
     "typecheck:main": "tsc --noEmit -p src/main/tsconfig.json",
     "typecheck:preload": "tsc --noEmit -p src/preload/tsconfig.json",
     "typecheck:renderer": "tsc --noEmit -p src/renderer/tsconfig.json",
-    "typecheck": "npm run typecheck:main && npm run typecheck:preload && npm run typecheck:renderer"
+    "typecheck": "pnpm run typecheck:main && pnpm run typecheck:preload && pnpm run typecheck:renderer"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",

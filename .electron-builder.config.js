@@ -84,7 +84,7 @@ const config = {
     ],
     icon: 'buildResources/icon.png',
     artifactName: '${productName}-${version}-${arch}.${ext}',
-    publisherName: 'Bugi',
+    //publisherName: 'Bugi', #26버전으로 업데이트 되면서 속성 제거됨
   },
   nsis: {
     oneClick: false,

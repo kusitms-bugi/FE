@@ -7,6 +7,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash #모든 step이 bash로 실행, OS에 관계없이 통과
 
     steps:
       - name: Checkout code

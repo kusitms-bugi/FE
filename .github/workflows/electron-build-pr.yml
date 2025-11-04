@@ -45,6 +45,7 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Verify project setup
+        shell: bash #기본 shell 설정
         run: |
           echo "✅ Dependencies installed successfully"
           echo "📁 Project structure:"

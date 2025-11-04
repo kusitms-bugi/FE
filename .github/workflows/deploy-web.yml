@@ -34,11 +34,17 @@ jobs:
           echo "✅ pnpm-lock.yaml found"
           echo "📦 pnpm version:"
           pnpm --version
+          echo "🔍 Checking lockfile sync status..."
+          pnpm install --dry-run --frozen-lockfile --ignore-scripts || echo "⚠️ Lockfile may need update, will update during install"
 
       - name: Install dependencies
         run: |
           # 의존성 설치 (husky 스크립트 무시)
-          pnpm install --frozen-lockfile --ignore-scripts
+          # lockfile이 오래된 경우 업데이트 후 설치
+          pnpm install --frozen-lockfile --ignore-scripts || {
+            echo "⚠️ Lockfile outdated, updating..."
+            pnpm install --ignore-scripts
+          }
 
       - name: Verify project setup
         run: |

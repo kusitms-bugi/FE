@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { WidgetTitleBar } from '../../components/WidgetTitleBar/WidgetTitleBar';
+import Giraffe from '../../assets/widget/mini_giraffe.svg?react';
 
 type WidgetSize = 'mini' | 'medium';
 
@@ -61,16 +62,14 @@ export function WidgetPage() {
 /* 미니 위젯 레이아웃 - 최대 50px 높이에 맞게 가로 배치 */
 function MiniWidgetContent() {
   return (
-    <div className="flex h-full items-center gap-2 bg-gradient-to-br from-green-400 to-green-500 px-3">
+    <div className="bg-grey-100 relative flex w-full items-center rounded-lg">
       {/* 캐릭터 이미지 영역 - 작게 */}
-      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-yellow-400">
-        <div className="text-xl">🦒</div>
-      </div>
-
-      {/* 간단한 상태 표시 - 가로로 컴팩트하게 */}
-      <div className="flex items-center gap-2 rounded-lg bg-white/90 px-2 py-1">
-        <div className="text-xs text-gray-600">자세 점수</div>
-        <div className="text-lg font-bold text-green-600">85</div>
+      <div
+        className="h-full w-full rounded-lg bg-linear-[180deg,var(--color-olive-green)_0.18%,var(--color-success)_99.7%] transition-all duration-700 ease-in-out"
+        style={{ width: '80%' }}
+      ></div>
+      <div className="absolute flex h-full">
+        <Giraffe className="h-full w-full object-contain" />
       </div>
     </div>
   );

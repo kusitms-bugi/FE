@@ -1,13 +1,15 @@
 import { useMutation } from '@tanstack/react-query';
 import api from '../api';
-import { StopSessionResponse } from '../../types/main/session';
+import { SessionActionResponse } from '../../types/main/session';
 
 /**
  * 세션 중단 API
  * PATCH /sessions/{sessionId}/stop
  */
-const stopSession = async (sessionId: string): Promise<StopSessionResponse> => {
-  const response = await api.patch<StopSessionResponse>(
+const stopSession = async (
+  sessionId: string,
+): Promise<SessionActionResponse> => {
+  const response = await api.patch<SessionActionResponse>(
     `/sessions/${sessionId}/stop`,
   );
   const result = response.data;

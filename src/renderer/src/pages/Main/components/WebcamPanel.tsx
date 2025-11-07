@@ -9,6 +9,8 @@ import WebcamView from '../../Calibration/components/WebcamView';
 import { useCameraStore } from '../../../store/useCameraStore';
 import { useCreateSessionMutation } from '../../../api/session/useCreateSessionMutation';
 import { useStopSessionMutation } from '../../../api/session/useStopSessionMutation';
+import { usePauseSessionMutation } from '../../../api/session/usePauseSessionMutation';
+import { useResumeSessionMutation } from '../../../api/session/useResumeSessionMutation';
 
 interface Props {
   onUserMediaError: (e: string | DOMException) => void;
@@ -20,7 +22,7 @@ interface Props {
 }
 
 const WebcamPanel = ({ onPoseDetected, onToggleWebcam }: Props) => {
-  const { cameraState, setShow, setExit } = useCameraStore();
+  const { cameraState, setShow, setHide, setExit } = useCameraStore();
   const isWebcamOn = cameraState === 'show';
   const isExit = cameraState === 'exit';
 
@@ -28,6 +30,10 @@ const WebcamPanel = ({ onPoseDetected, onToggleWebcam }: Props) => {
     useCreateSessionMutation();
   const { mutate: stopSession, isPending: isStoppingSession } =
     useStopSessionMutation();
+  const { mutate: pauseSession, isPending: isPausingSession } =
+    usePauseSessionMutation();
+  const { mutate: resumeSession, isPending: isResumingSession } =
+    useResumeSessionMutation();
 
   const handleStartStop = () => {
     if (isExit) {
@@ -49,6 +55,39 @@ const WebcamPanel = ({ onPoseDetected, onToggleWebcam }: Props) => {
       } else {
         // sessionId가 없으면 그냥 카메라만 종료
         setExit();
+      }
+    }
+  };
+
+  // 카메라 보이기/숨기기 버튼: 일시정지/재개
+  const handleToggleCamera = () => {
+    const sessionId = localStorage.getItem('sessionId');
+
+    if (isWebcamOn) {
+      // 카메라 보이는 상태 → 숨기기: 세션 일시정지
+      if (sessionId) {
+        pauseSession(sessionId, {
+          onSuccess: () => {
+            setHide();
+            onToggleWebcam();
+          },
+        });
+      } else {
+        setHide();
+        onToggleWebcam();
+      }
+    } else {
+      // 카메라 숨김 상태 → 보이기: 세션 재개
+      if (sessionId) {
+        resumeSession(sessionId, {
+          onSuccess: () => {
+            setShow();
+            onToggleWebcam();
+          },
+        });
+      } else {
+        setShow();
+        onToggleWebcam();
       }
     }
   };
@@ -84,7 +123,8 @@ const WebcamPanel = ({ onPoseDetected, onToggleWebcam }: Props) => {
               <ShowIcon className="h-6 w-6" />
             )
           }
-          onClick={onToggleWebcam}
+          onClick={handleToggleCamera}
+          disabled={isPausingSession || isResumingSession}
           className="h-11 w-11 px-0"
         />
       </div>

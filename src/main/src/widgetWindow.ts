@@ -31,7 +31,6 @@ async function createWidgetWindow() {
     resizable: true, // 크기 조절 가능 (사용자가 드래그로 크기 조절 가능)
     skipTaskbar: false, // 작업표시줄에 표시 여부
     hasShadow: true, // 그림자 추가
-    roundedCorners: process.platform !== 'darwin', // macOS는 false, Windows는 true
     webPreferences: {
       webviewTag: false,
       preload: join(__dirname, '../preload/index.cjs'), //preload 스크립트

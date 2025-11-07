@@ -39,8 +39,8 @@ export function WidgetTitleBar({
   return (
     <div
       className={`bg-grey-0 flex ${isMini
-          ? 'mr-1 h-full w-2 flex-col items-center justify-center'
-          : 'mb-1 h-2 w-full justify-center'
+        ? 'mr-1 h-full w-2 flex-col items-center justify-center'
+        : 'mb-1 h-2 w-full justify-center'
         } `}
       style={{
         // 드래그 가능하게 설정 (Electron에서 창 이동 가능)

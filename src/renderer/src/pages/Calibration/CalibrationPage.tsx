@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
+import CalibrationGuide from '../../assets/calibration_guide.svg?react';
 import {
   PoseLandmark as AnalyzerPoseLandmark,
   calculateFrameBrightness,
@@ -310,15 +311,23 @@ const CalibrationPage = () => {
         {/* 메인 콘텐츠 영역 */}
         <div className="flex w-full justify-center gap-12">
           {/* 왼쪽 웹캠 영역 */}
-          <WebcamView
-            onPoseDetected={handlePoseDetected}
-            showPoseOverlay={true}
-            showTimer={isCalibrating}
-            remainingTime={remainingTime}
-            onVideoRefReady={(ref) => {
-              videoRefRef.current = ref;
-            }}
-          />
+          <div className="relative">
+            <WebcamView
+              onPoseDetected={handlePoseDetected}
+              showPoseOverlay={true}
+              showTimer={isCalibrating}
+              remainingTime={remainingTime}
+              onVideoRefReady={(ref) => {
+                videoRefRef.current = ref;
+              }}
+            />
+            {/* 캘리브레이션 가이드 오버레이 (캘리브레이션 중일 때만) */}
+
+            <div className="pointer-events-none absolute inset-x-0 top-[50px] bottom-0 flex items-center justify-center">
+              <CalibrationGuide className="h-full w-full max-h-full max-w-full object-contain" />
+            </div>
+
+          </div>
           {/* 오른쪽 안내 영역 */}
           {isCalibrating ? (
             <MeasuringPanel step1Error={step1Error} step2Error={step2Error} />

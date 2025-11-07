@@ -8,6 +8,7 @@ import {
 import WebcamView from '../../Calibration/components/WebcamView';
 import { useCameraStore } from '../../../store/useCameraStore';
 import { useCreateSessionMutation } from '../../../api/session/useCreateSessionMutation';
+import { useStopSessionMutation } from '../../../api/session/useStopSessionMutation';
 
 interface Props {
   onUserMediaError: (e: string | DOMException) => void;
@@ -25,6 +26,8 @@ const WebcamPanel = ({ onPoseDetected, onToggleWebcam }: Props) => {
 
   const { mutate: createSession, isPending: isCreatingSession } =
     useCreateSessionMutation();
+  const { mutate: stopSession, isPending: isStoppingSession } =
+    useStopSessionMutation();
 
   const handleStartStop = () => {
     if (isExit) {
@@ -35,9 +38,18 @@ const WebcamPanel = ({ onPoseDetected, onToggleWebcam }: Props) => {
         },
       });
     } else {
-      // 종료하기: 카메라 종료
-      setExit();
-      // TODO: 세션 종료 API 호출 필요
+      // 종료하기: 세션 중단 후 카메라 종료
+      const sessionId = localStorage.getItem('sessionId');
+      if (sessionId) {
+        stopSession(sessionId, {
+          onSuccess: () => {
+            setExit();
+          },
+        });
+      } else {
+        // sessionId가 없으면 그냥 카메라만 종료
+        setExit();
+      }
     }
   };
 
@@ -52,13 +64,15 @@ const WebcamPanel = ({ onPoseDetected, onToggleWebcam }: Props) => {
           text={
             isCreatingSession
               ? '세션 생성 중...'
-              : isExit
-                ? '시작하기'
-                : '종료하기'
+              : isStoppingSession
+                ? '세션 종료 중...'
+                : isExit
+                  ? '시작하기'
+                  : '종료하기'
           }
           className="h-11 w-full max-w-[300px]"
           onClick={handleStartStop}
-          disabled={isCreatingSession}
+          disabled={isCreatingSession || isStoppingSession}
         />
         <Button
           size={'md'}

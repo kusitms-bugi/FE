@@ -8,3 +8,11 @@ export interface CreateSessionResponse {
   code: string;
   message: string;
 }
+
+/* 세션 중단 API 타입 */
+export interface StopSessionResponse {
+  timestamp: string;
+  success: boolean;
+  code: string;
+  message: string;
+}

@@ -15,6 +15,9 @@ export function MediumWidgetContent({ posture }: MediumWidgetContentProps) {
     ? 'linear-gradient(180deg, var(--color-olive-green) 0.18%, var(--color-success) 99.7%)'
     : 'linear-gradient(180deg, var(--color-coral-red) 0%, var(--color-error) 100%)';
 
+  /* 게이지 비율: 거북목 25%, 정상 75% */
+  const gaugeWidth = isGiraffe ? '75%' : '25%';
+
   return (
     <div className="flex h-full w-full flex-col transition-colors duration-500 ease-in-out">
       {/* 캐릭터 영역 */}
@@ -36,7 +39,7 @@ export function MediumWidgetContent({ posture }: MediumWidgetContentProps) {
           <div className="bg-grey-50 h-3 w-full rounded-full">
             <div
               className="flex h-full justify-end rounded-lg bg-green-500 p-[2px] transition-all duration-500 ease-in-out"
-              style={{ width: '60%', background: gradient }}
+              style={{ width: gaugeWidth, background: gradient }}
             >
               <div className="bg-dot h-2 w-2 rounded-full opacity-50" />
             </div>

@@ -1,12 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Webcam from 'react-webcam';
+import CalibrationGuide from '../../assets/calibration_guide.svg?react';
 import {
   PoseLandmark as AnalyzerPoseLandmark,
+  calculateFrameBrightness,
   calculatePI,
+  CalibrationFrame,
+  checkStep1Error,
+  getStep2Error,
   PIResult,
   processCalibrationData,
-  WorldLandmark,
-} from '../../components/pose-detection/PoseAnalyzer';
+  WorldLandmark
+} from '../../components/pose-detection';
 import MeasuringPanel from './components/MeasuringPanel';
 import WebcamView from './components/WebcamView';
 import WelcomePanel from './components/WelcomePanel';
@@ -57,8 +63,19 @@ const CalibrationPage = () => {
       lms: PoseLandmark[];
       pi: PIResult;
       worldLms: WorldLandmark[];
+      brightness?: number;
     }>
   >([]);
+
+  // 예외 케이스 에러 메시지 상태
+  const [step1Error, setStep1Error] = useState<string | null>(null); // Step 1 에러 (WelcomePanel용)
+  const [step2Error, setStep2Error] = useState<string | null>(null); // Step 2 에러 (MeasuringPanel step={2}용)
+
+  // 스텝 1: 최근 PI 값들을 저장하여 평균 계산
+  const recentPIsRef = useRef<number[]>([]);
+
+  // 비디오 ref 저장
+  const videoRefRef = useRef<RefObject<Webcam> | null>(null);
 
   const handlePoseDetected = (
     landmarks: PoseLandmark[],
@@ -74,11 +91,17 @@ const CalibrationPage = () => {
 
   // 캘리브레이션 시작
   const startCalibration = useCallback(() => {
+    // 스텝 1 에러가 있으면 시작하지 않음
+    if (step1Error) {
+      return;
+    }
+
     setIsCalibrating(true);
     setCalibrationFrames([]);
     setCalibrationProgress(0);
     setRemainingTime(5);
-  }, []);
+    setStep2Error(null);
+  }, [step1Error]);
 
   // 캘리브레이션 중단
   const stopCalibration = () => {
@@ -93,31 +116,54 @@ const CalibrationPage = () => {
   };
 
   // 측정하기 버튼 클릭
-  const handleStartMeasurement = () => {
-    if (detectedLandmarks.length > 0) {
+  const handleStartMeasurement = useCallback(() => {
+    if (detectedLandmarks.length > 0 && !step1Error) {
       setTimeout(() => {
         startCalibration();
       }, 1000);
     }
-  };
+  }, [detectedLandmarks.length, step1Error, startCalibration]);
 
   // 캘리브레이션 처리
-  useEffect(() => {
-    if (!isCalibrating) return;
-
-    const frames: Array<{
+  const startTimeRef = useRef<number>(Date.now());
+  const framesRef = useRef<
+    Array<{
       lms: PoseLandmark[];
       pi: PIResult;
       worldLms: WorldLandmark[];
-      pi_ema?: number; // EMA 적용된 PI 값
-    }> = [];
-    const startTime = Date.now();
-    const emaSmoother = new EmaSmoother(0.25); // 메인과 동일한 alpha 값
-    emaSmoother.reset(); // 캘리브레이션 시작 시 초기화
+      pi_ema?: number;
+      brightness?: number;
+    }>
+  >([]);
+  const emaSmootherRef = useRef<EmaSmoother>(new EmaSmoother(0.25));
+
+  // 이전 에러 상태 추적용 ref
+  const prevStep2ErrorRef = useRef<string | null>(null);
+  const errorResetTimeRef = useRef<number>(0);
+  const ERROR_HOLD_DURATION = 500; // 에러 상태를 500ms 동안 유지
+
+  useEffect(() => {
+    if (!isCalibrating) return;
+
+    // 캘리브레이션 시작 시 초기화
+    startTimeRef.current = Date.now();
+    framesRef.current = [];
+    emaSmootherRef.current.reset();
+    setCalibrationProgress(0);
+    setRemainingTime(5);
+    setStep2Error(null);
+    prevStep2ErrorRef.current = null;
+    errorResetTimeRef.current = 0;
+  }, [isCalibrating]);
+
+
+  // 캘리브레이션 타이머 및 데이터 수집
+  useEffect(() => {
+    if (!isCalibrating) return;
 
     // 타이머 업데이트 (1초마다)
     const timerInterval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
+      const elapsed = Date.now() - startTimeRef.current;
       const progress = Math.min(100, (elapsed / 5000) * 100);
       const remaining = Math.max(0, Math.ceil((5000 - elapsed) / 1000));
       setCalibrationProgress(progress);
@@ -127,9 +173,9 @@ const CalibrationPage = () => {
         clearInterval(timerInterval);
         clearInterval(dataInterval);
         stopCalibration();
-        const result = processCalibrationData(frames, true);
+        const result = processCalibrationData(framesRef.current, true);
         if (result.success) {
-          setCalibrationFrames(frames);
+          setCalibrationFrames(framesRef.current);
           // 측정 완료 수치를 한 번만 콘솔에 출력
           console.log('측정 완료 수치', {
             mu_PI: (result.mu_PI || 0).toFixed(4),
@@ -164,7 +210,7 @@ const CalibrationPage = () => {
       }
     }, 1000); // 1초마다 타이머 업데이트
 
-    // 데이터 수집 (100ms마다)
+    // 데이터 수집 및 스텝 2 예외 케이스 체크 (100ms마다)
     const dataInterval = setInterval(() => {
       const current2D = detectedLandmarksRef.current;
       const currentWorld = worldLandmarksRef.current;
@@ -181,16 +227,71 @@ const CalibrationPage = () => {
       if (!pi) return;
 
       // EMA 적용 (메인과 동일한 방식)
-      const pi_ema = emaSmoother.next(pi.PI_raw);
+      const pi_ema = emaSmootherRef.current.next(pi.PI_raw);
+
+      // 비디오 프레임의 밝기 계산
+      let brightness: number | undefined = undefined;
+      if (videoRefRef.current?.current?.video) {
+        const brightnessValue = calculateFrameBrightness(
+          videoRefRef.current.current.video,
+        );
+        if (brightnessValue !== null) {
+          brightness = brightnessValue;
+        }
+      }
 
       // const frontality = checkFrontality(current2D as AnalyzerPoseLandmark[]);
 
-      frames.push({
+      framesRef.current.push({
         lms: current2D,
         pi,
         worldLms: currentWorld,
         pi_ema, // EMA 적용된 값 저장
+        brightness, // 프레임 밝기 저장
       });
+
+      // frames가 너무 많이 쌓이지 않도록 제한 (최대 50개)
+      if (framesRef.current.length > 50) {
+        framesRef.current.shift(); // 가장 오래된 프레임 제거
+      }
+
+      // 스텝 1 에러 체크 (실시간)
+      const step1Err = checkStep1Error(
+        current2D as AnalyzerPoseLandmark[],
+        landmarksToUse,
+      );
+
+      // 스텝 1 에러가 발생했거나 계속 발생 중이면 시간 리셋
+      if (step1Err) {
+        startTimeRef.current = Date.now();
+        setCalibrationProgress(0);
+        setRemainingTime(5);
+        errorResetTimeRef.current = Date.now();
+        setStep1Error(step1Err);
+        // Step 1 에러가 있으면 Step 2 체크 건너뛰기
+        setStep2Error(null);
+        return;
+      }
+
+      setStep1Error(step1Err);
+
+      // 스텝 2 예외 케이스 실시간 체크 (충분한 프레임이 쌓인 후, Step 1 에러가 없을 때만)
+      if (framesRef.current.length >= 5) {
+        const error = getStep2Error(framesRef.current as CalibrationFrame[]);
+
+        // 에러가 발생했거나 계속 발생 중이면 시간 리셋 (frames는 유지)
+        if (error) {
+          startTimeRef.current = Date.now();
+          setCalibrationProgress(0);
+          setRemainingTime(5);
+          errorResetTimeRef.current = Date.now();
+        }
+
+        setStep2Error(error);
+      } else {
+        // 프레임이 충분하지 않으면 에러 초기화
+        setStep2Error(null);
+      }
     }, 100); // 100ms마다 데이터 수집
 
     return () => {
@@ -210,15 +311,26 @@ const CalibrationPage = () => {
         {/* 메인 콘텐츠 영역 */}
         <div className="flex w-full justify-center gap-12">
           {/* 왼쪽 웹캠 영역 */}
-          <WebcamView
-            onPoseDetected={handlePoseDetected}
-            showPoseOverlay={true}
-            showTimer={isCalibrating}
-            remainingTime={remainingTime}
-          />
+          <div className="relative">
+            <WebcamView
+              onPoseDetected={handlePoseDetected}
+              showPoseOverlay={true}
+              showTimer={isCalibrating}
+              remainingTime={remainingTime}
+              onVideoRefReady={(ref) => {
+                videoRefRef.current = ref;
+              }}
+            />
+            {/* 캘리브레이션 가이드 오버레이 (캘리브레이션 중일 때만) */}
+
+            <div className="pointer-events-none absolute inset-x-0 top-[50px] bottom-0 flex items-center justify-center">
+              <CalibrationGuide className="h-full w-full max-h-full max-w-full object-contain" />
+            </div>
+
+          </div>
           {/* 오른쪽 안내 영역 */}
           {isCalibrating ? (
-            <MeasuringPanel />
+            <MeasuringPanel step1Error={step1Error} step2Error={step2Error} />
           ) : (
             <WelcomePanel
               isPoseDetected={isPoseDetected}

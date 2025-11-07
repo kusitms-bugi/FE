@@ -5,7 +5,7 @@ import {
   checkFrontality,
   PostureClassifier,
   WorldLandmark,
-} from '../../components/pose-detection/PoseAnalyzer';
+} from '../../components/pose-detection';
 import { useCameraStore } from '../../store/useCameraStore';
 import { usePostureStore } from '../../store/usePostureStore';
 import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';

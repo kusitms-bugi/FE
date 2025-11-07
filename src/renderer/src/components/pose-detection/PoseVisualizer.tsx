@@ -76,10 +76,7 @@ const PoseVisualizer = ({
     const computedStyle = getComputedStyle(document.documentElement);
     const successColor = computedStyle.getPropertyValue('--color-success').trim();
     const errorColor = computedStyle.getPropertyValue('--color-error').trim();
-    const defaultShoulderColor = '#60a5fa'; // 기존 어깨 색상
-    const defaultEarColor = '#f472b6'; // 기존 귀 색상
-    const defaultLineColor = 'rgba(255, 255, 255, 0.6)'; // 기존 어깨선 색상
-    const defaultMidpointLineColor = '#22c55e'; // 기존 중심선 색상
+    const defaultColor = computedStyle.getPropertyValue('--color-yellow-500').trim();
 
     // --- 상태에 따른 색상 결정 ---
     const shoulderColor =
@@ -87,28 +84,28 @@ const PoseVisualizer = ({
         ? successColor
         : postureClass === 'bad'
           ? errorColor
-          : defaultShoulderColor;
+          : defaultColor;
 
     const earColor =
       postureClass === 'ok'
         ? successColor
         : postureClass === 'bad'
           ? errorColor
-          : defaultEarColor;
+          : defaultColor;
 
     const shoulderLineColor =
       postureClass === 'ok'
         ? successColor
         : postureClass === 'bad'
           ? errorColor
-          : defaultLineColor;
+          : defaultColor;
 
     const midpointLineColor =
       postureClass === 'ok'
         ? successColor
         : postureClass === 'bad'
           ? errorColor
-          : defaultMidpointLineColor;
+          : defaultColor;
 
     // 부모 컨테이너의 실제 크기 가져오기
     const parent = canvas.parentElement;

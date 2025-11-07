@@ -4,7 +4,7 @@ import HideIcon from '@assets/hide.svg?react';
 import {
   PoseLandmark,
   WorldLandmark,
-} from '../../../components/pose-detection/PoseAnalyzer';
+} from '../../../components/pose-detection';
 import WebcamView from '../../Calibration/components/WebcamView';
 import { useCameraStore } from '../../../store/useCameraStore';
 import { useCreateSessionMutation } from '../../../api/session/useCreateSessionMutation';

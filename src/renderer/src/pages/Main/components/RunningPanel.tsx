@@ -42,16 +42,16 @@ const RunningPanel = () => {
                 {/* 게이지바 */}
                 <div className="mt-4 mx-4">
                     {/* 흰색 트랙 */}
-                    <div className="h-6 w-full bg-white rounded-full relative">
+                    <div className="h-5 w-full bg-white rounded-full relative">
                         {/* 산호색 진행 바 (약 25-30%) */}
                         <div
-                            className="h-full rounded-full transition-all duration-1000 flex items-center justify-end pr-[3px]"
+                            className="h-full rounded-full transition-all duration-1000 flex items-center justify-end pr-[3px] py-[3px]"
                             style={{
                                 width: isTurtle ? '25%' : '75%',
                                 background: gradient
                             }}
                         >
-                            <div className="bg-grey-0 h-[14px] w-[14px] rounded-full opacity-50" />
+                            <div className="bg-dot h-[14px] w-[14px] rounded-full opacity-50" />
                         </div>
                     </div>
                 </div>

@@ -53,7 +53,7 @@
   --color-point-red: #ff6647;
   --color-point-green: #a1b100;
 
-  /* icon-color*/
+  --color-dot: #fff;
   --color-icon-stroke: #a8a7a4;
   --color-check-stroke: #ffffff;
   --color-check-fill: #c6c5c3;
@@ -113,6 +113,7 @@
   --color-point-green: var(--color-point-green);
 
   /* icon-color*/
+  --color-dot: var(--color-dot);
   --color-icon-stroke: var(--color-icon-stroke);
   --color-check-stroke: var(--color-check-stroke);
   --color-check-fill: var(--color-check-fill);

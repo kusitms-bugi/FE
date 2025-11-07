@@ -38,7 +38,7 @@ export function MediumWidgetContent({ posture }: MediumWidgetContentProps) {
               className="flex h-full justify-end rounded-lg bg-green-500 p-[2px] transition-all duration-500 ease-in-out"
               style={{ width: '60%', background: gradient }}
             >
-              <div className="bg-grey-0 h-2 w-2 rounded-full opacity-50" />
+              <div className="bg-dot h-2 w-2 rounded-full opacity-50" />
             </div>
           </div>
         </div>

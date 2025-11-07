@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-import DevNavbar from '../../components/DevNavbar/DevNavbar';
+import { useEffect, useRef } from 'react';
 import {
   PoseLandmark as AnalyzerPoseLandmark,
   calculatePI,
@@ -7,9 +6,12 @@ import {
   PostureClassifier,
   WorldLandmark,
 } from '../../components/pose-detection/PoseAnalyzer';
+import { useCameraStore } from '../../store/useCameraStore';
+import { usePostureStore } from '../../store/usePostureStore';
 import CharacterPanel from './components/CharacterPanel';
 import HighlightsPanel from './components/HighlightsPanel';
 import LevelProgressPanel from './components/LevelProgressPanel';
+import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
 import SummaryPanel from './components/SummaryPanel';
 import TrendPanel from './components/TrendPanel';
@@ -18,10 +20,16 @@ import WebcamPanel from './components/WebcamPanel';
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 
 const MainPage = () => {
-  const [isWebcamOn, setIsWebcamOn] = useState(true);
-  const [statusText, setStatusText] = useState<'정상' | '거북목' | '측정중'>(
-    '측정중',
-  );
+  const setStatus = usePostureStore((state) => state.setStatus);
+  const { cameraState, setHide, setShow } = useCameraStore();
+
+  const handleToggleWebcam = () => {
+    if (cameraState === 'show') {
+      setHide();
+    } else {
+      setShow();
+    }
+  };
 
   const classifierRef = useRef(new PostureClassifier());
 
@@ -45,7 +53,7 @@ const MainPage = () => {
   }, [calib]);
 
   const handleUserMediaError = () => {
-    setIsWebcamOn(false);
+    setHide();
   };
 
   const handlePoseDetected = async (
@@ -69,7 +77,7 @@ const MainPage = () => {
       calib.sigma,
       frontal,
     );
-    setStatusText(result.text as '정상' | '거북목');
+    setStatus(result.text as '정상' | '거북목', result.cls);
 
     // 기존 결과 배열 가져오기
     const existingData = localStorage.getItem('classificationResult');
@@ -103,12 +111,16 @@ const MainPage = () => {
 
   return (
     <>
-      <DevNavbar />
-      <main className="bg-grey-50 h-screen min-h-screen">
+      <main className="bg-grey-25 min-h-screen p-4">
         {/* 전체 레이아웃: 좌(콘텐츠) / 우(웹캠 패널) - 화면 꽉 차게 */}
-        <div className="grid h-full w-full grid-cols-1 items-stretch gap-6 p-4 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_400px]">
+        <div className="grid h-full w-full grid-cols-1 items-stretch gap-6 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_400px]">
           {/* 좌측 콘텐츠 영역: 단일 Grid 구성 */}
           <section className="grid grid-cols-12 content-start gap-6 overflow-y-auto">
+            {/* 헤더 */}
+            <div className="col-span-12">
+              <MainHeader />
+            </div>
+
             <CharacterPanel />
             <SummaryPanel />
             <LevelProgressPanel />
@@ -117,14 +129,16 @@ const MainPage = () => {
           </section>
 
           {/* 우측 사이드 패널: 좌/우 구분선 */}
-          <aside className="border-grey-100 flex flex-col gap-6 border-l pl-6">
+          <aside className="bg-grey-0 flex flex-col p-6 rounded-4xl gap-8">
             <WebcamPanel
-              isWebcamOn={isWebcamOn}
               onUserMediaError={handleUserMediaError}
               onPoseDetected={handlePoseDetected}
+              onToggleWebcam={handleToggleWebcam}
             />
 
-            <MiniRunningPanel statusText={statusText} />
+            <div className='h-px w-full bg-grey-50' />
+
+            <MiniRunningPanel />
           </aside>
         </div>
       </main>

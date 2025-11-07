@@ -40,7 +40,6 @@ class EmaSmoother {
 const CalibrationPage = () => {
   const navigate = useNavigate();
   const LOCAL_STORAGE_KEY = 'calibration_result_v1';
-  const [isWebcamOn, setIsWebcamOn] = useState(true); // 기본적으로 웹캠 켜짐
   const [detectedLandmarks, setDetectedLandmarks] = useState<PoseLandmark[]>(
     [],
   );
@@ -200,20 +199,24 @@ const CalibrationPage = () => {
     };
   }, [isCalibrating]);
 
+  // 상태에 따른 패딩 클래스
+  const paddingClass = isCalibrating
+    ? 'minimum:px-[29px] labtop:px-[44px] desktop:px-[164px]' // MeasuringPanel 상태
+    : 'minimum:px-[90px] labtop:px-[105px] desktop:px-[164px]'; // WelcomePanel 상태
+
   return (
     <main className="bg-grey-50 flex min-h-screen flex-col items-center">
-      <section className="hbp:px-[105px] flex h-screen w-full items-center justify-center">
+      <section className={`${paddingClass} flex h-screen w-full items-center justify-center`}>
         {/* 메인 콘텐츠 영역 */}
         <div className="flex w-full justify-center gap-12">
           {/* 왼쪽 웹캠 영역 */}
           <WebcamView
-            isWebcamOn={isWebcamOn}
             onPoseDetected={handlePoseDetected}
             showPoseOverlay={true}
             showTimer={isCalibrating}
             remainingTime={remainingTime}
           />
-          {/* 오른쪽 안내 영역 - 상태별 컴포넌트 (완료 화면 제거) */}
+          {/* 오른쪽 안내 영역 */}
           {isCalibrating ? (
             <MeasuringPanel />
           ) : (

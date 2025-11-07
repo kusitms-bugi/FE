@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { cn } from '../../utils/cn';
-import SunIcon from '../../assets/sun_icon.svg?react';
 import MoonIcon from '../../assets/moon_icon.svg?react';
+import SunIcon from '../../assets/sun_icon.svg?react';
+import { cn } from '../../utils/cn';
 
 interface ThemeToggleSwitchProps {
   checked: boolean;
@@ -20,7 +20,7 @@ const ThemeToggleSwitch = React.forwardRef<
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={cn(
-        'bg-grey-50 relative flex h-[30px] w-fit items-center gap-2 rounded-full px-[3px]',
+        'bg-grey-50 relative flex h-[30px] w-fit items-center gap-2 rounded-full px-[3px] cursor-pointer',
       )}
     >
       <div className="z-1 flex h-[24px] w-[24px] items-center justify-center">

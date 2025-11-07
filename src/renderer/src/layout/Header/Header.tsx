@@ -1,6 +1,6 @@
-import { ThemeToggleSwitch } from '../../components/ToggleSwitch/ToggleSwitch';
-import Logo from '../../assets/logo.svg?react';
 import { useEffect, useState } from 'react';
+import Logo from '../../assets/logo.svg?react';
+import { ThemeToggleSwitch } from '../../components/ToggleSwitch/ToggleSwitch';
 
 const Header = () => {
   const [isDark, setIsDark] = useState(() => {

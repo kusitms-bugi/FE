@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/Button/Button';
+import { useCameraStore } from '../../../store/useCameraStore';
 
 const CameraPermissionButton = () => {
   const navigate = useNavigate();
+  const { setShow } = useCameraStore();
 
   const requestCameraPermission = async () => {
     try {
@@ -24,6 +26,8 @@ const CameraPermissionButton = () => {
 
       // 스트림이 완전히 해제될 때까지 약간의 딜레이
       await new Promise((resolve) => setTimeout(resolve, 100));
+
+      setShow(); // Set camera state to 'show' after permission is granted
 
       console.log('[CameraPermission] Navigating to calibration page...');
       navigate('/onboarding/calibration');

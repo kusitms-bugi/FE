@@ -10,7 +10,7 @@ const WelcomePanel = ({
   onStartMeasurement,
 }: WelcomePanelProps) => {
   return (
-    <div className="flex w-[442px] flex-col justify-center">
+    <div className="flex w-[422px] min-w-[422px] shrink-0 flex-col pt-12">
       <div className="mb-12">
         <h1 className="text-title-4xl-bold text-grey-900 mb-[20px]">
           바른 자세 기준점 등록

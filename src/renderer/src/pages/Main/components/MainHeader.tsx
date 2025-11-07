@@ -1,0 +1,87 @@
+import DashboardIcon from '@assets/dashboard.svg?react';
+import PlanIcon from '@assets/plan.svg?react';
+import ProfileIcon from '@assets/profile.svg?react';
+import SettingIcon from '@assets/setting.svg?react';
+import { useEffect, useState } from 'react';
+import Logo from '../../../assets/logo.svg?react';
+import { Button } from '../../../components/Button/Button';
+import { ThemeToggleSwitch } from '../../../components/ToggleSwitch/ToggleSwitch';
+import { cn } from '../../../utils/cn';
+
+
+type TabType = 'dashboard' | 'plan' | 'settings';
+
+const MainHeader = () => {
+    const [isDark, setIsDark] = useState(() => {
+        // localStorage에 값이 있으면 true/false로 변환해서 사용
+        return localStorage.getItem('theme') === 'dark';
+    });
+
+    //테마 상태가 바뀔 때마다 HTML 클래스 + localStorage 업데이트
+    useEffect(() => {
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark'); // 다크모드 기억
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light'); // 라이트모드 기억
+        }
+    }, [isDark]);
+
+    const [activeTab, setActiveTab] = useState<TabType>('dashboard');
+
+    const tabs = [
+        { id: 'dashboard' as TabType, label: '대시보드', icon: DashboardIcon },
+        { id: 'plan' as TabType, label: '계획', icon: PlanIcon },
+        { id: 'settings' as TabType, label: '설정', icon: SettingIcon },
+    ];
+
+    return (
+        <div className="mb-9 bg-grey-0 flex rounded-[999px] justify-between p-2">
+            {/* 타이틀 영역 */}
+            <div className="flex items-center gap-10">
+
+                <Logo className="h-[32px] w-[139px] [&>path]:fill-logo-fill" />
+
+                {/* 네비게이션 탭 */}
+                <nav className="flex gap-2">
+                    {tabs.map((tab) => {
+                        const Icon = tab.icon;
+                        const isActive = activeTab === tab.id;
+
+                        return (
+                            <Button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                variant={isActive ? 'primary' : 'grey'}
+                                size="sm"
+                                className={cn(
+                                    'group',
+                                    isActive
+                                        ? 'bg-yellow-400 text-grey-1000'
+                                        : 'bg-grey-25 text-grey-400 group-hover:text-grey-700'
+                                )}
+                                text={
+                                    <div className="flex items-center gap-2">
+                                        <Icon className={cn(
+                                            'w-[18px] h-[18px]',
+                                            isActive ? 'text-grey-1000' : 'text-grey-400 group-hover:text-grey-700'
+                                        )} />
+                                        <span className="text-body-md-medium group-hover:text-grey-700">{tab.label}</span>
+                                    </div>
+                                }
+                            />
+                        );
+                    })}
+                </nav>
+            </div>
+            <div className="flex items-center gap-2">
+                <ThemeToggleSwitch checked={isDark} onChange={setIsDark} />
+                <ProfileIcon />
+            </div>
+        </div>
+    );
+};
+
+export default MainHeader;
+

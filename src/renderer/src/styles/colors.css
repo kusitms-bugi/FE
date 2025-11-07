@@ -50,7 +50,10 @@
   --color-error: #ff351f;
   --color-success: #67b000;
 
-  /* icon-color*/
+  --color-point-red: #ff6647;
+  --color-point-green: #a1b100;
+
+  --color-dot: #fff;
   --color-icon-stroke: #a8a7a4;
   --color-check-stroke: #ffffff;
   --color-check-fill: #c6c5c3;
@@ -106,7 +109,11 @@
   --color-error: var(--color-error);
   --color-success: var(--color-success);
 
+  --color-point-red: var(--color-point-red);
+  --color-point-green: var(--color-point-green);
+
   /* icon-color*/
+  --color-dot: var(--color-dot);
   --color-icon-stroke: var(--color-icon-stroke);
   --color-check-stroke: var(--color-check-stroke);
   --color-check-fill: var(--color-check-fill);
@@ -152,6 +159,9 @@
   /* Dark mode notification colors*/
   --color-error: #c92504;
   --color-success: #839400;
+
+  --color-point-red: #f15232;
+  --color-point-green: #839400;
 
   /* icon-color*/
   --color-icon-stroke: #6a6966;

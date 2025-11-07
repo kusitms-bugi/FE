@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { usePostureStore } from '../../store/usePostureStore';
 
 interface PoseLandmark {
   x: number;
@@ -53,6 +54,7 @@ const PoseVisualizer = ({
   videoHeight,
   isVisible = true,
 }: PoseVisualizerProps) => {
+  const postureClass = usePostureStore((state) => state.postureClass);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const smootherRef = useRef<LandmarkSmoother>(new LandmarkSmoother());
 
@@ -69,6 +71,44 @@ const PoseVisualizer = ({
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // --- 색상 정의 ---
+    const computedStyle = getComputedStyle(document.documentElement);
+    const successColor = computedStyle.getPropertyValue('--color-success').trim();
+    const errorColor = computedStyle.getPropertyValue('--color-error').trim();
+    const defaultShoulderColor = '#60a5fa'; // 기존 어깨 색상
+    const defaultEarColor = '#f472b6'; // 기존 귀 색상
+    const defaultLineColor = 'rgba(255, 255, 255, 0.6)'; // 기존 어깨선 색상
+    const defaultMidpointLineColor = '#22c55e'; // 기존 중심선 색상
+
+    // --- 상태에 따른 색상 결정 ---
+    const shoulderColor =
+      postureClass === 'ok'
+        ? successColor
+        : postureClass === 'bad'
+          ? errorColor
+          : defaultShoulderColor;
+
+    const earColor =
+      postureClass === 'ok'
+        ? successColor
+        : postureClass === 'bad'
+          ? errorColor
+          : defaultEarColor;
+
+    const shoulderLineColor =
+      postureClass === 'ok'
+        ? successColor
+        : postureClass === 'bad'
+          ? errorColor
+          : defaultLineColor;
+
+    const midpointLineColor =
+      postureClass === 'ok'
+        ? successColor
+        : postureClass === 'bad'
+          ? errorColor
+          : defaultMidpointLineColor;
 
     // 부모 컨테이너의 실제 크기 가져오기
     const parent = canvas.parentElement;
@@ -94,41 +134,38 @@ const PoseVisualizer = ({
     const smoothedLandmarks = smootherRef.current.smooth(landmarks);
 
     // 랜드마크 그리기 (거울모드 반전)
+    const relevantLandmarks = [7, 8, 11, 12]; // 귀, 어깨
     smoothedLandmarks.forEach((landmark, index) => {
-      if (landmark.visibility && landmark.visibility > 0.2) {
-        // 임계값 낮춤
-        // displayWidth/Height로 변환 (실제 표시 크기에 맞춤)
+      if (
+        relevantLandmarks.includes(index) &&
+        landmark.visibility &&
+        landmark.visibility > 0.2
+      ) {
         const x = displayWidth - landmark.x * displayWidth; // X축 반전 (거울모드)
         const y = landmark.y * displayHeight;
 
-        // 랜드마크 점 크기 (얼굴은 작게, 어깨는 크게)
-        const pointSize = index < 11 ? 4 : 6;
+        // 랜드마크 점 크기
+        const pointSize = 4;
 
-        // 랜드마크 점 그리기
+        // 랜드마크 점 그리기 (테두리 효과)
         ctx.beginPath();
-        ctx.arc(x, y, pointSize, 0, 2 * Math.PI);
+        ctx.arc(x, y, pointSize + 1, 0, 2 * Math.PI); // 테두리
+        ctx.fillStyle = 'white';
+        ctx.fill();
 
-        // 색상 구분 (얼굴: 연한 회색, 어깨: 파란색)
-        if (index >= 0 && index <= 10) {
-          // 얼굴 (0-10)
-          ctx.fillStyle = '#e5e7eb'; // 연한 회색
+        ctx.beginPath();
+        ctx.arc(x, y, pointSize, 0, 2 * Math.PI); // 원래 점
+
+        // 색상 구분 (귀: 분홍색, 어깨: 파란색)
+        if (index === 7 || index === 8) {
+          // 귀
+          ctx.fillStyle = earColor;
         } else if (index === 11 || index === 12) {
-          // 어깨 (11, 12)
-          ctx.fillStyle = '#60a5fa'; // 파란색
-        } else {
-          ctx.fillStyle = '#e5e7eb'; // 기본값
+          // 어깨
+          ctx.fillStyle = shoulderColor;
         }
 
         ctx.fill();
-        ctx.strokeStyle = 'rgba(229,231,235,0.9)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        // 랜드마크 번호 표시 (작은 폰트로)
-        ctx.fillStyle = 'rgba(229,231,235,0.9)';
-        ctx.font = '11px ui-sans-serif, system-ui';
-        ctx.textAlign = 'left';
-        ctx.fillText(index.toString(), x + 5, y - 5);
       }
     });
 
@@ -149,10 +186,33 @@ const PoseVisualizer = ({
       const rightShoulderX = displayWidth - rightShoulder.x * displayWidth;
       const rightShoulderY = rightShoulder.y * displayHeight;
 
-      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+      ctx.strokeStyle = shoulderLineColor;
+      ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.moveTo(leftShoulderX, leftShoulderY);
       ctx.lineTo(rightShoulderX, rightShoulderY);
+      ctx.stroke();
+    }
+
+    // 귀 라인
+    const leftEarLine = smoothedLandmarks[7];
+    const rightEarLine = smoothedLandmarks[8];
+    if (
+      leftEarLine &&
+      rightEarLine &&
+      (leftEarLine.visibility ?? 0) > 0.2 &&
+      (rightEarLine.visibility ?? 0) > 0.2
+    ) {
+      const leftEarX = displayWidth - leftEarLine.x * displayWidth;
+      const leftEarY = leftEarLine.y * displayHeight;
+      const rightEarX = displayWidth - rightEarLine.x * displayWidth;
+      const rightEarY = rightEarLine.y * displayHeight;
+
+      ctx.strokeStyle = earColor;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(leftEarX, leftEarY);
+      ctx.lineTo(rightEarX, rightEarY);
       ctx.stroke();
     }
 
@@ -188,23 +248,36 @@ const PoseVisualizer = ({
       const shoulderMidX = (leftShoulderX + rightShoulderX) / 2;
       const shoulderMidY = (leftShoulderY + rightShoulderY) / 2;
 
-      // 귀-어깨 중점 연결선 (초록색)
-      ctx.strokeStyle = '#22c55e';
+      // 귀-어깨 중점 연결선
+      ctx.strokeStyle = midpointLineColor;
+      ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.moveTo(shoulderMidX, shoulderMidY);
       ctx.lineTo(earMidX, earMidY);
       ctx.stroke();
 
-      // 어깨 중점 강조 (파란색)
-      ctx.fillStyle = '#60a5fa';
+      // 어깨 중점 강조 (테두리)
+      ctx.fillStyle = 'white';
       ctx.beginPath();
-      ctx.arc(shoulderMidX, shoulderMidY, 6, 0, Math.PI * 2);
+      ctx.arc(shoulderMidX, shoulderMidY, 4 + 1, 0, Math.PI * 2);
       ctx.fill();
 
-      // 귀 중점 강조 (분홍색)
-      ctx.fillStyle = '#f472b6';
+      // 어깨 중점 강조 (원래 점)
+      ctx.fillStyle = shoulderColor;
       ctx.beginPath();
-      ctx.arc(earMidX, earMidY, 6, 0, Math.PI * 2);
+      ctx.arc(shoulderMidX, shoulderMidY, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 귀 중점 강조 (테두리)
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(earMidX, earMidY, 4 + 1, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 귀 중점 강조 (원래 점)
+      ctx.fillStyle = earColor;
+      ctx.beginPath();
+      ctx.arc(earMidX, earMidY, 4, 0, Math.PI * 2);
       ctx.fill();
     }
   }, [landmarks, videoWidth, videoHeight, isVisible]);

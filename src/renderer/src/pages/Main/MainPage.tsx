@@ -8,6 +8,8 @@ import {
 } from '../../components/pose-detection/PoseAnalyzer';
 import { useCameraStore } from '../../store/useCameraStore';
 import { usePostureStore } from '../../store/usePostureStore';
+import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';
+import { MetricData } from '../../types/main/session';
 import CharacterPanel from './components/CharacterPanel';
 import HighlightsPanel from './components/HighlightsPanel';
 import LevelProgressPanel from './components/LevelProgressPanel';
@@ -23,6 +25,12 @@ const MainPage = () => {
   const setStatus = usePostureStore((state) => state.setStatus);
   const { cameraState, setHide, setShow } = useCameraStore();
 
+  // 메트릭 저장 mutation
+  const { mutate: saveMetrics } = useSaveMetricsMutation();
+
+  // 메트릭 데이터를 저장할 ref (리렌더링 방지)
+  const metricsRef = useRef<MetricData[]>([]);
+
   const handleToggleWebcam = () => {
     if (cameraState === 'show') {
       setHide();
@@ -32,6 +40,19 @@ const MainPage = () => {
   };
 
   const classifierRef = useRef(new PostureClassifier());
+
+  // 메트릭을 서버로 전송하는 함수
+  const sendMetricsToServer = () => {
+    const sessionId = localStorage.getItem('sessionId');
+    if (sessionId && metricsRef.current.length > 0) {
+      saveMetrics({
+        sessionId,
+        metrics: metricsRef.current,
+      });
+      // 전송 후 메트릭 초기화
+      metricsRef.current = [];
+    }
+  };
 
   // 캘리브레이션 로드
   const calib = (() => {
@@ -78,6 +99,12 @@ const MainPage = () => {
       frontal,
     );
     setStatus(result.text as '정상' | '거북목', result.cls);
+
+    // 메트릭 데이터 수집 (서버 전송용)
+    metricsRef.current.push({
+      score: result.Score,
+      timestamp: new Date().toISOString(),
+    });
 
     // 기존 결과 배열 가져오기
     const existingData = localStorage.getItem('classificationResult');
@@ -129,14 +156,15 @@ const MainPage = () => {
           </section>
 
           {/* 우측 사이드 패널: 좌/우 구분선 */}
-          <aside className="bg-grey-0 flex flex-col p-6 rounded-4xl gap-8">
+          <aside className="bg-grey-0 flex flex-col gap-8 rounded-4xl p-6">
             <WebcamPanel
               onUserMediaError={handleUserMediaError}
               onPoseDetected={handlePoseDetected}
               onToggleWebcam={handleToggleWebcam}
+              onSendMetrics={sendMetricsToServer}
             />
 
-            <div className='h-px w-full bg-grey-50' />
+            <div className="bg-grey-50 h-px w-full" />
 
             <MiniRunningPanel />
           </aside>

@@ -16,3 +16,23 @@ export interface SessionActionResponse {
   code: string;
   message: string;
 }
+
+/* 세션 메트릭 데이터 타입 */
+export interface MetricData {
+  score: number;
+  timestamp: string;
+}
+
+/* 세션 메트릭 저장 요청 타입 */
+export interface SaveMetricsRequest {
+  sessionId: string;
+  metrics: MetricData[];
+}
+
+/* 세션 메트릭 저장 응답 타입 */
+export interface SaveMetricsResponse {
+  timestamp: string;
+  success: boolean;
+  code: string;
+  message: string;
+}

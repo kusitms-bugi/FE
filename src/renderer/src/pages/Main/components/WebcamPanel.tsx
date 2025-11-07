@@ -19,9 +19,14 @@ interface Props {
     worldLandmarks?: WorldLandmark[],
   ) => void;
   onToggleWebcam: () => void;
+  onSendMetrics: () => void;
 }
 
-const WebcamPanel = ({ onPoseDetected, onToggleWebcam }: Props) => {
+const WebcamPanel = ({
+  onPoseDetected,
+  onToggleWebcam,
+  onSendMetrics,
+}: Props) => {
   const { cameraState, setShow, setHide, setExit } = useCameraStore();
   const isWebcamOn = cameraState === 'show';
   const isExit = cameraState === 'exit';
@@ -44,9 +49,13 @@ const WebcamPanel = ({ onPoseDetected, onToggleWebcam }: Props) => {
         },
       });
     } else {
-      // 종료하기: 세션 중단 후 카메라 종료
+      // 종료하기: 메트릭 전송 → 세션 중단 → 카메라 종료
       const sessionId = localStorage.getItem('sessionId');
       if (sessionId) {
+        // 1. 수집된 메트릭을 서버로 전송
+        onSendMetrics();
+
+        // 2. 세션 종료
         stopSession(sessionId, {
           onSuccess: () => {
             setExit();

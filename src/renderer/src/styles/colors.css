@@ -60,6 +60,21 @@
   --color-logo-fill: #3c3b3a;
   --color-sun-stroke: #191917;
   --color-moon-stroke: #6a6966;
+
+  /* widget-color*/
+  --color-olive-green: #a1b100;
+  --color-coral-red: #ff6647;
+
+  --color-widget-gradient: linear-gradient(
+    180deg,
+    var(--color-olive-green) 0.18%,
+    var(--color-success) 99.7%
+  );
+  --color-widget-red: linear-gradient(
+    180deg,
+    var(--color-coral-red) 0%,
+    var(var(--color-error) 100%)
+  );
 }
 
 @theme inline {
@@ -104,6 +119,10 @@
   --color-logo-fill: var(--color-logo-fill);
   --color-sun-stroke: var(--color-sun-stroke);
   --color-moon-stroke: var(--color-moon-stroke);
+
+  /* widget-color*/
+  --color-olive-green: var(--color-olive-green);
+  --color-coral-red: var(--color-coral-red);
 }
 
 /* Dark mode colors */
@@ -150,4 +169,8 @@
   --color-logo-fill: #c6c5c3;
   --color-sun-stroke: #6a6966;
   --color-moon-stroke: #191917;
+
+  /* widget-color*/
+  --color-olive-green: #477d00;
+  --color-coral-red: #f15232;
 }

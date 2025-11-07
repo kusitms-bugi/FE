@@ -98,3 +98,8 @@
   font-size: 14px;
   font-weight: 600;
 }
+
+@utility text-caption-xs-meidum {
+  font-size: 12px;
+  font-weight: 500;
+}

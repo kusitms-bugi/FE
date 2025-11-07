@@ -9,6 +9,7 @@
 
   /* 커스텀 Breakpoints */
   --breakpoint-minimum: 128rem; /* 2048px - 하이퍼 대형 */
+  --breakpoint-mini: (min-height: 18rem); /* 276px -위젯*/
   --breakpoint-hbp: 160rem; /* 2560px - 하이브리드 */
   --breakpoint-mobile: 30rem; /* 480px - 모바일 최적화 */
   --breakpoint-tablet: 56rem; /* 896px - 태블릿 최적화 */

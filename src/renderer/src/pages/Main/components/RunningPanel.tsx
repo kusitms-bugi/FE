@@ -38,7 +38,7 @@ const RunningPanel = () => {
                 {/* 게이지바 */}
                 <div className="mt-4 mx-4">
                     {/* 흰색 트랙 */}
-                    <div className="h-6 w-full bg-white rounded-full shadow-sm">
+                    <div className="h-6 w-full bg-white rounded-full">
                         {/* 산호색 진행 바 (약 25-30%) */}
                         <div
                             className={cn(

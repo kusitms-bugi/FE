@@ -1,5 +1,5 @@
-import MiniDragIcon from '../../assets/widget/mini_drag_icon.svg?react';
 import MediumDragIcon from '../../assets/widget/drag_icon.svg?react';
+import MiniDragIcon from '../../assets/widget/mini_drag_icon.svg?react';
 
 interface WidgetTitleBarProps {
   onClose?: () => void;
@@ -16,6 +16,19 @@ export function WidgetTitleBar({
     try {
       if (window.electronAPI?.widget) {
         await window.electronAPI.widget.close();
+
+        // 위젯 닫힘 로그 저장
+        if (window.electronAPI?.writeLog) {
+          try {
+            const logData = JSON.stringify({
+              event: 'widget_closed',
+              timestamp: new Date().toISOString(),
+            });
+            await window.electronAPI.writeLog(logData);
+          } catch (error) {
+            console.error('위젯 닫힘 로그 저장 실패:', error);
+          }
+        }
       }
       onClose?.();
     } catch (error) {
@@ -25,11 +38,10 @@ export function WidgetTitleBar({
 
   return (
     <div
-      className={`bg-grey-0 flex ${
-        isMini
-          ? 'mr-1 h-full w-2 flex-col items-center justify-center'
-          : 'mb-1 h-2 w-full justify-center'
-      } `}
+      className={`bg-grey-0 flex ${isMini
+        ? 'mr-1 h-full w-2 flex-col items-center justify-center'
+        : 'mb-1 h-2 w-full justify-center'
+        } `}
       style={{
         // 드래그 가능하게 설정 (Electron에서 창 이동 가능)
         // @ts-expect-error: electronAPI 타입 정의 없음

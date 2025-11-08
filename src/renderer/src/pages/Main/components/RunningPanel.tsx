@@ -44,10 +44,36 @@ const RunningPanel = () => {
                     await window.electronAPI.widget.close();
                     setIsWidgetOpen(false);
                     console.log('위젯 창이 닫혔습니다');
+
+                    // 위젯 닫힘 로그 저장
+                    if (window.electronAPI?.writeLog) {
+                        try {
+                            const logData = JSON.stringify({
+                                event: 'widget_closed',
+                                timestamp: new Date().toISOString(),
+                            });
+                            await window.electronAPI.writeLog(logData);
+                        } catch (error) {
+                            console.error('위젯 닫힘 로그 저장 실패:', error);
+                        }
+                    }
                 } else {
                     await window.electronAPI.widget.open();
                     setIsWidgetOpen(true);
                     console.log('위젯 창이 열렸습니다');
+
+                    // 위젯 열림 로그 저장
+                    if (window.electronAPI?.writeLog) {
+                        try {
+                            const logData = JSON.stringify({
+                                event: 'widget_opened',
+                                timestamp: new Date().toISOString(),
+                            });
+                            await window.electronAPI.writeLog(logData);
+                        } catch (error) {
+                            console.error('위젯 열림 로그 저장 실패:', error);
+                        }
+                    }
                 }
             }
         } catch (error) {

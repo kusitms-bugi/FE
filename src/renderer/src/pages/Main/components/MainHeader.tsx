@@ -37,7 +37,7 @@ const MainHeader = () => {
     ];
 
     return (
-        <div className="mb-9 bg-grey-0 flex rounded-[999px] justify-between p-2">
+        <div className="bg-grey-0 flex rounded-[999px] justify-between p-2">
             {/* 타이틀 영역 */}
             <div className="flex items-center gap-10">
 

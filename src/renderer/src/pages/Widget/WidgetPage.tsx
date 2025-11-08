@@ -30,6 +30,21 @@ export function WidgetPage() {
   /* 위젯 라이트/다크 모드 */
   useThemeSync();
 
+  /* 위젯 페이지 로드 시 로그 */
+  useEffect(() => {
+    console.log('위젯 페이지가 로드되었습니다');
+    
+    if (window.electronAPI?.writeLog) {
+      const logData = JSON.stringify({
+        event: 'widget_page_loaded',
+        timestamp: new Date().toISOString(),
+      });
+      window.electronAPI.writeLog(logData).catch((error) => {
+        console.error('위젯 페이지 로드 로그 저장 실패:', error);
+      });
+    }
+  }, []);
+
   /* 위젯 resize 이벤트 */
   useEffect(() => {
     /* resize 디바운스 타이머 ID 저장용 변수 */

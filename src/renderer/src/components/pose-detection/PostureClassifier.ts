@@ -37,7 +37,7 @@ export class PostureClassifier {
     const z_PI = (PI_EMA - mu) / (sigma + 1e-6);
 
     // 정면성 가중치 gamma ∈ [0,1]
-    const gamma = frontality.pass ? 1.0 : 0.4;
+    const gamma = 1.0;
 
     // Score = gamma * z_PI
     const Score = gamma * z_PI;

@@ -73,7 +73,7 @@
   --color-widget-red: linear-gradient(
     180deg,
     var(--color-coral-red) 0%,
-    var(var(--color-error) 100%)
+    var(--color-error) 100%
   );
 }
 

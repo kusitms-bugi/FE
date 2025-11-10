@@ -9,7 +9,7 @@
   font-display: swap;
 }
 
-@source './**/*.{ts,tsx}';
+@source './**/*.{ts,tsx,js,jsx}';
 
 /* web 앱에만 필요한 스타일이 있다면 여기에 추가합니다 */
 body {

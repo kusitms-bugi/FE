@@ -9,7 +9,7 @@ export function checkStep1Error(
   const pi = calculatePI(landmarks, worldLandmarks);
   if (!pi) return null;
 
-  if (pi.PI_raw > 0.5) {
+  if (pi.PI_raw > 0.7) {
     return '귀와 어깨가 일직선이 되도록 턱을 살짝 당겨주세요';
   }
 
@@ -26,7 +26,7 @@ export function checkLandmarkVisibility(
 
   const recentFrames = frames.slice(-10);
   const requiredLandmarks = [7, 8, 11, 12]; // LEFT_EAR, RIGHT_EAR, LEFT_SHOULDER, RIGHT_SHOULDER
-  const minVisibility = 0.5;
+  const minVisibility = 0.3;
 
   let lowVisibilityCount = 0;
   for (const frame of recentFrames) {
@@ -37,8 +37,8 @@ export function checkLandmarkVisibility(
     if (hasLowVisibility) lowVisibilityCount++;
   }
 
-  // 10개 중 5개 이상이 낮으면 경고
-  if (lowVisibilityCount >= 5) {
+  // 10개 중 8개 이상이 낮으면 경고
+  if (lowVisibilityCount >= 8) {
     return '얼굴과 어깨가 모두 보일 수 있게 뒤로 가주세요';
   }
   return null;
@@ -93,7 +93,7 @@ export function checkDistanceAndPosition(
   );
 
   // 너무 멀리 있거나 화면 중앙에서 벗어난 경우
-  if (avgW < 0.1 || distanceFromCenter > 0.3) {
+  if (avgW < 0.03 || distanceFromCenter > 0.7) {
     return '조금 더 가까이, 화면 중앙으로 와주세요';
   }
   return null;
@@ -161,8 +161,8 @@ export function checkBrightness(frames: CalibrationFrame[]): string | null {
       return sum + (frame.brightness || 0);
     }, 0) / framesWithBrightness.length;
 
-  // 밝기가 0.3 미만이면 어둡다고 판단 (0.0 ~ 1.0 범위)
-  if (avgBrightness < 0.3) {
+  // 밝기가 0.2 미만이면 어둡다고 판단 (0.0 ~ 1.0 범위)
+  if (avgBrightness < 0.2) {
     return '주변을 조금 더 밝게 해주세요';
   }
 
@@ -174,10 +174,10 @@ export function checkPostureStability(
   frames: CalibrationFrame[],
 ): string | null {
   // 최소 프레임 수 (5개 이상)
-  if (frames.length < 3) return null;
+  if (frames.length < 15) return null;
 
   // 최근 5개 프레임만 확인
-  const recentFrames = frames.slice(-3);
+  const recentFrames = frames.slice(-15);
   const recentPIs = recentFrames.map((f) => {
     // EMA 대신 PI_raw 사용 (변동을 더 정확히 감지하기 위해)
     return f.pi.PI_raw;
@@ -194,14 +194,14 @@ export function checkPostureStability(
   // 연속된 프레임 간의 급격한 변화 체크 (포즈가 갑자기 감지될 때)
   for (let i = 1; i < recentPIs.length; i++) {
     const diff = Math.abs(recentPIs[i] - recentPIs[i - 1]);
-    // 연속된 프레임 간 차이가 0.2 이상이면 급격한 변화
-    if (diff > 0.2) {
+    // 연속된 프레임 간 차이가 0.3 이상이면 급격한 변화
+    if (diff > 0.3) {
       return '정확한 측정을 위해, 5초 동안 자세를 그대로 유지해주세요';
     }
   }
 
-  // 표준편차 임계값을 더 낮춤 (0.08 -> 0.06) - 더 엄격한 기준
-  if (std > 0.02) {
+  // 표준편차 임계값 완화
+  if (std > 0.04) {
     return '정확한 측정을 위해, 5초 동안 자세를 그대로 유지해주세요';
   }
 

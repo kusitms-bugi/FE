@@ -1,5 +1,5 @@
-import MiniDragIcon from '../../assets/widget/mini_drag_icon.svg?react';
 import MediumDragIcon from '../../assets/widget/drag_icon.svg?react';
+import MiniDragIcon from '../../assets/widget/mini_drag_icon.svg?react';
 
 interface WidgetTitleBarProps {
   onClose?: () => void;
@@ -16,6 +16,19 @@ export function WidgetTitleBar({
     try {
       if (window.electronAPI?.widget) {
         await window.electronAPI.widget.close();
+
+        // 위젯 닫힘 로그 저장
+        if (window.electronAPI?.writeLog) {
+          try {
+            const logData = JSON.stringify({
+              event: 'widget_closed',
+              timestamp: new Date().toISOString(),
+            });
+            await window.electronAPI.writeLog(logData);
+          } catch (error) {
+            console.error('위젯 닫힘 로그 저장 실패:', error);
+          }
+        }
       }
       onClose?.();
     } catch (error) {

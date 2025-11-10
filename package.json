@@ -24,6 +24,10 @@
     "build:preload": "vite build src/preload",
     "build:renderer": "vite build",
     "build:preload:types": "dts-cb -i \"src/preload/tsconfig.json\" -o \"src/preload/exposedInMainWorld.d.ts\"",
+    "start": "cross-env MODE=production electron .",
+    "start:prod": "cross-env MODE=production pnpm run build && cross-env MODE=production electron .",
+    "start:renderer": "vite preview --config vite.config.mts",
+    "start:renderer:prod": "pnpm run build:renderer && vite preview --config vite.config.mts",
     "compile": "cross-env MODE=production pnpm run build && electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
     "build:mac": "cross-env MODE=production pnpm run build && electron-builder build --config .electron-builder.config.js --mac",
     "build:win": "cross-env MODE=production pnpm run build && electron-builder build --config .electron-builder.config.js --win",
@@ -55,12 +59,14 @@
     "react-router-dom": "7.9.5",
     "react-webcam": "7.2.0",
     "recharts": "^3.3.0",
-    "tailwind-merge": "3.3.1",
-    "tailwindcss": "4.1.16",
-    "zod": "4.1.12",
     "zustand": "5.0.8"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "4.1.16",
+    "dts-for-context-bridge": "0.7.1",
+    "tailwind-merge": "3.3.1",
+    "tailwindcss": "4.1.16",
+    "zod": "4.1.12",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@types/react-router-dom": "5.3.3",
@@ -88,24 +94,6 @@
     "typescript": "5.9.3",
     "vite": "7.1.12",
     "vite-plugin-svgr": "4.5.0"
-  },
-  "optionalDependencies": {
-    "@esbuild/darwin-arm64": "latest",
-    "@esbuild/darwin-x64": "latest",
-    "@esbuild/linux-x64": "latest",
-    "@esbuild/win32-x64": "latest",
-    "@rollup/rollup-darwin-arm64": "latest",
-    "@rollup/rollup-darwin-x64": "latest",
-    "@rollup/rollup-linux-x64-gnu": "latest",
-    "@rollup/rollup-win32-x64-msvc": "latest",
-    "@tailwindcss/oxide-darwin-arm64": "latest",
-    "@tailwindcss/oxide-darwin-x64": "latest",
-    "@tailwindcss/oxide-linux-x64-gnu": "latest",
-    "@tailwindcss/oxide-win32-x64-msvc": "latest",
-    "lightningcss-darwin-arm64": "latest",
-    "lightningcss-darwin-x64": "latest",
-    "lightningcss-linux-x64-gnu": "latest",
-    "lightningcss-win32-x64-msvc": "latest"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

@@ -4,6 +4,7 @@ import ProfileIcon from '@assets/profile.svg?react';
 import SettingIcon from '@assets/setting.svg?react';
 import { useEffect, useState } from 'react';
 import Logo from '../../../assets/logo.svg?react';
+import Symbol from '../../../assets/symbol.svg?react';
 import { Button } from '../../../components/Button/Button';
 import { ThemeToggleSwitch } from '../../../components/ToggleSwitch/ToggleSwitch';
 import { cn } from '../../../utils/cn';
@@ -40,8 +41,10 @@ const MainHeader = () => {
         <div className="bg-grey-0 flex rounded-[999px] justify-between p-2">
             {/* 타이틀 영역 */}
             <div className="flex items-center gap-10">
-
-                <Logo className="h-[32px] w-[139px] [&>path]:fill-logo-fill" />
+                <div className="flex items-center gap-[10px]">
+                    <Symbol className="flex h-[27px] w-[27px]" />
+                    <Logo className="hbp:h-[27px] hbp:w-[115px] [&>path]:fill-logo-fill flex h-[22px] w-[92px]" />
+                </div>
 
                 {/* 네비게이션 탭 */}
                 <nav className="flex gap-2">

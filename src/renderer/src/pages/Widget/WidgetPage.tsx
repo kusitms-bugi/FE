@@ -33,7 +33,7 @@ export function WidgetPage() {
   /* 위젯 페이지 로드 시 로그 */
   useEffect(() => {
     console.log('위젯 페이지가 로드되었습니다');
-    
+
     if (window.electronAPI?.writeLog) {
       const logData = JSON.stringify({
         event: 'widget_page_loaded',

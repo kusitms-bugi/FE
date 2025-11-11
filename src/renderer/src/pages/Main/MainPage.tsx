@@ -8,6 +8,9 @@ import {
 } from '../../components/pose-detection';
 import { useCameraStore } from '../../store/useCameraStore';
 import { usePostureStore } from '../../store/usePostureStore';
+
+import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';
+import { MetricData } from '../../types/main/session';
 import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
 import WebcamPanel from './components/WebcamPanel';
@@ -18,6 +21,15 @@ const MainPage = () => {
   const setStatus = usePostureStore((state) => state.setStatus);
   const { cameraState, setHide, setShow } = useCameraStore();
 
+  // 메트릭 저장 mutation
+  const { mutate: saveMetrics } = useSaveMetricsMutation();
+
+  // 메트릭 데이터를 저장할 ref (리렌더링 방지)
+  const metricsRef = useRef<MetricData[]>([]);
+
+  // 마지막 저장 시간을 추적 (1초마다 저장용)
+  const lastSaveTimeRef = useRef<number>(0);
+
   const handleToggleWebcam = () => {
     if (cameraState === 'show') {
       setHide();
@@ -27,6 +39,21 @@ const MainPage = () => {
   };
 
   const classifierRef = useRef(new PostureClassifier());
+
+  // 메트릭을 서버로 전송하는 함수
+  const sendMetricsToServer = () => {
+    const sessionId = localStorage.getItem('sessionId');
+    if (sessionId && metricsRef.current.length > 0) {
+      saveMetrics({
+        sessionId,
+        metrics: metricsRef.current,
+      });
+      // 전송 후 메트릭 초기화
+      metricsRef.current = [];
+    }
+  };
+
+  // 메트릭은 종료 시에만 서버로 전송됨 (WebcamPanel에서 호출)
 
   // 캘리브레이션 로드
   const calib = (() => {
@@ -73,6 +100,19 @@ const MainPage = () => {
       frontal,
     );
     setStatus(result.text as '정상' | '거북목', result.cls);
+
+    // 메트릭 데이터 수집 (1초마다 한 번씩만 저장)
+    const currentTime = Date.now();
+    const timeSinceLastSave = currentTime - lastSaveTimeRef.current;
+
+    if (timeSinceLastSave >= 1000) {
+      // 1초(1000ms) 이상 지났으면 저장
+      metricsRef.current.push({
+        score: result.Score,
+        timestamp: new Date().toISOString(),
+      });
+      lastSaveTimeRef.current = currentTime;
+    }
 
     // 기존 결과 배열 가져오기
     const existingData = localStorage.getItem('classificationResult');
@@ -150,9 +190,10 @@ const MainPage = () => {
               onUserMediaError={handleUserMediaError}
               onPoseDetected={handlePoseDetected}
               onToggleWebcam={handleToggleWebcam}
+              onSendMetrics={sendMetricsToServer}
             />
 
-            <div className='h-px w-full bg-grey-50' />
+            <div className="bg-grey-50 h-px w-full" />
 
             <MiniRunningPanel />
           </div>

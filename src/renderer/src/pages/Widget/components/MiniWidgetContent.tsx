@@ -15,12 +15,15 @@ export function MiniWidgetContent({ posture }: MiniWidgetContentProps) {
     ? 'linear-gradient(180deg, var(--color-olive-green) 0.18%, var(--color-success) 99.7%)'
     : 'linear-gradient(180deg, var(--color-coral-red) 0%, var(--color-error) 100%)';
 
+  /* 게이지 비율: 거북목 25%, 정상 75% */
+  const gaugeWidth = isGiraffe ? '75%' : '25%';
+
   return (
     <div className="bg-grey-100 relative flex w-full items-center rounded-lg transition-colors duration-500 ease-in-out">
       {/* 캐릭터 이미지 영역 - 작게 */}
       <div
         className="h-full w-full rounded-lg transition-all duration-500 ease-in-out"
-        style={{ width: '80%', background: gradient }}
+        style={{ width: gaugeWidth, background: gradient }}
       ></div>
       <div className="absolute flex h-full">
         {isGiraffe ? (

@@ -11,6 +11,7 @@ import { usePostureStore } from '../../store/usePostureStore';
 
 import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';
 import { MetricData } from '../../types/main/session';
+import AttendacePanel from './components/AttendacePanel';
 import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
 import WebcamPanel from './components/WebcamPanel';
@@ -164,7 +165,9 @@ const MainPage = () => {
                     {/* 상단 부분 */}
                     <div className='grid grid-cols-[1fr_2fr] h-[268px] mb-4 gap-4 shrink-0'>
                       <div className='bg-amber-700'></div>
-                      <div className='bg-grey-0 rounded-3xl'></div>
+                      <div className='bg-grey-0 rounded-3xl'>
+                        <AttendacePanel />
+                      </div>
                     </div>
 
                     {/* 하단 부분 */}
@@ -172,8 +175,8 @@ const MainPage = () => {
                       <div className='@container flex flex-col items-start gap-4 flex-1 self-stretch min-w-[552px] w-full min-h-0'>
                         <div className='h-[170px] w-full bg-grey-0 rounded-3xl shrink-0'>레벨 거부기</div>
                         <div className='grid grid-cols-1 @[562px]:grid-cols-2 gap-4 w-full flex-1 min-h-0'>
-                          <div className='bg-grey-0 rounded-3xl min-h-[224px] min-w-[270px] w-full h-full'>시계열 그래프</div>
-                          <div className='bg-grey-0 rounded-3xl min-h-[224px] min-w-[270px] w-full h-full'>하이라이트</div>
+                          <div className='bg-grey-0 rounded-3xl min-h-[224px] @[552px]:min-h-[210px] min-w-[270px] w-full h-full'>시계열 그래프</div>
+                          <div className='bg-grey-0 rounded-3xl min-h-[224px] @[552px]:min-h-[210px] min-w-[270px] w-full h-full'>하이라이트</div>
                         </div>
                       </div>
                       <div className='w-full min-h-[300px] min-w-[330px] max-w-[330px] bg-grey-0 rounded-3xl flex-1'>asd</div>

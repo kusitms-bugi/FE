@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';
 import {
   PoseLandmark as AnalyzerPoseLandmark,
   calculatePI,
@@ -8,12 +9,11 @@ import {
 } from '../../components/pose-detection';
 import { useCameraStore } from '../../store/useCameraStore';
 import { usePostureStore } from '../../store/usePostureStore';
-
-import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';
 import { MetricData } from '../../types/main/session';
 import AttendacePanel from './components/AttendacePanel';
 import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
+import PosePatternPanel from "./components/PosePatternPanel";
 import WebcamPanel from './components/WebcamPanel';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
@@ -152,7 +152,7 @@ const MainPage = () => {
 
           {/* 좌측 영역 */}
           <div className='w-full h-full min-h-0'>
-            <div className="flex flex-col h-full min-h-0 gap-[clamp(8px,calc(17.5vw-216px),36px)]">
+            <div className="flex flex-col h-full min-h-0 gap-[clamp(8px,calc(4.375vw-48px),36px)]">
               <MainHeader />
               <div className="flex flex-col flex-1 min-h-0">
 
@@ -179,7 +179,7 @@ const MainPage = () => {
                           <div className='bg-grey-0 rounded-3xl min-h-[224px] @[552px]:min-h-[210px] min-w-[270px] w-full h-full'>하이라이트</div>
                         </div>
                       </div>
-                      <div className='w-full min-h-[300px] min-w-[330px] max-w-[330px] bg-grey-0 rounded-3xl flex-1'>asd</div>
+                      <div className='w-full min-h-[300px] min-w-[330px] max-w-[330px] bg-grey-0 rounded-3xl flex-1'><PosePatternPanel /></div>
                     </div>
                   </div>
                 </div>

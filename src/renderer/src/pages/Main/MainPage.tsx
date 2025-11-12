@@ -11,9 +11,9 @@ import { usePostureStore } from '../../store/usePostureStore';
 
 import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';
 import { MetricData } from '../../types/main/session';
+import AttendacePanel from './components/AttendacePanel';
 import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
-import SummaryPanel from './components/SummaryPanel';
 import WebcamPanel from './components/WebcamPanel';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
@@ -166,7 +166,7 @@ const MainPage = () => {
                     <div className='grid grid-cols-[1fr_2fr] h-[268px] mb-4 gap-4 shrink-0'>
                       <div className='bg-amber-700'></div>
                       <div className='bg-grey-0 rounded-3xl'>
-                        <SummaryPanel />
+                        <AttendacePanel />
                       </div>
                     </div>
 

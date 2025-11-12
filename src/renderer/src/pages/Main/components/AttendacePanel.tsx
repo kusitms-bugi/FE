@@ -50,7 +50,7 @@ const Calendar = () => {
 
 
 
-const SummaryPanel = () => {
+const AttendacePanel = () => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth() + 1;
 
@@ -97,4 +97,4 @@ const SummaryPanel = () => {
   );
 };
 
-export default SummaryPanel;
+export default AttendacePanel;

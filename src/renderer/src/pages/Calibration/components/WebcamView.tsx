@@ -1,4 +1,4 @@
-import SleepIcon from "@assets/sleep.svg?react";
+import SleepIcon from '@assets/sleep.svg?react';
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import Webcam from 'react-webcam';
 import { Timer } from '../../../components/Timer/Timer';
@@ -48,10 +48,21 @@ const WebcamView = ({
   const { cameraState, setShow } = useCameraStore();
   const isWebcamOn = cameraState === 'show';
 
-  const videoConstraints = {
-    facingMode: 'user', width: 1000,
-    height: 563,
-  };
+  // 저장된 카메라 deviceId 사용
+  const preferredDeviceId = localStorage.getItem('preferred-camera-device');
+  console.log('[WebcamView] Preferred deviceId:', preferredDeviceId);
+
+  const videoConstraints = preferredDeviceId
+    ? {
+        deviceId: { exact: preferredDeviceId },
+        width: 1000,
+        height: 563,
+      }
+    : {
+        facingMode: 'user',
+        width: 1000,
+        height: 563,
+      };
 
   const handlePoseDetected = (
     landmarks: PoseLandmark[],
@@ -62,7 +73,6 @@ const WebcamView = ({
   };
 
   const handleUserMedia = (stream: MediaStream | null) => {
-
     if (stream) {
       setShow();
       const videoTrack = stream.getVideoTracks()[0];
@@ -88,10 +98,14 @@ const WebcamView = ({
 
   useEffect(() => {
     if (cameraState === 'hide' || cameraState === 'exit') {
-      if (webcamRef.current && webcamRef.current.video && webcamRef.current.video.srcObject) {
+      if (
+        webcamRef.current &&
+        webcamRef.current.video &&
+        webcamRef.current.video.srcObject
+      ) {
         const stream = webcamRef.current.video.srcObject as MediaStream;
         const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
+        tracks.forEach((track) => track.stop());
       }
     }
   }, [cameraState]);
@@ -124,12 +138,12 @@ const WebcamView = ({
               <Timer
                 value={
                   Math.min(5, Math.max(0, remainingTime)) as
-                  | 0
-                  | 1
-                  | 2
-                  | 3
-                  | 4
-                  | 5
+                    | 0
+                    | 1
+                    | 2
+                    | 3
+                    | 4
+                    | 5
                 }
                 size={80}
               />
@@ -150,10 +164,11 @@ const WebcamView = ({
           className="bg-grey-50 flex items-center justify-center rounded-2xl"
           style={{
             width: containerRef.current?.clientWidth || videoDimensions.width,
-            height: containerRef.current?.clientHeight || videoDimensions.height,
+            height:
+              containerRef.current?.clientHeight || videoDimensions.height,
           }}
         >
-          <div className="text-center text-grey-300">
+          <div className="text-grey-300 text-center">
             측정을 멈췄어요! <br />
             준비되면 카메라 버튼을 눌러주세요.
           </div>
@@ -163,11 +178,12 @@ const WebcamView = ({
           className="bg-grey-50 flex items-center justify-center rounded-2xl"
           style={{
             width: containerRef.current?.clientWidth || videoDimensions.width,
-            height: containerRef.current?.clientHeight || videoDimensions.height,
+            height:
+              containerRef.current?.clientHeight || videoDimensions.height,
           }}
         >
-          <div className="text-center text-grey-300 flex flex-col items-center">
-            <div className='flex flex-col items-center gap-6'>
+          <div className="text-grey-300 flex flex-col items-center text-center">
+            <div className="flex flex-col items-center gap-6">
               오늘 한걸음 나아갔네요 <br />
               내일을 위해 쉬어요
               <SleepIcon />

@@ -58,6 +58,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
       ...prettier.rules,
       'react/react-in-jsx-scope': 'off',
+      'react-hooks/refs': 'off',
       'react-hooks/incompatible-library': 'off',
       'react-refresh/only-export-components': [
         'warn',

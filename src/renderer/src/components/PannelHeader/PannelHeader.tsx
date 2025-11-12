@@ -1,0 +1,25 @@
+import InfoIcon from "@assets/info-circle.svg?react";
+import * as React from 'react';
+
+interface PannelHeaderProps {
+    children?: React.ReactNode;
+}
+
+const PannelHeader = React.forwardRef<
+    HTMLDivElement,
+    PannelHeaderProps
+>(({ children }, ref) => {
+    return (
+        <div
+            ref={ref}
+            className="flex items-center gap-1 text-caption-sm-medium text-grey-400"
+        >
+            {children}
+            <InfoIcon className="cursor-pointer" />
+        </div>
+    );
+});
+
+PannelHeader.displayName = 'PannelHeader';
+export { PannelHeader };
+

@@ -139,16 +139,16 @@
 /* Dark mode colors */
 .dark {
   /* Dark mode Yellow (더 어두운 톤) */
-  --color-yellow-50: #483705;
-  --color-yellow-100: #76550a;
-  --color-yellow-200: #a0770d;
-  --color-yellow-300: #c69610;
-  --color-yellow-400: #e7b213;
-  --color-yellow-500: #eebd2b;
-  --color-yellow-600: #f0c84c;
-  --color-yellow-700: #f3cf6d;
-  --color-yellow-800: #f7dc97;
-  --color-yellow-900: #fae6bd;
+  --color-yellow-50: #493704;
+  --color-yellow-100: #795706;
+  --color-yellow-200: #a57909;
+  --color-yellow-300: #cb980b;
+  --color-yellow-400: #e9b20c;
+  --color-yellow-500: #f5c73d;
+  --color-yellow-600: #f7d364;
+  --color-yellow-700: #f9da86;
+  --color-yellow-800: #fae19e;
+  --color-yellow-900: #fbe7bb;
 
   --color-sementic-brand-primary: #ffcb31;
 

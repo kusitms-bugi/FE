@@ -126,7 +126,7 @@ const AttendacePanel = () => {
           </div>
         </div>
         <div className="h-px w-full bg-grey-50" />
-        <div className="w-full h-[calc(100%-84px)] flex items-center justify-center text-grey-500 text-caption-sm-medium">
+        <div className="w-full h-[calc(100%-84px)] flex items-center text-grey-500 text-caption-sm-medium">
           당신은 매일 골든리트리버 한 마리를 목에 업고 작업한 것과 같아요 🥺
         </div>
       </div>

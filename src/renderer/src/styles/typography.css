@@ -108,3 +108,13 @@
   font-size: 12px;
   font-weight: 400;
 }
+
+@utility text-caption-2xs-regular {
+  font-size: 10px;
+  font-weight: 400;
+}
+
+@utility text-caption-2xs-medium {
+  font-size: 10px;
+  font-weight: 500;
+}

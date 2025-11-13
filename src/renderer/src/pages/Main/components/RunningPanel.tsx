@@ -1,6 +1,6 @@
-import backgroundImage from '@assets/background.svg';
-import bugiVideo from '@assets/video/bugi.gif';
-import RiniVideo from '@assets/video/rini.gif';
+import BackgroundVideo from '@assets/video/background.webm';
+import BugiVideo from '@assets/video/bugi.webm';
+import RiniVideo from '@assets/video/rini.webm';
 import WidgetIcon from '@assets/widget.svg?react';
 import { useEffect, useMemo, useState } from 'react';
 import { Button } from '../../../components/Button/Button';
@@ -98,12 +98,19 @@ const RunningPanel = () => {
         />
       </div>
 
-      <div
-        className="h-[421px] w-full overflow-hidden rounded-xl bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
-      >
+      <div className="relative h-[421px] w-full overflow-hidden rounded-xl">
+        {/* 배경 영상 */}
+        <video
+          src={BackgroundVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 h-full w-full rounded-xl object-cover"
+        />
+
         {/* 게이지바 */}
-        <div className="mx-4 mt-4">
+        <div className="relative z-10 mx-4 mt-4">
           {/* 흰색 트랙 */}
           <div className="bg-grey-50 relative h-5 w-full rounded-full">
             {/* 진행 바 */}
@@ -122,13 +129,15 @@ const RunningPanel = () => {
         {/* 움직이는 동영상 영역 */}
         <div
           className={cn(
-            'flex items-center justify-center px-4',
-            isTurtle ? 'mt-26' : 'mt-12',
+            'relative z-10 flex items-center justify-center px-4 mt-12',
           )}
         >
-          <img
-            src={isTurtle ? bugiVideo : RiniVideo}
-            alt="Running animation"
+          <video
+            src={isTurtle ? BugiVideo : RiniVideo}
+            autoPlay
+            loop
+            muted
+            playsInline
             className="h-auto max-h-[320px] w-full rounded-lg bg-transparent object-contain"
           />
         </div>

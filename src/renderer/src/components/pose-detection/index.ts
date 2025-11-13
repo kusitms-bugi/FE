@@ -4,4 +4,3 @@ export * from './calculations';
 export * from './PostureClassifier';
 export * from './calibration';
 export * from './errorChecks';
-

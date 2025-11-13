@@ -74,9 +74,13 @@ const PoseVisualizer = ({
 
     // --- 색상 정의 ---
     const computedStyle = getComputedStyle(document.documentElement);
-    const successColor = computedStyle.getPropertyValue('--color-success').trim();
+    const successColor = computedStyle
+      .getPropertyValue('--color-success')
+      .trim();
     const errorColor = computedStyle.getPropertyValue('--color-error').trim();
-    const defaultColor = computedStyle.getPropertyValue('--color-yellow-500').trim();
+    const defaultColor = computedStyle
+      .getPropertyValue('--color-yellow-500')
+      .trim();
 
     // --- 상태에 따른 색상 결정 ---
     const shoulderColor =

@@ -13,7 +13,7 @@ import { MetricData } from '../../types/main/session';
 import AttendacePanel from './components/AttendacePanel';
 import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
-import PosePatternPanel from "./components/PosePatternPanel";
+import PosePatternPanel from './components/PosePatternPanel';
 import WebcamPanel from './components/WebcamPanel';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
@@ -147,39 +147,46 @@ const MainPage = () => {
 
   return (
     <>
-      <main className="bg-grey-25 h-screen overflow-hidden flex flex-col p-4">
-        <div className="grid flex-1 min-h-0 w-full items-stretch gap-2 grid-cols-[1fr_minmax(336px,400px)]">
-
+      <main className="bg-grey-25 flex h-screen flex-col overflow-hidden p-4">
+        <div className="grid min-h-0 w-full flex-1 grid-cols-[1fr_minmax(336px,400px)] items-stretch gap-2">
           {/* 좌측 영역 */}
-          <div className='w-full h-full min-h-0'>
-            <div className="flex flex-col h-full min-h-0 gap-[clamp(8px,calc(4.375vw-48px),36px)]">
+          <div className="h-full min-h-0 w-full">
+            <div className="flex h-full min-h-0 flex-col gap-[clamp(8px,calc(4.375vw-48px),36px)]">
               <MainHeader />
-              <div className="flex flex-col flex-1 min-h-0">
-
-                <div className='text-caption-xs-regular text-grey-200 flex items-end justify-end shrink-0 mr-4'>
-                  마지막 갱신일: 2025.10.22(수) 17:52</div>
+              <div className="flex min-h-0 flex-1 flex-col">
+                <div className="text-caption-xs-regular text-grey-200 mr-4 flex shrink-0 items-end justify-end">
+                  마지막 갱신일: 2025.10.22(수) 17:52
+                </div>
 
                 {/* 스크롤 영역 래퍼 */}
-                <div className="flex-1 min-h-0 overflow-hidden">
-                  <div className="w-full h-full min-h-full overflow-y-auto overscroll-y-contain pr-4 flex flex-col custom-scrollbar">
+                <div className="min-h-0 flex-1 overflow-hidden">
+                  <div className="custom-scrollbar flex h-full min-h-full w-full flex-col overflow-y-auto overscroll-y-contain pr-4">
                     {/* 상단 부분 */}
-                    <div className='grid grid-cols-[1fr_2fr] h-[268px] mb-4 gap-4 shrink-0'>
-                      <div className='bg-amber-700'></div>
-                      <div className='bg-grey-0 rounded-3xl'>
+                    <div className="mb-4 grid h-[268px] shrink-0 grid-cols-[1fr_2fr] gap-4">
+                      <div className="bg-amber-700"></div>
+                      <div className="bg-grey-0 rounded-3xl">
                         <AttendacePanel />
                       </div>
                     </div>
 
                     {/* 하단 부분 */}
-                    <div className='flex items-stretch gap-4 flex-1 min-h-max'>
-                      <div className='@container flex flex-col items-start gap-4 flex-1 self-stretch min-w-[552px] w-full min-h-0'>
-                        <div className='h-[170px] w-full bg-grey-0 rounded-3xl shrink-0'>레벨 거부기</div>
-                        <div className='grid grid-cols-1 @[562px]:grid-cols-2 gap-4 w-full flex-1 min-h-0'>
-                          <div className='bg-grey-0 rounded-3xl min-h-[224px] @[552px]:min-h-[210px] min-w-[270px] w-full h-full'>시계열 그래프</div>
-                          <div className='bg-grey-0 rounded-3xl min-h-[224px] @[552px]:min-h-[210px] min-w-[270px] w-full h-full'>하이라이트</div>
+                    <div className="flex min-h-max flex-1 items-stretch gap-4">
+                      <div className="@container flex min-h-0 w-full min-w-[552px] flex-1 flex-col items-start gap-4 self-stretch">
+                        <div className="bg-grey-0 h-[170px] w-full shrink-0 rounded-3xl">
+                          레벨 거부기
+                        </div>
+                        <div className="grid min-h-0 w-full flex-1 grid-cols-1 gap-4 @[562px]:grid-cols-2">
+                          <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
+                            시계열 그래프
+                          </div>
+                          <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
+                            하이라이트
+                          </div>
                         </div>
                       </div>
-                      <div className='w-full min-h-[300px] min-w-[330px] max-w-[330px] bg-grey-0 rounded-3xl flex-1'><PosePatternPanel /></div>
+                      <div className="bg-grey-0 min-h-[300px] w-full max-w-[330px] min-w-[330px] flex-1 rounded-3xl">
+                        <PosePatternPanel />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -188,7 +195,7 @@ const MainPage = () => {
           </div>
 
           {/* 우측영역 */}
-          <div className='bg-grey-0 rounded-4xl w-full h-full p-6 flex flex-col gap-[clamp(16px,calc(16px+(100vh-810px)*16/270),32px)]'>
+          <div className="bg-grey-0 flex h-full w-full flex-col gap-[clamp(16px,calc(16px+(100vh-810px)*16/270),32px)] rounded-4xl p-6">
             <WebcamPanel
               onUserMediaError={handleUserMediaError}
               onPoseDetected={handlePoseDetected}

@@ -1,15 +1,15 @@
-import DownIcon from "@assets/arrow-narrow-down.svg?react";
-import UpIcon from "@assets/arrow-narrow-up.svg?react";
-import { useState } from "react";
-import { IntensitySlider } from "../../../components/IntensitySlider/IntensitySlider";
-import { PageMoveButton } from "../../../components/PageMoveButton/PageMoveButton";
-import { PannelHeader } from "../../../components/PannelHeader/PannelHeader";
-import { ToggleSwitch } from "../../../components/ToggleSwitch/ToggleSwitch";
+import DownIcon from '@assets/arrow-narrow-down.svg?react';
+import UpIcon from '@assets/arrow-narrow-up.svg?react';
+import { useState } from 'react';
+import { IntensitySlider } from '../../../components/IntensitySlider/IntensitySlider';
+import { PageMoveButton } from '../../../components/PageMoveButton/PageMoveButton';
+import { PannelHeader } from '../../../components/PannelHeader/PannelHeader';
+import { ToggleSwitch } from '../../../components/ToggleSwitch/ToggleSwitch';
 
 type CalendarProps = { year: number; month: number }; // month: 0~11
 
 const Calendar = ({ year, month }: CalendarProps) => {
-  const days = ["일", "월", "화", "수", "목", "금", "토"];
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
 
   const firstDayOfMonth = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -25,22 +25,22 @@ const Calendar = ({ year, month }: CalendarProps) => {
   ];
 
   return (
-    <div className="w-full h-[150px]">
+    <div className="h-[150px] w-full">
       {/* 요일 헤더 */}
-      <div className="grid grid-cols-7 gap-x-1 text-center text-grey-400 text-caption-2xs-medium">
+      <div className="text-grey-400 text-caption-2xs-medium grid grid-cols-7 gap-x-1 text-center">
         {days.map((day, i) => (
-          <div key={day} className={i === 0 ? "text-point-red" : undefined}>
+          <div key={day} className={i === 0 ? 'text-point-red' : undefined}>
             {day}
           </div>
         ))}
       </div>
 
       {/* 이번 달 칸만 동그라미 */}
-      <div className="grid grid-cols-7 gap-x-1 gap-y-1 text-center mt-[5px] h-full">
+      <div className="mt-[5px] grid h-full grid-cols-7 gap-x-1 gap-y-1 text-center">
         {calendarDays.map((day, index) => (
-          <div key={index} className="flex justify-center items-center">
+          <div key={index} className="flex items-center justify-center">
             {day !== null && (
-              <div className="bg-yellow-300 h-[18px] w-[18px] rounded-full" />
+              <div className="h-[18px] w-[18px] rounded-full bg-yellow-300" />
             )}
           </div>
         ))}
@@ -74,7 +74,7 @@ const AttendacePanel = () => {
     viewYear === todayYm.getFullYear() && viewMonth === todayYm.getMonth();
 
   return (
-    <div className="p-4 gap-2 grid grid-cols-4 grid-rows-[57px_1fr_1fr_1fr] h-full w-full">
+    <div className="grid h-full w-full grid-cols-4 grid-rows-[57px_1fr_1fr_1fr] gap-2 p-4">
       <div className="flex flex-col">
         <PannelHeader>출석 현황</PannelHeader>
         <div className="text-headline-3xl-semibold text-grey-700">
@@ -83,15 +83,15 @@ const AttendacePanel = () => {
       </div>
 
       {/* ←/→ 월 이동 버튼 */}
-      <div className="p-[9px] flex justify-end items-end">
+      <div className="flex items-end justify-end p-[9px]">
         <div className="flex gap-2">
           <PageMoveButton
             direction="prev"
-            onClick={() => setViewDate(d => addMonthsSafe(d, -1))}
+            onClick={() => setViewDate((d) => addMonthsSafe(d, -1))}
           />
           <PageMoveButton
             direction="next"
-            onClick={() => setViewDate(d => addMonthsSafe(d, +1))}
+            onClick={() => setViewDate((d) => addMonthsSafe(d, +1))}
             disabled={isAtCurrentMonth}
           />
         </div>
@@ -99,12 +99,12 @@ const AttendacePanel = () => {
 
       <div></div>
 
-      <div className="flex flex-col gap-3 justify-end items-end">
+      <div className="flex flex-col items-end justify-end gap-3">
         <ToggleSwitch
           uncheckedLabel="월간"
           checkedLabel="연간"
           checked={false}
-          onChange={() => { }}
+          onChange={() => {}}
         />
         <IntensitySlider leftLabel="Less" rightLabel="More" />
       </div>
@@ -113,20 +113,24 @@ const AttendacePanel = () => {
         <Calendar year={viewYear} month={viewMonth} />
       </div>
 
-      <div className="col-span-2 row-span-3 p-3 bg-grey-25 rounded-xl">
-        <div className="flex flex-col h-[76px] gap-3 mb-2">
-          <div className="text-grey-700 text-body-md-semibold">잘하고 있어요</div>
-          <div className="flex flex-col gap-1 text-caption-2xs-regular text-grey-600">
-            <div className="flex gap-1 items-center">
-              <UpIcon />첫날보다 기린 시간이 하루 평균 45분 늘었어요
+      <div className="bg-grey-25 col-span-2 row-span-3 rounded-xl p-3">
+        <div className="mb-2 flex h-[76px] flex-col gap-3">
+          <div className="text-grey-700 text-body-md-semibold">
+            잘하고 있어요
+          </div>
+          <div className="text-caption-2xs-regular text-grey-600 flex flex-col gap-1">
+            <div className="flex items-center gap-1">
+              <UpIcon />
+              첫날보다 기린 시간이 하루 평균 45분 늘었어요
             </div>
-            <div className="flex gap-1 items-center">
-              <DownIcon />가장 나빴던 뽀각거부기 상태가 80% 감소했어요
+            <div className="flex items-center gap-1">
+              <DownIcon />
+              가장 나빴던 뽀각거부기 상태가 80% 감소했어요
             </div>
           </div>
         </div>
-        <div className="h-px w-full bg-grey-50" />
-        <div className="w-full h-[calc(100%-84px)] flex items-center text-grey-500 text-caption-sm-medium">
+        <div className="bg-grey-50 h-px w-full" />
+        <div className="text-grey-500 text-caption-sm-medium flex h-[calc(100%-84px)] w-full items-center">
           당신은 매일 골든리트리버 한 마리를 목에 업고 작업한 것과 같아요 🥺
         </div>
       </div>

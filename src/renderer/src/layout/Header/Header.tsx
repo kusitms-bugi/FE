@@ -3,7 +3,6 @@ import Logo from '../../assets/logo.svg?react';
 import Symbol from '../../assets/symbol.svg?react';
 import { ThemeToggleSwitch } from '../../components/ThemeToggleSwitch/ThemeToggleSwitch';
 
-
 const Header = () => {
   const [isDark, setIsDark] = useState(() => {
     // localStorage에 값이 있으면 true/false로 변환해서 사용

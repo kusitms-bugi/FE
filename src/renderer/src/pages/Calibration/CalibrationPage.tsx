@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type RefObject,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import CalibrationGuide from '../../assets/calibration_guide.svg?react';
@@ -11,7 +17,7 @@ import {
   getStep2Error,
   PIResult,
   processCalibrationData,
-  WorldLandmark
+  WorldLandmark,
 } from '../../components/pose-detection';
 import MeasuringPanel from './components/MeasuringPanel';
 import WebcamView from './components/WebcamView';
@@ -155,7 +161,6 @@ const CalibrationPage = () => {
     prevStep2ErrorRef.current = null;
     errorResetTimeRef.current = 0;
   }, [isCalibrating]);
-
 
   // 캘리브레이션 타이머 및 데이터 수집
   useEffect(() => {
@@ -306,8 +311,10 @@ const CalibrationPage = () => {
     : 'minimum:px-[90px] labtop:px-[105px] desktop:px-[164px]'; // WelcomePanel 상태
 
   return (
-    <main className="bg-grey-50 flex flex-col items-center h-[calc(100vh-60px)] pt-15 hbp:pt-[75px] hbp:h-[calc(100vh-75px)]">
-      <section className={`${paddingClass} flex h-screen w-full items-center justify-center`}>
+    <main className="bg-grey-50 hbp:pt-[75px] hbp:h-[calc(100vh-75px)] flex h-[calc(100vh-60px)] flex-col items-center pt-15">
+      <section
+        className={`${paddingClass} flex h-screen w-full items-center justify-center`}
+      >
         {/* 메인 콘텐츠 영역 */}
         <div className="flex w-full justify-center gap-12">
           {/* 왼쪽 웹캠 영역 */}
@@ -324,9 +331,8 @@ const CalibrationPage = () => {
             {/* 캘리브레이션 가이드 오버레이 (캘리브레이션 중일 때만) */}
 
             <div className="pointer-events-none absolute inset-x-0 top-[50px] bottom-0 flex items-center justify-center">
-              <CalibrationGuide className="h-full w-full max-h-full max-w-full object-contain" />
+              <CalibrationGuide className="h-full max-h-full w-full max-w-full object-contain" />
             </div>
-
           </div>
           {/* 오른쪽 안내 영역 */}
           {isCalibrating ? (

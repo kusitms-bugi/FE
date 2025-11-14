@@ -11,6 +11,7 @@ import { useCameraStore } from '../../store/useCameraStore';
 import { usePostureStore } from '../../store/usePostureStore';
 import { MetricData } from '../../types/main/session';
 import AttendacePanel from './components/AttendacePanel';
+import HighlightsPanel from './components/HighlightsPanel';
 import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
 import PosePatternPanel from './components/PosePatternPanel';
@@ -180,7 +181,7 @@ const MainPage = () => {
                             시계열 그래프
                           </div>
                           <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
-                            하이라이트
+                            <HighlightsPanel />
                           </div>
                         </div>
                       </div>

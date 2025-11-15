@@ -12,7 +12,11 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   base: './',
   root: 'src/renderer',
-  plugins: [react(), tailwindcss(), svgr()],
+  plugins: [
+    svgr(),
+    react(),
+    tailwindcss(),
+  ],
   resolve: {
     alias: {
       '@ui/': path.resolve(__dirname, 'src/renderer/src/components') + '/',
@@ -27,7 +31,7 @@ export default defineConfig({
     host: 'localhost',
   },
   build: {
-    outDir: '../dist/renderer',
+    outDir: path.resolve(__dirname, 'dist/renderer'),
     sourcemap: true,
     emptyOutDir: true,
   },

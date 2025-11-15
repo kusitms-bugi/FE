@@ -39,14 +39,16 @@ const LoginForm = () => {
     });
   };
 
+  /* @react-refresh-ignore */
   const email = watch('email');
+  /* @react-refresh-ignore */
   const password = watch('password');
 
   return (
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="hbp:w-[550px] flex w-[440px] flex-col items-center gap-3"
+        className="hbp:w-[550px] hbp:mt-15 mt-12 flex w-[440px] flex-col items-center gap-3"
       >
         {/* 이메일 */}
         <TextInput
@@ -59,8 +61,8 @@ const LoginForm = () => {
         {/* 비밀번호 */}
         <PasswordField {...register('password')} hasValue={!!password} />
         {loginMutation.isError && (
-          <div className="text-caption-sm-regular flex items-center gap-1 self-start text-red-500">
-            <FailIcon className="h-[16px] w-[16px]" />
+          <div className="text-caption-sm-regular text-error flex gap-1 self-start">
+            <FailIcon />
             <span>이메일 또는 비밀번호가 올바르지 않습니다.</span>
           </div>
         )}
@@ -74,7 +76,11 @@ const LoginForm = () => {
               className="sr-only"
             />
             <SaveIdIcon
-              className={watch('saveId') ? '[&>rect]:fill-yellow-400' : ''}
+              className={
+                watch('saveId')
+                  ? '[&>path]:stroke-check-stroke [&_path]:fill-none [&>rect]:fill-yellow-400'
+                  : '[&>path]:stroke-check-stroke [&>rect]:fill-check-fill [&_path]:fill-none'
+              }
             />
             <span>아이디 저장</span>
           </label>
@@ -85,17 +91,15 @@ const LoginForm = () => {
       </form>
 
       {/* 회원가입 / 비밀번호 찾기 */}
-      <div className="text-grey-300 text-caption-sm-regular hbp:text-body-lg-regular hbp:mt-[-20px] hbp:gap-[25px] mt-[-16px] flex flex-row gap-5">
+      <div className="text-grey-300 text-caption-sm-regular hbp:text-body-lg-regular hbp:gap-[25px] hbp:mt-10 mt-8 flex flex-row gap-5">
         <span
           onClick={() => navigate('/auth/signup')}
-          className="hover:text-grey-200 cursor-pointer"
+          className="cursor-pointer"
         >
           회원가입
         </span>
         <span>|</span>
-        <span className="hover:text-grey-200 cursor-pointer">
-          비밀번호 찾기
-        </span>
+        <span className="cursor-pointer">비밀번호 찾기</span>
       </div>
     </>
   );

@@ -8,6 +8,7 @@ import OnboardingPage from '../pages/Onboarding/OnboardingPage';
 import EmailVerificationPage from '../pages/SignUp/EmailVerificationPage';
 import ResendVerificationPage from '../pages/SignUp/ResendVerificationPage';
 import SignUpPage from '../pages/SignUp/SignUpPage';
+import { WidgetPage } from '../pages/Widget/WidgetPage';
 
 export const router = createBrowserRouter([
   {
@@ -16,7 +17,6 @@ export const router = createBrowserRouter([
     children: [{ path: '', element: <OnboardingPage /> }],
   },
   {
-    element: <Layout />,
     path: '/main',
     children: [{ path: '', element: <MainPage /> }],
   },
@@ -38,5 +38,9 @@ export const router = createBrowserRouter([
       { path: 'calibration', element: <CalibrationPage /> },
       { path: 'completion', element: <OnboardingCompletionPage /> },
     ],
+  },
+  {
+    path: '/widget',
+    children: [{ path: '', element: <WidgetPage /> }],
   },
 ]);

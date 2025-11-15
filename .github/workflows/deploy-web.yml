@@ -7,6 +7,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash #모든 step이 bash로 실행, OS에 관계없이 통과
 
     steps:
       - name: Checkout code
@@ -14,57 +17,74 @@ jobs:
         with:
           fetch-depth: 0 # 전체 git 히스토리 가져오기
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: |
-            package-lock.json
+          cache: 'pnpm'
 
-      - name: Enable corepack
-        run: corepack enable
-
-      - name: Verify package-lock.json exists
+      - name: Verify pnpm-lock.yaml exists
         run: |
-          if [ ! -f package-lock.json ]; then
-            echo "❌ package-lock.json not found!"
+          if [ ! -f pnpm-lock.yaml ]; then
+            echo "❌ pnpm-lock.yaml not found!"
             echo "📁 Current directory contents:"
             ls -la
             exit 1
           fi
-          echo "✅ package-lock.json found"
-          echo "📋 Lockfile version:"
-          node -p "require('./package-lock.json').lockfileVersion"
-          echo "📦 npm version:"
-          npm --version
+          echo "✅ pnpm-lock.yaml found"
+          echo "📦 pnpm version:"
+          pnpm --version
+          echo "🔍 Checking lockfile sync status..."
+          pnpm install --dry-run --frozen-lockfile --ignore-scripts || echo "⚠️ Lockfile may need update, will update during install"
 
-      - name: Install workspace dependencies
+      - name: Install dependencies
         run: |
-          # 전체 workspace 의존성 설치 (husky 스크립트 무시)
-          npm ci --ignore-scripts
+          # 의존성 설치 (husky 스크립트 무시)
+          # lockfile이 오래된 경우 업데이트 후 설치
+          pnpm install --frozen-lockfile --ignore-scripts || {
+            echo "⚠️ Lockfile outdated, updating..."
+            pnpm install --ignore-scripts
+          }
 
-      - name: Verify workspace setup
+      - name: Verify project setup
         run: |
-          echo "✅ Workspace dependencies installed successfully"
-          echo "📦 Workspace packages:"
-          ls -la packages/
-          echo "🔗 Checking workspace links:"
-          cd apps/web
-          echo "Checking if ui package is accessible:"
-          node -e "try { require('ui'); console.log('✅ ui package accessible'); } catch(e) { console.log('❌ ui package not accessible:', e.message); }"
-          echo "Checking if api package is accessible:"
-          node -e "try { require('api'); console.log('✅ api package accessible'); } catch(e) { console.log('❌ api package not accessible:', e.message); }"
+          echo "✅ Dependencies installed successfully"
+          echo "📁 Project structure:"
+          ls -la
+          echo "📦 Checking if renderer source exists:"
+          if [ -d "src/renderer" ]; then
+            echo "✅ src/renderer directory found"
+          else
+            echo "❌ src/renderer directory not found"
+            exit 1
+          fi
 
-      - name: Build web app
+      - name: Build web app (renderer)
         run: |
-          cd apps/web
-          npm run build
+          pnpm run build:renderer
+          echo "✅ Build completed"
+          echo "📁 Checking build output location:"
+          ls -la dist/ || echo "dist/ not found"
+          ls -la src/renderer/dist/ || echo "src/renderer/dist/ not found"
+          find . -name "index.html" -type f | head -5
 
       - name: Create output directory
         run: |
           mkdir -p output
-          cp -r apps/web/dist/* output/
+          # 빌드 출력 위치 확인 및 복사
+          if [ -d "dist/renderer" ]; then
+            echo "📁 Found dist/renderer/"
+            cp -r dist/renderer/* output/
+          elif [ -d "src/renderer/dist" ]; then
+            echo "📁 Found src/renderer/dist/"
+            cp -r src/renderer/dist/* output/
+          else
+            echo "❌ Build output not found in expected locations"
+            exit 1
+          fi
 
           # Vercel 설정 파일 생성
           cat > output/vercel.json << 'EOF'
@@ -79,41 +99,27 @@ jobs:
               {
                 "source": "/(.*)",
                 "headers": [
-                  {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                  },
-                  {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                  },
-                  {
-                    "key": "X-XSS-Protection",
-                    "value": "1; mode=block"
-                  }
+                  { "key": "X-Content-Type-Options", "value": "nosniff" },
+                  { "key": "X-Frame-Options", "value": "DENY" },
+                  { "key": "X-XSS-Protection", "value": "1; mode=block" }
                 ]
               },
               {
                 "source": "/assets/(.*)",
                 "headers": [
-                  {
-                    "key": "Cache-Control",
-                    "value": "public, max-age=31536000, immutable"
-                  }
+                  { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
                 ]
               }
             ],
             "redirects": [
               {
-                "source": "/",
-                "destination": "/index.html"
+                "source": "/index.html",
+                "destination": "/",
+                "permanent": true
               }
             ],
             "rewrites": [
-              {
-                "source": "/(.*)",
-                "destination": "/index.html"
-              }
+              { "source": "/(.*)", "destination": "/index.html" }
             ]
           }
           EOF

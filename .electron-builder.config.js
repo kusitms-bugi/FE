@@ -13,16 +13,16 @@ const config = {
   appId: 'co.kr.bugi.electron',
   productName: 'bugi',
   directories: {
-    output: 'dist',
+    output: 'electron-dist',
     buildResources: 'buildResources',
   },
   files: [
     'dist/main/**',
     'dist/preload/**',
     'dist/renderer/**',
-    'node_modules/**/*',
     'package.json',
   ],
+  asar: true,
   // 빌드 전에 필요한 파일들이 존재하는지 확인
   beforeBuild: async (context) => {
     const fs = require('fs');
@@ -83,14 +83,74 @@ const config = {
       },
     ],
     icon: 'buildResources/icon.png',
-    artifactName: '${productName}-${version}-${arch}.${ext}',
-    publisherName: 'Bugi',
+    artifactName: '거부기린.${ext}',
   },
   nsis: {
     oneClick: false,
     allowToChangeInstallationDirectory: true,
     createDesktopShortcut: true,
     createStartMenuShortcut: true,
+  },
+  afterPack: async (context) => {
+    const fs = require('fs');
+
+    const { electronPlatformName, appOutDir } = context;
+
+    if (electronPlatformName !== 'darwin') {
+      return;
+    }
+
+    const {
+      productFilename,
+      info: {
+        _metadata: { electronLanguagesInfoPlistStrings },
+      },
+    } = context.packager.appInfo;
+
+    const resPath = `${appOutDir}/${productFilename}.app/Contents/Resources/`;
+
+    console.log(
+      '\n> package.json의 "electronLanguagesInfoPlistStrings" 설정을 기반으로 언어 패키지 생성 시작\n',
+      '\n>  electronLanguagesInfoPlistStrings:\n',
+      electronLanguagesInfoPlistStrings,
+      '\n\n',
+      '>  ResourcesPath:',
+      resPath,
+    );
+
+    // APP 언어 패키지 파일 생성
+    return await Promise.all(
+      Object.keys(electronLanguagesInfoPlistStrings).map((langKey) => {
+        const infoPlistStrPath = `${langKey}.lproj/InfoPlist.strings`;
+        let infos = '';
+
+        const langItem = electronLanguagesInfoPlistStrings[langKey];
+
+        Object.keys(langItem).forEach((infoKey) => {
+          infos += `"${infoKey}" = "${langItem[infoKey]}";\n`;
+        });
+
+        return new Promise((resolve) => {
+          // 디렉토리가 없으면 생성
+          const dirPath = `${resPath}${langKey}.lproj`;
+          if (!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath, { recursive: true });
+          }
+
+          fs.writeFile(`${resPath}${infoPlistStrPath}`, infos, (err) => {
+            if (err) {
+              console.error(
+                `>  "${resPath}${infoPlistStrPath}" 생성 실패:`,
+                err,
+              );
+              throw err;
+            }
+            console.log(`>  "${resPath}${infoPlistStrPath}" 생성 완료.`);
+            resolve();
+          });
+        });
+      }),
+    );
   },
 };
 

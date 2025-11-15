@@ -8,8 +8,8 @@ export default function EmailHeroSection() {
     <div className="mb-12 flex flex-col items-center gap-[46px]">
       <EmailIcon className="ml-5" />
       <div className="flex flex-col items-center justify-center gap-6">
-        <p className="text-title-4xl-bold">이메일 인증</p>
-        <p className="text-headline-2xl-regular text-center">
+        <p className="text-title-4xl-bold text-grey-700">이메일 인증</p>
+        <p className="text-headline-2xl-regular text-grey-800 text-center">
           본인 인증 메일을 귀하의
           <span className="text-headline-2xl-semibold text-yellow-500">
             {' ' + email}

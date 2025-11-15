@@ -1,29 +1,61 @@
-import { useEffect, useRef, useState } from 'react';
-import DevNavbar from '../../components/DevNavbar/DevNavbar';
+import { useEffect, useRef } from 'react';
+import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';
 import {
   PoseLandmark as AnalyzerPoseLandmark,
   calculatePI,
   checkFrontality,
   PostureClassifier,
   WorldLandmark,
-} from '../../components/pose-detection/PoseAnalyzer';
-import CharacterPanel from './components/CharacterPanel';
+} from '../../components/pose-detection';
+import { useCameraStore } from '../../store/useCameraStore';
+import { usePostureStore } from '../../store/usePostureStore';
+import { MetricData } from '../../types/main/session';
+import AttendacePanel from './components/AttendacePanel';
 import HighlightsPanel from './components/HighlightsPanel';
-import LevelProgressPanel from './components/LevelProgressPanel';
+import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
-import SummaryPanel from './components/SummaryPanel';
-import TrendPanel from './components/TrendPanel';
+import PosePatternPanel from './components/PosePatternPanel';
 import WebcamPanel from './components/WebcamPanel';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 
 const MainPage = () => {
-  const [isWebcamOn, setIsWebcamOn] = useState(true);
-  const [statusText, setStatusText] = useState<'정상' | '거북목' | '측정중'>(
-    '측정중',
-  );
+  const setStatus = usePostureStore((state) => state.setStatus);
+  const { cameraState, setHide, setShow } = useCameraStore();
+
+  // 메트릭 저장 mutation
+  const { mutate: saveMetrics } = useSaveMetricsMutation();
+
+  // 메트릭 데이터를 저장할 ref (리렌더링 방지)
+  const metricsRef = useRef<MetricData[]>([]);
+
+  // 마지막 저장 시간을 추적 (1초마다 저장용)
+  const lastSaveTimeRef = useRef<number>(0);
+
+  const handleToggleWebcam = () => {
+    if (cameraState === 'show') {
+      setHide();
+    } else {
+      setShow();
+    }
+  };
 
   const classifierRef = useRef(new PostureClassifier());
+
+  // 메트릭을 서버로 전송하는 함수
+  const sendMetricsToServer = () => {
+    const sessionId = localStorage.getItem('sessionId');
+    if (sessionId && metricsRef.current.length > 0) {
+      saveMetrics({
+        sessionId,
+        metrics: metricsRef.current,
+      });
+      // 전송 후 메트릭 초기화
+      metricsRef.current = [];
+    }
+  };
+
+  // 메트릭은 종료 시에만 서버로 전송됨 (WebcamPanel에서 호출)
 
   // 캘리브레이션 로드
   const calib = (() => {
@@ -45,7 +77,7 @@ const MainPage = () => {
   }, [calib]);
 
   const handleUserMediaError = () => {
-    setIsWebcamOn(false);
+    setHide();
   };
 
   const handlePoseDetected = async (
@@ -69,7 +101,20 @@ const MainPage = () => {
       calib.sigma,
       frontal,
     );
-    setStatusText(result.text as '정상' | '거북목');
+    setStatus(result.text as '정상' | '거북목', result.cls);
+
+    // 메트릭 데이터 수집 (1초마다 한 번씩만 저장)
+    const currentTime = Date.now();
+    const timeSinceLastSave = currentTime - lastSaveTimeRef.current;
+
+    if (timeSinceLastSave >= 1000) {
+      // 1초(1000ms) 이상 지났으면 저장
+      metricsRef.current.push({
+        score: result.Score,
+        timestamp: new Date().toISOString(),
+      });
+      lastSaveTimeRef.current = currentTime;
+    }
 
     // 기존 결과 배열 가져오기
     const existingData = localStorage.getItem('classificationResult');
@@ -103,29 +148,66 @@ const MainPage = () => {
 
   return (
     <>
-      <DevNavbar />
-      <main className="bg-grey-50 h-screen min-h-screen">
-        {/* 전체 레이아웃: 좌(콘텐츠) / 우(웹캠 패널) - 화면 꽉 차게 */}
-        <div className="grid h-full w-full grid-cols-1 items-stretch gap-6 p-4 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_400px]">
-          {/* 좌측 콘텐츠 영역: 단일 Grid 구성 */}
-          <section className="grid grid-cols-12 content-start gap-6 overflow-y-auto">
-            <CharacterPanel />
-            <SummaryPanel />
-            <LevelProgressPanel />
-            <HighlightsPanel />
-            <TrendPanel />
-          </section>
+      <main className="bg-grey-25 flex h-screen flex-col overflow-hidden p-4">
+        <div className="grid min-h-0 w-full flex-1 grid-cols-[1fr_minmax(336px,400px)] items-stretch gap-2">
+          {/* 좌측 영역 */}
+          <div className="h-full min-h-0 w-full">
+            <div className="flex h-full min-h-0 flex-col gap-[clamp(8px,calc(4.375vw-48px),36px)]">
+              <MainHeader />
+              <div className="flex min-h-0 flex-1 flex-col">
+                <div className="text-caption-xs-regular text-grey-200 mr-4 flex shrink-0 items-end justify-end">
+                  마지막 갱신일: 2025.10.22(수) 17:52
+                </div>
 
-          {/* 우측 사이드 패널: 좌/우 구분선 */}
-          <aside className="border-grey-100 flex flex-col gap-6 border-l pl-6">
+                {/* 스크롤 영역 래퍼 */}
+                <div className="min-h-0 flex-1 overflow-hidden">
+                  <div className="custom-scrollbar flex h-full min-h-full w-full flex-col overflow-y-auto overscroll-y-contain pr-4">
+                    {/* 상단 부분 */}
+                    <div className="mb-4 grid h-[268px] shrink-0 grid-cols-[1fr_2fr] gap-4">
+                      <div className="bg-amber-700"></div>
+                      <div className="bg-grey-0 rounded-3xl">
+                        <AttendacePanel />
+                      </div>
+                    </div>
+
+                    {/* 하단 부분 */}
+                    <div className="flex min-h-max flex-1 items-stretch gap-4">
+                      <div className="@container flex min-h-0 w-full min-w-[552px] flex-1 flex-col items-start gap-4 self-stretch">
+                        <div className="bg-grey-0 h-[170px] w-full shrink-0 rounded-3xl">
+                          레벨 거부기
+                        </div>
+                        <div className="grid min-h-0 w-full flex-1 grid-cols-1 gap-4 @[562px]:grid-cols-2">
+                          <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
+                            시계열 그래프
+                          </div>
+                          <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
+                            <HighlightsPanel />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-grey-0 min-h-[300px] w-full max-w-[330px] min-w-[330px] flex-1 rounded-3xl">
+                        <PosePatternPanel />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 우측영역 */}
+          <div className="bg-grey-0 flex h-full w-full flex-col gap-[clamp(16px,calc(16px+(100vh-810px)*16/270),32px)] rounded-4xl p-6">
             <WebcamPanel
-              isWebcamOn={isWebcamOn}
               onUserMediaError={handleUserMediaError}
               onPoseDetected={handlePoseDetected}
+              onToggleWebcam={handleToggleWebcam}
+              onSendMetrics={sendMetricsToServer}
             />
 
-            <MiniRunningPanel statusText={statusText} />
-          </aside>
+            <div className="bg-grey-50 h-px w-full" />
+
+            <MiniRunningPanel />
+          </div>
         </div>
       </main>
     </>

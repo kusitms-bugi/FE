@@ -1,15 +1,15 @@
-import CompletionCharacter from '../../assets/completion.svg?react';
 import { useNavigate } from 'react-router-dom';
+import CompletionCharacter from '../../assets/completion.svg?react';
 import { Button } from '../../components/Button/Button';
 
 const OnboardingCompletionPage = () => {
   const navigate = useNavigate();
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-[#FDFBF5]">
+    <main className="hbp:h-[calc(100vh-75px)] flex h-[calc(100vh-60px)] flex-col items-center">
       <div className="relative flex w-full flex-col items-center justify-center px-7">
         {/* 캐릭터 영역 */}
-        <CompletionCharacter />
+        <CompletionCharacter className="labtop:w-[560px] labtop:h-[560px] h-[415px] w-[415px]" />
         {/* 색종이 효과 */}
 
         {/* 텍스트 영역 */}

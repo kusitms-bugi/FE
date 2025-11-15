@@ -3,6 +3,11 @@ import { appendFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import './security-restrictions';
 import { restoreOrCreateWindow } from '/@/mainWindow';
+import {
+  openWidgetWindow,
+  closeWidgetWindow,
+  isWidgetWindowOpen,
+} from '/@/widgetWindow';
 
 /**
  * Setup IPC handlers for Electron-specific features
@@ -37,7 +42,35 @@ function setupAPIHandlers() {
       }
     },
   );
+
+  /* 리액트에서 Main Process로 오는 요청을 처리하는 함수*/
+
+  /* 위젯 오픈 요청 핸들러 */
+  ipcMain.handle('widget:open', async () => {
+    try {
+      await openWidgetWindow();
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to open widget window:', error);
+      throw error;
+    }
+  });
+
+  /* 위젯 닫기 요청 핸들러 */
+  ipcMain.handle('widget:close', () => {
+    try {
+      closeWidgetWindow();
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to close widget window:', error);
+      throw error;
+    }
+  });
 }
+/* 위젯 상태 확인 요청 핸들러 */
+ipcMain.handle('widget:isOpen', () => {
+  return isWidgetWindowOpen();
+});
 
 /**
  * Prevent multiple instances

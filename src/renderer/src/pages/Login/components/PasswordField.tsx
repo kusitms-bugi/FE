@@ -1,11 +1,11 @@
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, type ChangeEvent } from 'react';
 import TextInput from '../../../components/InputField/TextField';
 import VisibleIcon from '../../../assets/auth/visible_icon.svg?react';
 import InvisibleIcon from '../../../assets/auth/invisible_icon.svg?react';
 
 interface PasswordFieldProps {
   hasValue?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   className?: string;
   name?: string;
@@ -40,12 +40,12 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
             type="button"
             onMouseDown={(e) => e.preventDefault()}
             onClick={toggleVisibility}
-            className="absolute top-1/2 right-6 -translate-y-1/2 p-1 hover:bg-gray-100"
+            className="absolute top-1/2 right-6 -translate-y-1/2 cursor-pointer p-1"
           >
             {isVisible ? (
-              <InvisibleIcon className="hbp:h-6 hbp:w-6 h-5 w-5" />
+              <InvisibleIcon className="hbp:h-6 hbp:w-6 [&_path]:stroke-icon-stroke h-5 w-5" />
             ) : (
-              <VisibleIcon className="hbp:h-6 hbp:w-6 h-5 w-5" />
+              <VisibleIcon className="hbp:h-6 hbp:w-6 [&>path]:stroke-icon-stroke h-5 w-5" />
             )}
           </button>
         )}

@@ -21,14 +21,15 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@ui/*": ["./src/packages/ui/components/*"],
+      "@ui/*": ["./src/components/*"],
       "@assets/*": ["./src/assets/*"]
     }
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "../preload/exposedInMainWorld.d.ts"
+    "../preload/exposedInMainWorld.d.ts",
+    "src/types/*.d.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }

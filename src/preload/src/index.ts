@@ -63,4 +63,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Write log file
   writeLog: (data: string, filename?: string) =>
     ipcRenderer.invoke('api:writeLog', data, filename),
+
+  /*electronAPI 객체에 widget 추가해서 리액트에서 접근 가능하도록 설정(리액트와 main process의 다리 역할) */
+  widget: {
+    open: () => ipcRenderer.invoke('widget:open'),
+    close: () => ipcRenderer.invoke('widget:close'),
+    isOpen: () => ipcRenderer.invoke('widget:isOpen'),
+  },
 });

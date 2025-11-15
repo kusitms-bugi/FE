@@ -1,16 +1,15 @@
+@import 'tailwindcss';
+@import './styles/globals.css';
+
 @font-face {
   font-family: 'Pretendard';
-  src: url('../../assets/fonts/PretendardVariable.woff2')
-    format('woff2-variations');
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
-@import 'tailwindcss';
-@import './styles/globals.css';
-
-@source './**/*.{ts,tsx}';
+@source './**/*.{ts,tsx,js,jsx}';
 
 /* web 앱에만 필요한 스타일이 있다면 여기에 추가합니다 */
 body {
@@ -28,5 +27,5 @@ body {
     'Helvetica Neue',
     sans-serif;
 
-  @apply bg-[#F9F8F7];
+  @apply bg-grey-25;
 }

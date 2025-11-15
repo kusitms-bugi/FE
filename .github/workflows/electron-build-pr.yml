@@ -4,9 +4,10 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'apps/electron/**'
-      - 'packages/**'
-      - 'apps/web/**'
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.electron-builder.config.js'
       - '.github/workflows/electron-build-pr.yml'
 
 permissions:
@@ -31,32 +32,34 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
-
-      - name: Cache turbo
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: turbo-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
-          restore-keys: |
-            turbo-${{ github.job }}-${{ github.ref_name }}-
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Build web app for Electron renderer
+      - name: Verify project setup
+        shell: bash #기본 shell 설정
         run: |
-          cd apps/web
-          npm run build
-          echo "✅ Web app built for Electron renderer"
+          echo "✅ Dependencies installed successfully"
+          echo "📁 Project structure:"
+          ls -la
+          echo "📦 Checking if renderer source exists:"
+          if [ -d "src/renderer" ]; then
+            echo "✅ src/renderer directory found"
+          else
+            echo "❌ src/renderer directory not found"
+            exit 1
+          fi
 
       - name: Package Electron App
-        run: npm run build:${{ matrix.os_short }} --workspace=electron-wrapper
+        run: pnpm run build:${{ matrix.os_short }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -64,28 +67,89 @@ jobs:
           name: electron-${{ matrix.os }}-${{ github.event.number }}
           if-no-files-found: warn
           path: |
-            apps/electron/dist/*.dmg
-            apps/electron/dist/*.zip
-            apps/electron/dist/*.exe
-            apps/electron/dist/mac/**
+            # macOS 빌드 결과물
+            electron-dist/*.dmg
+            electron-dist/*.zip
+            electron-dist/*.blockmap
+            electron-dist/mac/**
+            electron-dist/mac-arm64/**
+            # Windows 빌드 결과물
+            # NSIS 설치 프로그램 (artifactName: 거부기린.${ext})
+            electron-dist/거부기린.*
+            # Portable 빌드 결과물 (폴더 형태)
+            electron-dist/win-ia32-unpacked/**
+            electron-dist/win-unpacked/**
 
+  comment:
+    needs: build-electron
+    runs-on: ubuntu-latest
+    if: always()
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
       - name: Comment on PR
-        if: always()
         uses: actions/github-script@v7
         with:
           script: |
-            const os = '${{ matrix.os }}';
-            const run = `https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
-            const body = `
-              ## 🔧 Electron Build (${os})
-              - **Status**: ${{ job.status }}
-              - **Artifacts**: [View Build Artifacts](${run})
-              ---
-              *This is an automated comment.*
-            `;
-            await github.rest.issues.createComment({
+            // 현재 workflow run의 모든 job 가져오기
+            const jobs = await github.rest.actions.listJobsForWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            });
+
+            // 빌드 job들 찾기 (matrix로 생성된 job들)
+            const buildJobs = jobs.data.jobs.filter(job => 
+              job.name.startsWith('build-electron')
+            );
+
+            // 댓글 본문 생성
+            let body = `## 🔧 Electron Build Results\n\n`;
+
+            buildJobs.forEach(job => {
+              const osName = job.name.includes('macos') ? 'macOS' : 
+                           job.name.includes('windows') ? 'Windows' : 
+                           job.name;
+              const statusIcon = job.conclusion === 'success' ? '✅' : 
+                                job.conclusion === 'failure' ? '❌' : '⚠️';
+              const statusText = job.conclusion === 'success' ? 'Success' :
+                               job.conclusion === 'failure' ? 'Failed' : 
+                               job.conclusion === 'cancelled' ? 'Cancelled' : 'In Progress';
+              
+              body += `### ${statusIcon} ${osName}\n`;
+              body += `- **Status**: ${statusText}\n`;
+              body += `- **Job**: [${job.name}](${job.html_url})\n\n`;
+            });
+
+            body += `---\n*This is an automated comment.*`;
+
+            // 기존 댓글 찾기
+            const comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body
             });
+
+            const existingComment = comments.data.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('## 🔧 Electron Build Results')
+            );
+
+            if (existingComment) {
+              // 기존 댓글 업데이트
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body
+              });
+            } else {
+              // 새 댓글 작성
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body
+              });
+            }

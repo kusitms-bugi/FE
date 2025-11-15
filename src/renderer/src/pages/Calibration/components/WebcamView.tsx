@@ -1,15 +1,16 @@
-import { useRef, useState } from 'react';
+import SleepIcon from '@assets/sleep.svg?react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import Webcam from 'react-webcam';
 import { Timer } from '../../../components/Timer/Timer';
 import {
   PoseLandmark,
   WorldLandmark,
-} from '../../../components/pose-detection/PoseAnalyzer';
+} from '../../../components/pose-detection';
 import PoseDetection from '../../../components/pose-detection/PoseDetection';
 import PoseVisualizer from '../../../components/pose-detection/PoseVisualizer';
+import { useCameraStore } from '../../../store/useCameraStore';
 
 interface WebcamViewProps {
-  isWebcamOn: boolean;
   onPoseDetected?: (
     landmarks: PoseLandmark[],
     worldLandmarks?: WorldLandmark[],
@@ -17,16 +18,25 @@ interface WebcamViewProps {
   showPoseOverlay?: boolean;
   showTimer?: boolean;
   remainingTime?: number;
+  onVideoRefReady?: (videoRef: RefObject<Webcam>) => void;
 }
 
 const WebcamView = ({
-  isWebcamOn,
   onPoseDetected,
   showPoseOverlay = false,
   showTimer = false,
   remainingTime = 0,
+  onVideoRefReady,
 }: WebcamViewProps) => {
   const webcamRef = useRef<Webcam>(null);
+
+  // 비디오 ref를 부모 컴포넌트에 전달
+  useEffect(() => {
+    if (onVideoRefReady) {
+      onVideoRefReady(webcamRef as RefObject<Webcam>);
+    }
+  }, [onVideoRefReady]);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [detectedLandmarks, setDetectedLandmarks] = useState<PoseLandmark[]>(
     [],
   );
@@ -35,11 +45,24 @@ const WebcamView = ({
     height: 428,
   });
 
-  const videoConstraints = {
-    width: 760,
-    height: 428,
-    facingMode: 'user',
-  };
+  const { cameraState, setShow } = useCameraStore();
+  const isWebcamOn = cameraState === 'show';
+
+  // 저장된 카메라 deviceId 사용
+  const preferredDeviceId = localStorage.getItem('preferred-camera-device');
+  console.log('[WebcamView] Preferred deviceId:', preferredDeviceId);
+
+  const videoConstraints = preferredDeviceId
+    ? {
+        deviceId: { exact: preferredDeviceId },
+        width: 1000,
+        height: 563,
+      }
+    : {
+        facingMode: 'user',
+        width: 1000,
+        height: 563,
+      };
 
   const handlePoseDetected = (
     landmarks: PoseLandmark[],
@@ -50,12 +73,11 @@ const WebcamView = ({
   };
 
   const handleUserMedia = (stream: MediaStream | null) => {
-    console.log('[WebcamView] handleUserMedia called, stream:', stream);
     if (stream) {
+      setShow();
       const videoTrack = stream.getVideoTracks()[0];
       if (videoTrack) {
         const settings = videoTrack.getSettings();
-        console.log('[WebcamView] Video settings:', settings);
         setVideoDimensions({
           width: settings.width || 760,
           height: settings.height || 428,
@@ -74,14 +96,28 @@ const WebcamView = ({
     }
   };
 
+  useEffect(() => {
+    if (cameraState === 'hide' || cameraState === 'exit') {
+      if (
+        webcamRef.current &&
+        webcamRef.current.video &&
+        webcamRef.current.video.srcObject
+      ) {
+        const stream = webcamRef.current.video.srcObject as MediaStream;
+        const tracks = stream.getTracks();
+        tracks.forEach((track) => track.stop());
+      }
+    }
+  }, [cameraState]);
+
   return (
-    <div className="relative">
-      {isWebcamOn ? (
+    <div className="relative" ref={containerRef}>
+      {cameraState === 'show' ? (
         <div className="relative">
           <Webcam
             ref={webcamRef}
-            width={760}
-            height={428}
+            width={videoDimensions.width}
+            height={videoDimensions.height}
             autoPlay
             playsInline
             videoConstraints={videoConstraints}
@@ -114,16 +150,44 @@ const WebcamView = ({
             </div>
           )}
           <PoseDetection
-            videoRef={webcamRef}
+            videoRef={
+              webcamRef as RefObject<
+                Webcam | { video?: HTMLVideoElement | null } | null
+              >
+            }
             onPoseDetected={handlePoseDetected}
             isEnabled={isWebcamOn}
           />
         </div>
+      ) : cameraState === 'hide' ? (
+        <div
+          className="bg-grey-50 flex items-center justify-center rounded-2xl"
+          style={{
+            width: containerRef.current?.clientWidth || videoDimensions.width,
+            height:
+              containerRef.current?.clientHeight || videoDimensions.height,
+          }}
+        >
+          <div className="text-grey-300 text-center">
+            측정을 멈췄어요! <br />
+            준비되면 카메라 버튼을 눌러주세요.
+          </div>
+        </div>
       ) : (
-        <div className="bg-grey-900 flex h-full w-full items-center justify-center rounded-[24px]">
-          <div className="text-center text-white">
-            <div className="mb-4 text-6xl">📹</div>
-            <div className="text-headline-lg-regular">웹캠이 꺼져있습니다</div>
+        <div
+          className="bg-grey-50 flex items-center justify-center rounded-2xl"
+          style={{
+            width: containerRef.current?.clientWidth || videoDimensions.width,
+            height:
+              containerRef.current?.clientHeight || videoDimensions.height,
+          }}
+        >
+          <div className="text-grey-300 flex flex-col items-center text-center">
+            <div className="flex flex-col items-center gap-6">
+              오늘 한걸음 나아갔네요 <br />
+              내일을 위해 쉬어요
+              <SleepIcon />
+            </div>
           </div>
         </div>
       )}

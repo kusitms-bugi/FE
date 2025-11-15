@@ -25,7 +25,7 @@ interface TypographyProps {
     | 'caption-sm-semibold';
   children: React.ReactNode;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: React.ElementType;
 }
 
 export function Typography({

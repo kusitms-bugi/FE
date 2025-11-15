@@ -16,12 +16,14 @@
   --color-yellow-100: #ffebb0;
   --color-yellow-200: #ffe28a;
   --color-yellow-300: #ffd454;
-  --color-yellow-400: #ffcc33;
+  --color-yellow-400: #ffcb31;
   --color-yellow-500: #ffbf00;
   --color-yellow-600: #e8ae00;
   --color-yellow-700: #d29a00;
   --color-yellow-800: #bd8700;
   --color-yellow-900: #a67100;
+
+  --color-sementic-brand-primary: #ffbf00;
 
   /* Grey 컬러 팔레트 */
   --color-grey-0: #ffffff;
@@ -45,8 +47,36 @@
     #ffbf00 50%,
     #ffae00 100%
   );
-  --color-error: #ff3232;
-  --color-success: #00bf29;
+
+  /* notification colors*/
+  --color-error: #ff351f;
+  --color-success: #67b000;
+
+  --color-point-red: #ff6647;
+  --color-point-green: #a1b100;
+
+  --color-dot: #fff;
+  --color-icon-stroke: #a8a7a4;
+  --color-check-stroke: #ffffff;
+  --color-check-fill: #c6c5c3;
+  --color-logo-fill: #3c3b3a;
+  --color-sun-stroke: #191917;
+  --color-moon-stroke: #6a6966;
+
+  /* widget-color*/
+  --color-olive-green: #a1b100;
+  --color-coral-red: #ff6647;
+
+  --color-widget-gradient: linear-gradient(
+    180deg,
+    var(--color-olive-green) 0.18%,
+    var(--color-success) 99.7%
+  );
+  --color-widget-red: linear-gradient(
+    180deg,
+    var(--color-coral-red) 0%,
+    var(--color-error) 100%
+  );
 }
 
 @theme inline {
@@ -76,21 +106,43 @@
   --color-grey-900: var(--color-grey-900);
   --color-grey-950: var(--color-grey-950);
   --color-grey-1000: var(--color-grey-1000);
+
+  /* notification colors*/
+  --color-error: var(--color-error);
+  --color-success: var(--color-success);
+
+  --color-point-red: var(--color-point-red);
+  --color-point-green: var(--color-point-green);
+
+  /* icon-color*/
+  --color-dot: var(--color-dot);
+  --color-icon-stroke: var(--color-icon-stroke);
+  --color-check-stroke: var(--color-check-stroke);
+  --color-check-fill: var(--color-check-fill);
+  --color-logo-fill: var(--color-logo-fill);
+  --color-sun-stroke: var(--color-sun-stroke);
+  --color-moon-stroke: var(--color-moon-stroke);
+
+  /* widget-color*/
+  --color-olive-green: var(--color-olive-green);
+  --color-coral-red: var(--color-coral-red);
 }
 
 /* Dark mode colors */
 .dark {
   /* Dark mode Yellow (더 어두운 톤) */
-  --color-yellow-50: #624d0b;
-  --color-yellow-100: #806310;
-  --color-yellow-200: #9d7b13;
-  --color-yellow-300: #c59a18;
-  --color-yellow-400: #e0ae1c;
-  --color-yellow-500: #e7bd3e;
-  --color-yellow-600: #e9c34f;
-  --color-yellow-700: #edcd73;
-  --color-yellow-800: #f2da9b;
-  --color-yellow-900: #f7e5c0;
+  --color-yellow-50: #493704;
+  --color-yellow-100: #795706;
+  --color-yellow-200: #a57909;
+  --color-yellow-300: #cb980b;
+  --color-yellow-400: #e9b20c;
+  --color-yellow-500: #f5c73d;
+  --color-yellow-600: #f7d364;
+  --color-yellow-700: #f9da86;
+  --color-yellow-800: #fae19e;
+  --color-yellow-900: #fbe7bb;
+
+  --color-sementic-brand-primary: #e9b20c;
 
   /* Dark mode Grey (역전된 스케일) */
   --color-grey-0: #191917;
@@ -107,4 +159,23 @@
   --color-grey-900: #f9f8f7;
   --color-grey-950: #fcfcfc;
   --color-grey-1000: #ffffff;
+
+  /* Dark mode notification colors*/
+  --color-error: #c92504;
+  --color-success: #839400;
+
+  --color-point-red: #f15232;
+  --color-point-green: #839400;
+
+  /* icon-color*/
+  --color-icon-stroke: #6a6966;
+  --color-check-stroke: #191917;
+  --color-check-fill: #3c3b3a;
+  --color-logo-fill: #c6c5c3;
+  --color-sun-stroke: #6a6966;
+  --color-moon-stroke: #191917;
+
+  /* widget-color*/
+  --color-olive-green: #477d00;
+  --color-coral-red: #f15232;
 }

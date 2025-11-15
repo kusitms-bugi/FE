@@ -3,9 +3,9 @@ import CameraPermissionButton from './components/CameraPermissionButton';
 
 const OnboardingPage = () => {
   return (
-    <main className="flex min-h-screen flex-col items-center">
+    <main className="hbp:pt-[75px] hbp:h-[calc(100vh-75px)] flex h-[calc(100vh-60px)] flex-col items-center pt-15">
       <div className="hbp:mx-auto hbp:max-w-screen-lg hbp:px-10 relative w-full overflow-visible">
-        <section className="hbp:gap-15 hbp:px-20 flex h-screen w-full flex-col items-center justify-center gap-12 px-7">
+        <section className="hbp:gap-15 hbp:px-20 flex h-full w-full flex-col items-center justify-center gap-12 px-7">
           <CameraIcon />
           <div className="text-title-4xl-bold text-grey-900">
             카메라 사용 권한

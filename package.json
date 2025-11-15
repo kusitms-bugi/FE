@@ -1,13 +1,11 @@
 {
-  "name": "electron-app",
+  "name": "GBGR",
   "version": "1.0.0",
-  "description": "거부기 Electron Application",
+  "description": "거부기린",
   "author": {
-    "name": "Yerba Team",
-    "email": "your-email@example.com"
+    "name": "GBGR"
   },
-  "homepage": "https://your-project-homepage.com",
-  "maintainer": "Yerba Team <your-email@example.com>",
+  "homepage": "https://bugi.co.kr",
   "private": true,
   "main": "dist/main/index.cjs",
   "engines": {
@@ -101,5 +99,14 @@
       "prettier --write"
     ],
     "*.{json,css,md}": "prettier --write"
+  },
+  "electronLanguagesInfoPlistStrings": {
+    "ko": {
+      "CFBundleName": "거부기린",
+      "CFBundleDisplayName": "거부기린",
+      "NSHumanReadableCopyright": "Copyright © 2025 GBGR",
+      "NSCameraUsageDescription": "거부기린은 사용자의 자세를 실시간으로 분석하기 위해 카메라에 접근합니다.",
+      "NSMicrophoneUsageDescription": "거부기린은 사용자의 자세를 실시간으로 분석하기 위해 마이크에 접근합니다."
+    }
   }
 }

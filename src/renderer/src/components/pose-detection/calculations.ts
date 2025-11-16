@@ -1,4 +1,9 @@
-import { PoseLandmark, WorldLandmark, PIResult, FrontalityResult } from './types';
+import {
+  PoseLandmark,
+  WorldLandmark,
+  PIResult,
+  FrontalityResult,
+} from './types';
 
 // EMA 스무딩 클래스
 export class EmaSmoother {
@@ -55,8 +60,8 @@ export function calculatePI(
   // W = || RIGHT_SHOULDER - LEFT_SHOULDER || (world 공간 길이)
   const W = Math.sqrt(
     Math.pow(RS.x - LS.x, 2) +
-    Math.pow(RS.y - LS.y, 2) +
-    Math.pow(RS.z - LS.z, 2),
+      Math.pow(RS.y - LS.y, 2) +
+      Math.pow(RS.z - LS.z, 2),
   );
 
   if (W === 0) return null;
@@ -123,4 +128,3 @@ export function trimmedStats(values: number[], trimPercent: number = 0.05) {
 
   return { mean, std };
 }
-

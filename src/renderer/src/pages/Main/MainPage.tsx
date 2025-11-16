@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';
 import {
   PoseLandmark as AnalyzerPoseLandmark,
   calculatePI,
@@ -8,12 +9,13 @@ import {
 } from '../../components/pose-detection';
 import { useCameraStore } from '../../store/useCameraStore';
 import { usePostureStore } from '../../store/usePostureStore';
-
-import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';
 import { MetricData } from '../../types/main/session';
 import AveragePosturePanel from './components/AveragePosturePanel';
+import AttendacePanel from './components/AttendacePanel';
+import HighlightsPanel from './components/HighlightsPanel';
 import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
+import PosePatternPanel from './components/PosePatternPanel';
 import WebcamPanel from './components/WebcamPanel';
 import { Button } from '@ui/index';
 
@@ -152,7 +154,7 @@ const MainPage = () => {
         <div className="grid min-h-0 w-full flex-1 grid-cols-[1fr_minmax(336px,400px)] items-stretch gap-2">
           {/* 좌측 영역 */}
           <div className="h-full min-h-0 w-full">
-            <div className="flex h-full min-h-0 flex-col gap-[clamp(8px,calc(17.5vw-216px),36px)]">
+            <div className="flex h-full min-h-0 flex-col gap-[clamp(8px,calc(4.375vw-48px),36px)]">
               <MainHeader />
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="text-caption-xs-regular text-grey-200 mr-4 flex shrink-0 items-end justify-end">
@@ -166,9 +168,9 @@ const MainPage = () => {
                     <div className="mb-4 grid h-[268px] shrink-0 grid-cols-[1fr_2fr] gap-4">
                       {/* 평균 자세 점수 부분 */}
                       <AveragePosturePanel />
-
-                      {/* */}
-                      <div className="bg-grey-0 rounded-3xl"></div>
+                      <div className="bg-grey-0 rounded-3xl">
+                        <AttendacePanel />
+                      </div>
                     </div>
 
                     {/* 하단 부분 */}
@@ -178,16 +180,16 @@ const MainPage = () => {
                           레벨 거부기
                         </div>
                         <div className="grid min-h-0 w-full flex-1 grid-cols-1 gap-4 @[562px]:grid-cols-2">
-                          <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl">
+                          <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
                             시계열 그래프
                           </div>
-                          <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl">
-                            하이라이트
+                          <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
+                            <HighlightsPanel />
                           </div>
                         </div>
                       </div>
                       <div className="bg-grey-0 min-h-[300px] w-full max-w-[330px] min-w-[330px] flex-1 rounded-3xl">
-                        asd
+                        <PosePatternPanel />
                       </div>
                     </div>
                   </div>

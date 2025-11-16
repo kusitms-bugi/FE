@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react';
 import Logo from '../../../assets/logo.svg?react';
 import Symbol from '../../../assets/symbol.svg?react';
 import { Button } from '../../../components/Button/Button';
-import { ThemeToggleSwitch } from '../../../components/ToggleSwitch/ToggleSwitch';
+
+import { ThemeToggleSwitch } from '../../../components/ThemeToggleSwitch/ThemeToggleSwitch';
 import { cn } from '../../../utils/cn';
 
 type TabType = 'dashboard' | 'plan' | 'settings';
@@ -38,10 +39,10 @@ const MainHeader = () => {
   ];
 
   return (
-    <div className="bg-grey-0 flex justify-between rounded-[999px] p-2 mr-4">
+    <div className="bg-grey-0 mr-4 flex justify-between rounded-[999px] p-2">
       {/* 타이틀 영역 */}
       <div className="flex items-center gap-10">
-        <div className="flex items-center gap-[10px]">
+        <div className="ml-3 flex items-center gap-[10px]">
           <Symbol className="flex h-[27px] w-[27px]" />
           <Logo className="hbp:h-[27px] hbp:w-[115px] [&>path]:fill-logo-fill flex h-[22px] w-[92px]" />
         </div>

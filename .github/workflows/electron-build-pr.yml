@@ -67,12 +67,18 @@ jobs:
           name: electron-${{ matrix.os }}-${{ github.event.number }}
           if-no-files-found: warn
           path: |
-            dist/*.dmg
-            dist/*.zip
-            dist/*.exe
-            dist/*.blockmap
-            dist/mac/**
-            dist/mac-arm64/**
+            # macOS 빌드 결과물
+            electron-dist/*.dmg
+            electron-dist/*.zip
+            electron-dist/*.blockmap
+            electron-dist/mac/**
+            electron-dist/mac-arm64/**
+            # Windows 빌드 결과물
+            # NSIS 설치 프로그램 (artifactName: 거부기린.${ext})
+            electron-dist/거부기린.*
+            # Portable 빌드 결과물 (폴더 형태)
+            electron-dist/win-ia32-unpacked/**
+            electron-dist/win-unpacked/**
 
   comment:
     needs: build-electron

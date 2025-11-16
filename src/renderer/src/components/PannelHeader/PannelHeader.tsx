@@ -13,7 +13,7 @@ const PannelHeader = React.forwardRef<HTMLDivElement, PannelHeaderProps>(
         className="text-caption-sm-medium text-grey-400 flex items-center gap-1"
       >
         {children}
-        <InfoIcon className="cursor-pointer" />
+        <InfoIcon className="[&_path]:stroke-grey-200 cursor-pointer" />
       </div>
     );
   },

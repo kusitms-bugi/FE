@@ -21,6 +21,7 @@ import TotalDistancePanel from './components/TotalDistancePanel';
 import NotificationModal from '../../components/Modal/NotificationModal';
 import { ModalPortal } from '@ui/Modal/ModalPortal';
 import AverageGraphPannel from './components/AverageGraph/AverageGraphPannel';
+import { useModal } from '../../hooks/useModal';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 
@@ -152,13 +153,7 @@ const MainPage = () => {
   };
 
   /* 모달 오픈 */
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const handleOpenModal = () => {
-    setIsOpen(true);
-  };
-  const handleCloseModal = () => {
-    setIsOpen(false);
-  };
+  const { isOpen, open: handleOpenModal, close: handleCloseModal } = useModal();
 
   return (
     <>

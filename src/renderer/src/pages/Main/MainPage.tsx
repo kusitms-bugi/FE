@@ -19,6 +19,7 @@ import PosePatternPanel from './components/PosePatternPanel';
 import WebcamPanel from './components/WebcamPanel';
 import TotalDistancePanel from './components/TotalDistancePanel';
 import { Button } from '@ui/index';
+import AverageGraphPannel from './components/AverageGraph/AverageGraphPannel';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 
@@ -182,10 +183,13 @@ const MainPage = () => {
                           <TotalDistancePanel />
                         </div>
 
+                        {/* 시계열 그래프 */}
                         <div className="grid min-h-0 w-full flex-1 grid-cols-1 gap-4 @[562px]:grid-cols-2">
                           <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
-                            시계열 그래프
+                            <AverageGraphPannel />
                           </div>
+
+                          {/*하이라이트 */}
                           <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
                             <HighlightsPanel />
                           </div>

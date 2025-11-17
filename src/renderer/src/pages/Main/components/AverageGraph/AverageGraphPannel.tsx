@@ -104,7 +104,7 @@ const AverageGraphPannel = () => {
               dataKey="score"
               stroke={strokeColor}
               strokeWidth={2}
-              fill="url(#colorColor)"
+              fill="url(#colorScore)"
             />
           </AreaChart>
         </ResponsiveContainer>

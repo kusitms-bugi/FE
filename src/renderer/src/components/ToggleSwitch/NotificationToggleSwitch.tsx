@@ -24,8 +24,8 @@ const NotificationToggleSwitch = React.forwardRef<
     >
       <span
         className={cn(
-          'inline-block h-[14px] w-[14px] transform rounded-full bg-white transition-transform duration-200 ease-in-out',
-          checked ? 'translate-x-[14px]' : '',
+          'bg-grey-0 dark:bg-grey-500 inline-block h-[14px] w-[14px] transform rounded-full transition-transform duration-200 ease-in-out',
+          checked ? 'dark:bg-grey-1000 translate-x-[14px]' : '',
         )}
       />
     </button>

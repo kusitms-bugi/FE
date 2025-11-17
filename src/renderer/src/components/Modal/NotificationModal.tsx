@@ -29,15 +29,15 @@ const NotificationModal = ({ onClose }: NotificationModalProps) => {
   return (
     <>
       <div
-        className="fixed inset-0 z-999999 h-full w-full bg-black/40"
+        className="fixed inset-0 z-999999 h-full w-full bg-black/40 dark:bg-black/70"
         onClick={onClose}
       >
         <div
-          className="bg-grey-0 fixed top-[45%] left-1/2 flex w-[339px] -translate-x-1/2 -translate-y-1/2 flex-col gap-2 rounded-[24px] p-4"
+          className="bg-surface-modal fixed top-[45%] left-1/2 flex w-[339px] -translate-x-1/2 -translate-y-1/2 flex-col gap-2 rounded-[24px] p-4"
           onClick={(e) => e.stopPropagation()}
         >
           {/* 알림 허용 */}
-          <div className="bg-grey-25 flex items-center justify-between rounded-[12px] p-3">
+          <div className="bg-surface-modal-container flex items-center justify-between rounded-[12px] p-3">
             <span className="text-body-lg-semibold text-grey-900">
               알림 허용
             </span>

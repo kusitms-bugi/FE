@@ -23,6 +23,7 @@ const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 
 const MainPage = () => {
   const setStatus = usePostureStore((state) => state.setStatus);
+  const currentScore = usePostureStore((state) => state.score); // 현재 스코어 가져오기 (기존 값 유지용)
   const { cameraState, setHide, setShow } = useCameraStore();
 
   // 메트릭 저장 mutation
@@ -33,6 +34,9 @@ const MainPage = () => {
 
   // 마지막 저장 시간을 추적 (1초마다 저장용)
   const lastSaveTimeRef = useRef<number>(0);
+
+  // 마지막 스코어 업데이트 시간을 추적 (2초마다 스코어 업데이트용)
+  const lastScoreUpdateTimeRef = useRef<number>(0);
 
   const handleToggleWebcam = () => {
     if (cameraState === 'show') {
@@ -103,10 +107,29 @@ const MainPage = () => {
       calib.sigma,
       frontal,
     );
-    setStatus(result.text as '정상' | '거북목', result.cls);
+
+    // 스코어 값을 2초마다만 업데이트 (UI 업데이트 빈도 제한)
+    const currentTime = Date.now();
+    const timeSinceLastScoreUpdate =
+      currentTime - lastScoreUpdateTimeRef.current;
+    const SCORE_UPDATE_INTERVAL_MS = 2000; // 2초 (2000ms)
+
+    if (timeSinceLastScoreUpdate >= SCORE_UPDATE_INTERVAL_MS) {
+      // 2초 이상 지났으면 스코어 업데이트
+      setStatus(result.text as '정상' | '거북목', result.cls, result.Score);
+      lastScoreUpdateTimeRef.current = currentTime;
+    } else {
+      // 2초가 지나지 않았으면 기존 스코어를 유지하면서 상태만 업데이트
+      // currentScore를 전달하여 기존 값이 초기화되지 않도록 함
+      setStatus(
+        result.text as '정상' | '거북목',
+        result.cls,
+        currentScore, // 기존 스코어 유지
+      );
+    }
 
     // 메트릭 데이터 수집 (1초마다 한 번씩만 저장)
-    const currentTime = Date.now();
+    // currentTime은 위에서 이미 선언됨 (스코어 업데이트 로직에서 사용)
     const timeSinceLastSave = currentTime - lastSaveTimeRef.current;
 
     if (timeSinceLastSave >= 1000) {

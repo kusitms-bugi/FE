@@ -1,4 +1,5 @@
 import { EmaSmoother } from './calculations';
+import { ScoreProcessor } from './ScoreProcessor';
 import { FrontalityResult, PIResult, PostureClassification } from './types';
 
 // 자세 판정 엔진
@@ -8,6 +9,7 @@ export class PostureClassifier {
     state: 'normal' as 'normal' | 'bad',
   };
   private emaSmoother = new EmaSmoother(0.25);
+  private scoreProcessor = new ScoreProcessor();
 
   classify(
     piData: PIResult,
@@ -40,7 +42,8 @@ export class PostureClassifier {
     const gamma = 1.0;
 
     // Score = gamma * z_PI
-    const Score = gamma * z_PI;
+    const rawScore = gamma * z_PI;
+    const finalScore = this.scoreProcessor.next(rawScore);
 
     // 히스테리시스 임계값
     const enter_bad = 1.2; // Score ≥ 1.2 → 거북목 진입
@@ -50,10 +53,10 @@ export class PostureClassifier {
     let newState = this.prevState.state;
     const events: string[] = [];
 
-    if (this.prevState.state === 'normal' && Score >= enter_bad) {
+    if (this.prevState.state === 'normal' && finalScore >= enter_bad) {
       newState = 'bad';
       events.push('enter_bad');
-    } else if (this.prevState.state === 'bad' && Score <= exit_bad) {
+    } else if (this.prevState.state === 'bad' && finalScore <= exit_bad) {
       newState = 'normal';
       events.push('exit_bad');
     }
@@ -68,11 +71,11 @@ export class PostureClassifier {
     return {
       text,
       cls,
-      zScore: Score,
+      zScore: finalScore,
       PI_EMA,
       z_PI,
       gamma,
-      Score,
+      Score: finalScore,
       events,
     };
   }
@@ -80,5 +83,6 @@ export class PostureClassifier {
   reset() {
     this.prevState = { PI_EMA: null, state: 'normal' };
     this.emaSmoother.reset();
+    this.scoreProcessor.reset();
   }
 }

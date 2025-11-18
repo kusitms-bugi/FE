@@ -63,7 +63,6 @@ const PoseDetection = ({
         );
 
         setIsInitialized(true);
-        console.log('Pose landmarker initialized successfully');
       } catch (error) {
         console.error('Failed to initialize pose landmarker:', error);
       }
@@ -105,10 +104,6 @@ const PoseDetection = ({
               ...landmark,
               z: landmark.z || 0, // z값이 없으면 0으로 설정
             }));
-            console.log(
-              'World landmarks 없음 - 2D 랜드마크를 3D로 변환:',
-              worldLandmarks.length,
-            );
           }
 
           onPoseDetected?.(keyLandmarks, worldLandmarks);

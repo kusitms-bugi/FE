@@ -5,3 +5,4 @@ export * from './PostureClassifier';
 export * from './calibration';
 export * from './errorChecks';
 export * from './ScoreProcessor';
+export * from './PostureStabilizer';

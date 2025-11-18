@@ -50,19 +50,18 @@ const WebcamView = ({
 
   // 저장된 카메라 deviceId 사용
   const preferredDeviceId = localStorage.getItem('preferred-camera-device');
-  console.log('[WebcamView] Preferred deviceId:', preferredDeviceId);
 
   const videoConstraints = preferredDeviceId
     ? {
-        deviceId: { exact: preferredDeviceId },
-        width: 1000,
-        height: 563,
-      }
+      deviceId: { exact: preferredDeviceId },
+      width: 1000,
+      height: 563,
+    }
     : {
-        facingMode: 'user',
-        width: 1000,
-        height: 563,
-      };
+      facingMode: 'user',
+      width: 1000,
+      height: 563,
+    };
 
   const handlePoseDetected = (
     landmarks: PoseLandmark[],
@@ -138,12 +137,12 @@ const WebcamView = ({
               <Timer
                 value={
                   Math.min(5, Math.max(0, remainingTime)) as
-                    | 0
-                    | 1
-                    | 2
-                    | 3
-                    | 4
-                    | 5
+                  | 0
+                  | 1
+                  | 2
+                  | 3
+                  | 4
+                  | 5
                 }
                 size={80}
               />

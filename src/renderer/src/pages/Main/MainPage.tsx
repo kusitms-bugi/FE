@@ -5,25 +5,30 @@ import {
   calculatePI,
   checkFrontality,
   PostureClassifier,
+  PostureStabilizer,
   WorldLandmark,
 } from '../../components/pose-detection';
 import { useCameraStore } from '../../store/useCameraStore';
 import { usePostureStore } from '../../store/usePostureStore';
 import { MetricData } from '../../types/main/session';
-import AveragePosturePanel from './components/AveragePosturePanel';
 import AttendacePanel from './components/AttendacePanel';
+import AveragePosturePanel from './components/AveragePosturePanel';
 import HighlightsPanel from './components/HighlightsPanel';
 import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
 import PosePatternPanel from './components/PosePatternPanel';
 import WebcamPanel from './components/WebcamPanel';
-import { Button } from '@ui/index';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
+
+// 스코어 업데이트 주기
+const SCORE_UPDATE_INTERVAL_MS = 2000; // 2초 (2000ms)
 
 const MainPage = () => {
   const setStatus = usePostureStore((state) => state.setStatus);
   const currentScore = usePostureStore((state) => state.score); // 현재 스코어 가져오기 (기존 값 유지용)
+  const currentStatusText = usePostureStore((state) => state.statusText);
+  const currentPostureClass = usePostureStore((state) => state.postureClass);
   const { cameraState, setHide, setShow } = useCameraStore();
 
   // 메트릭 저장 mutation
@@ -37,6 +42,22 @@ const MainPage = () => {
 
   // 마지막 스코어 업데이트 시간을 추적 (2초마다 스코어 업데이트용)
   const lastScoreUpdateTimeRef = useRef<number>(0);
+
+  // 단계 전환 안정화 검사기
+  const stabilizerRef = useRef(
+    new PostureStabilizer(500, 0.5, 5), // windowMs=500ms, threshold=0.5, minBufferSize=5
+  );
+
+  // 이전 상태를 저장 (안정화 검사 실패 시 사용)
+  const previousStateRef = useRef<{
+    statusText: '정상' | '거북목' | '측정중';
+    postureClass: 'ok' | 'warn' | 'bad' | null;
+    score: number;
+  }>({
+    statusText: '측정중',
+    postureClass: null,
+    score: 0,
+  });
 
   const handleToggleWebcam = () => {
     if (cameraState === 'show') {
@@ -75,10 +96,11 @@ const MainPage = () => {
     }
   })();
 
-  // 캘리브레이션이 로드될 때 EMA 초기화
+  // 캘리브레이션이 로드될 때 초기화
   useEffect(() => {
     if (calib) {
       classifierRef.current.reset();
+      stabilizerRef.current.reset();
     }
   }, [calib]);
 
@@ -108,16 +130,57 @@ const MainPage = () => {
       frontal,
     );
 
-    // 스코어 값을 2초마다만 업데이트 (UI 업데이트 빈도 제한)
     const currentTime = Date.now();
+
+    // 안정화 버퍼에 현재 프레임 데이터 추가
+    stabilizerRef.current.addScore(result.Score, currentTime);
+
+    // 스코어 값을 2초마다만 업데이트 (UI 업데이트 빈도 제한)
     const timeSinceLastScoreUpdate =
       currentTime - lastScoreUpdateTimeRef.current;
-    const SCORE_UPDATE_INTERVAL_MS = 2000; // 2초 (2000ms)
 
     if (timeSinceLastScoreUpdate >= SCORE_UPDATE_INTERVAL_MS) {
-      // 2초 이상 지났으면 스코어 업데이트
-      setStatus(result.text as '정상' | '거북목', result.cls, result.Score);
-      lastScoreUpdateTimeRef.current = currentTime;
+      // 2초 이상 지났으면 단계 전환 안정화 검사
+      const shouldUpdate = stabilizerRef.current.shouldUpdate(result.Score);
+
+      // 개발 환경에서 디버깅 정보 출력
+      if (import.meta.env.DEV) {
+        const debugInfo = stabilizerRef.current.getDebugInfo(result.Score);
+        console.log('[안정화 검사]', {
+          결과: shouldUpdate ? '✅ 업데이트 허용' : '❌ 이전 상태 유지',
+          ...debugInfo,
+          상태: result.text,
+        });
+      }
+
+      if (shouldUpdate) {
+        // 안정화 검사 통과 - 스코어 업데이트
+        const newStatusText = result.text as '정상' | '거북목';
+        const newPostureClass = result.cls;
+        setStatus(newStatusText, newPostureClass, result.Score);
+        // 이전 상태 업데이트
+        previousStateRef.current = {
+          statusText: newStatusText,
+          postureClass: newPostureClass,
+          score: result.Score,
+        };
+        lastScoreUpdateTimeRef.current = currentTime;
+      } else {
+        // 안정화 검사 실패 - 이전 상태 유지
+        if (import.meta.env.DEV) {
+          console.log('[안정화 검사 실패] 이전 상태 유지:', {
+            이전상태: previousStateRef.current.statusText,
+            이전스코어: previousStateRef.current.score,
+            현재스코어: result.Score,
+          });
+        }
+        setStatus(
+          previousStateRef.current.statusText,
+          previousStateRef.current.postureClass,
+          previousStateRef.current.score,
+        );
+        lastScoreUpdateTimeRef.current = currentTime; // 다음 검사까지 2초 대기
+      }
     } else {
       // 2초가 지나지 않았으면 기존 스코어를 유지하면서 상태만 업데이트
       // currentScore를 전달하여 기존 값이 초기화되지 않도록 함
@@ -126,6 +189,12 @@ const MainPage = () => {
         result.cls,
         currentScore, // 기존 스코어 유지
       );
+      // 이전 상태도 업데이트 (안정화 검사 실패 시 사용)
+      previousStateRef.current = {
+        statusText: currentStatusText,
+        postureClass: currentPostureClass,
+        score: currentScore,
+      };
     }
 
     // 메트릭 데이터 수집 (1초마다 한 번씩만 저장)

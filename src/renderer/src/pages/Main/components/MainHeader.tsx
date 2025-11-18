@@ -1,6 +1,6 @@
 import DashboardIcon from '@assets/dashboard.svg?react';
 import PlanIcon from '@assets/plan.svg?react';
-import ProfileIcon from '@assets/profile.svg?react';
+import NotificationIcon from '../../../assets/main/bell_icon.svg?react';
 import SettingIcon from '@assets/setting.svg?react';
 import { useEffect, useState } from 'react';
 import Logo from '../../../assets/logo.svg?react';
@@ -12,7 +12,11 @@ import { cn } from '../../../utils/cn';
 
 type TabType = 'dashboard' | 'plan' | 'settings';
 
-const MainHeader = () => {
+interface MainHeaderProps {
+  onClickNotification?: () => void;
+}
+
+const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
   const [isDark, setIsDark] = useState<boolean>(() => {
     // SSR 안전 가드
     if (typeof window === 'undefined') return false;
@@ -88,7 +92,12 @@ const MainHeader = () => {
 
       <div className="flex items-center gap-2">
         <ThemeToggleSwitch checked={isDark} onChange={setIsDark} />
-        <ProfileIcon />
+        <Button
+          onClick={onClickNotification}
+          variant="grey"
+          className="h-[34px] w-[34px] p-[7px]"
+          text={<NotificationIcon className="[&>path]:stroke-grey-400" />}
+        />
       </div>
     </div>
   );

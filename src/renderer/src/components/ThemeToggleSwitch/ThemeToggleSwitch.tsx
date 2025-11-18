@@ -20,7 +20,7 @@ const ThemeToggleSwitch = React.forwardRef<
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={cn(
-        'bg-grey-50 relative flex h-[30px] w-fit cursor-pointer items-center gap-2 rounded-full px-[3px]',
+        'bg-grey-25 relative flex h-[30px] w-fit cursor-pointer items-center gap-2 rounded-full px-[3px]',
       )}
     >
       <div className="z-1 flex h-[24px] w-[24px] items-center justify-center">

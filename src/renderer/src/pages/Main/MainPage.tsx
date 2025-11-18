@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';
 import {
   PoseLandmark as AnalyzerPoseLandmark,
@@ -17,6 +17,11 @@ import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
 import PosePatternPanel from './components/PosePatternPanel';
 import WebcamPanel from './components/WebcamPanel';
+import TotalDistancePanel from './components/TotalDistancePanel';
+import NotificationModal from '../../components/Modal/NotificationModal';
+import { ModalPortal } from '@ui/Modal/ModalPortal';
+import AverageGraphPannel from './components/AverageGraph/AverageGraphPannel';
+import { useModal } from '../../hooks/useModal';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 
@@ -135,6 +140,9 @@ const MainPage = () => {
     }
   };
 
+  /* 모달 오픈 */
+  const { isOpen, open: handleOpenModal, close: handleCloseModal } = useModal();
+
   return (
     <>
       <main className="bg-grey-25 flex h-screen flex-col overflow-hidden p-4">
@@ -142,7 +150,7 @@ const MainPage = () => {
           {/* 좌측 영역 */}
           <div className="h-full min-h-0 w-full">
             <div className="flex h-full min-h-0 flex-col gap-[clamp(8px,calc(4.375vw-48px),36px)]">
-              <MainHeader />
+              <MainHeader onClickNotification={handleOpenModal} />
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="text-caption-xs-regular text-grey-200 mr-4 flex shrink-0 items-end justify-end">
                   마지막 갱신일: 2025.10.22(수) 17:52
@@ -163,13 +171,18 @@ const MainPage = () => {
                     {/* 하단 부분 */}
                     <div className="flex min-h-max flex-1 items-stretch gap-4">
                       <div className="@container flex min-h-0 w-full min-w-[552px] flex-1 flex-col items-start gap-4 self-stretch">
-                        <div className="bg-grey-0 h-[170px] w-full shrink-0 rounded-3xl">
-                          레벨 거부기
+                        {/*레벨 및 이동거리 section */}
+                        <div className="bg-grey-0 relative h-[170px] w-full shrink-0 rounded-3xl py-5 pr-4 pl-2">
+                          <TotalDistancePanel />
                         </div>
+
+                        {/* 시계열 그래프 */}
                         <div className="grid min-h-0 w-full flex-1 grid-cols-1 gap-4 @[562px]:grid-cols-2">
                           <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
-                            시계열 그래프
+                            <AverageGraphPannel />
                           </div>
+
+                          {/*하이라이트 */}
                           <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
                             <HighlightsPanel />
                           </div>
@@ -198,6 +211,11 @@ const MainPage = () => {
 
             <MiniRunningPanel />
           </div>
+          {isOpen && (
+            <ModalPortal>
+              <NotificationModal onClose={handleCloseModal} />
+            </ModalPortal>
+          )}
         </div>
       </main>
     </>

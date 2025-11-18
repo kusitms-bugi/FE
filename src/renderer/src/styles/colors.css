@@ -77,6 +77,12 @@
     var(--color-coral-red) 0%,
     var(--color-error) 100%
   );
+
+  /* 모달 컬러 */
+  --color-surface-modal: #ffffff;
+  --color-surface-modal-container: #f9f8f7;
+  --color-modal-button: #f9f8f7;
+  --color-modal-disabled: #e3e1df;
 }
 
 @theme inline {
@@ -134,6 +140,12 @@
     var(--color-yellow-400) 25.52%,
     var(--color-yellow-200) 97.31%
   );
+
+  /* 모달 컬러 */
+  --color-surface-modal: var(--color-surface-modal);
+  --color-surface-modal-container: var(--color-surface-modal-container);
+  --color-modal-button: var(--color-modal-button);
+  --color-modal-disabled: var(--color-modal-disabled);
 }
 
 /* Dark mode colors */
@@ -194,4 +206,10 @@
     var(--color-yellow-400) 25.52%,
     var(--color-yellow-200) 97.31%
   );
+
+  /* 모달 컬러 */
+  --color-surface-modal: #131312;
+  --color-surface-modal-container: #191917;
+  --color-modal-button: #232323;
+  --color-modal-disabled: #2c2c2c;
 }

@@ -1,17 +1,21 @@
 import { useEffect, useRef } from 'react';
 import { useNotificationStore } from '../store/useNotificationStore';
+import { usePostureStore } from '../store/usePostureStore';
 
 /* 알림 스케줄러 훅 , 설정된 시간에 따라 시스템 알림을 자동으로 표시 */
 export const useNotificationScheduler = () => {
   const { isAllow, stretching, turtleNeck } = useNotificationStore();
+  const postureClass = usePostureStore((state) => state.postureClass);
 
   /* 타이머 저장 변수 */
   const stretchingTimerRef = useRef<ReturnType<typeof setInterval> | null>(
     null,
   );
-  const turtleNeckTimerRef = useRef<ReturnType<typeof setInterval> | null>(
+  const turtleNeckCheckRef = useRef<ReturnType<typeof setInterval> | null>(
     null,
   );
+  /* 거북목 상태 시작 시간 */
+  const badPostureStartTime = useRef<number | null>(null);
 
   /* 스트레칭 알림 표시 */
   const showStretchingNotification = async () => {
@@ -67,29 +71,55 @@ export const useNotificationScheduler = () => {
     };
   }, [isAllow, stretching.isEnabled, stretching.interval]);
 
-  /* 거북목 타이머 설정 */
+  /* 거북목 상태 추적 - postureClass가 'bad'로 바뀔 때 시작 시간 기록 */
   useEffect(() => {
-    if (turtleNeckTimerRef.current) {
-      clearInterval(turtleNeckTimerRef.current);
-      turtleNeckTimerRef.current = null;
+    if (postureClass === 'bad') {
+      if (!badPostureStartTime.current) {
+        badPostureStartTime.current = Date.now();
+        console.log('🐢 거북목 상태 시작');
+      }
+    } else {
+      if (badPostureStartTime.current) {
+        console.log('✅ 정상 자세로 복귀');
+      }
+      badPostureStartTime.current = null;
+    }
+  }, [postureClass]);
+
+  /* 거북목 지속 시간 체크 - 설정된 시간 초과 시 알림 */
+  useEffect(() => {
+    if (turtleNeckCheckRef.current) {
+      clearInterval(turtleNeckCheckRef.current);
+      turtleNeckCheckRef.current = null;
     }
 
     if (isAllow && turtleNeck.isEnabled && turtleNeck.interval > 0) {
-      const intervalMs = turtleNeck.interval * 60 * 1000;
+      const thresholdMs = turtleNeck.interval * 60 * 1000;
 
-      turtleNeckTimerRef.current = setInterval(() => {
-        showTurtleNeckNotification();
-      }, intervalMs);
+      turtleNeckCheckRef.current = setInterval(() => {
+        if (badPostureStartTime.current) {
+          const duration = Date.now() - badPostureStartTime.current;
 
-      console.log(`✅ 거북목 알림 활성화: ${turtleNeck.interval}분마다 알림`);
+          if (duration >= thresholdMs) {
+            showTurtleNeckNotification();
+            /* 알림 후 타이머 리셋 (다음 알림을 위해) */
+            badPostureStartTime.current = Date.now();
+            console.log(`🔔 거북목 알림 발송 (${turtleNeck.interval}분 지속)`);
+          }
+        }
+      }, 10000); /* 30초마다 체크 */
+
+      console.log(
+        `✅ 거북목 알림 활성화: ${turtleNeck.interval}분 지속 시 알림`,
+      );
     } else {
       console.log('⏸️ 거북목 알림 비활성화');
     }
 
     return () => {
-      if (turtleNeckTimerRef.current) {
-        clearInterval(turtleNeckTimerRef.current);
-        turtleNeckTimerRef.current = null;
+      if (turtleNeckCheckRef.current) {
+        clearInterval(turtleNeckCheckRef.current);
+        turtleNeckCheckRef.current = null;
       }
     };
   }, [isAllow, turtleNeck.isEnabled, turtleNeck.interval]);

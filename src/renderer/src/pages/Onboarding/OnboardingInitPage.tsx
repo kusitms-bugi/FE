@@ -4,15 +4,18 @@ import InfoPanel from './components/InfoPanel';
 
 const OnboardinInitPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [direction, setDirection] = useState<'next' | 'prev'>('next');
 
   const handlePrev = () => {
     if (currentStep > 1) {
+      setDirection('prev');
       setCurrentStep(currentStep - 1);
     }
   };
 
   const handleNext = () => {
     if (currentStep < 5) {
+      setDirection('next');
       setCurrentStep(currentStep + 1);
     } else {
       // 5단계에서 시작하기 클릭 시 처리
@@ -27,8 +30,13 @@ const OnboardinInitPage = () => {
           <ImageDescriptionPannel
             currentStep={currentStep}
             onPrev={handlePrev}
+            direction={direction}
           />
-          <InfoPanel currentStep={currentStep} onNext={handleNext} />
+          <InfoPanel
+            currentStep={currentStep}
+            onNext={handleNext}
+            direction={direction}
+          />
         </section>
       </div>
     </main>

@@ -6,3 +6,34 @@
 @import './breakpoint.css';
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* 슬라이드 애니메이션 */
+@keyframes slide-next {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-prev {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-next {
+  animation: slide-next 0.3s ease-out;
+}
+
+.animate-slide-prev {
+  animation: slide-prev 0.3s ease-out;
+}

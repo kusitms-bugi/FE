@@ -12,11 +12,13 @@ const STEP_IMAGES = [null, FirstImage, SecondImage, ThirdImage, FourthImage];
 interface ImageDescriptionPannelProps {
   currentStep: number;
   onPrev: () => void;
+  direction: 'next' | 'prev';
 }
 
 const ImageDescriptionPannel = ({
   currentStep,
   onPrev,
+  direction,
 }: ImageDescriptionPannelProps) => {
   const StepImage = STEP_IMAGES[currentStep - 1];
 
@@ -34,13 +36,20 @@ const ImageDescriptionPannel = ({
         )}
 
         {/* 1단계: FirstImageDescription, 2~5단계: 이미지 */}
-        {currentStep === 1 ? (
-          <FirstImageDescription />
-        ) : (
-          StepImage && (
-            <StepImage className="aspect-[784/510] w-full object-cover" />
-          )
-        )}
+        <div
+          key={currentStep}
+          className={
+            direction === 'next' ? 'animate-slide-next' : 'animate-slide-prev'
+          }
+        >
+          {currentStep === 1 ? (
+            <FirstImageDescription />
+          ) : (
+            StepImage && (
+              <StepImage className="aspect-[784/510] w-full object-cover" />
+            )
+          )}
+        </div>
 
         <p className="text-caption-xs-regular text-grey-200 absolute bottom-6 flex items-center gap-1">
           <RockIcon />

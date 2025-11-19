@@ -44,9 +44,10 @@ const STEP_DATA = [
 interface InfoPanelProps {
   currentStep: number;
   onNext: () => void;
+  direction: 'next' | 'prev';
 }
 
-const InfoPanel = ({ currentStep, onNext }: InfoPanelProps) => {
+const InfoPanel = ({ currentStep, onNext, direction }: InfoPanelProps) => {
   const stepData = STEP_DATA[currentStep - 1];
   const StepIcon = STEP_ICONS[currentStep - 1];
 
@@ -68,7 +69,10 @@ const InfoPanel = ({ currentStep, onNext }: InfoPanelProps) => {
         </div>
 
         {/*설명 부분 */}
-        <div className="flex flex-col">
+        <div
+          key={currentStep}
+          className={`flex flex-col ${direction === 'next' ? 'animate-slide-next' : 'animate-slide-prev'}`}
+        >
           {/* Keypoint */}
           <p className="text-body-md-semibold text-sementic-brand-primary flex justify-between">
             <span>Keypoint {currentStep}</span>
@@ -99,7 +103,7 @@ const InfoPanel = ({ currentStep, onNext }: InfoPanelProps) => {
       {/* 버튼 부분 */}
       <Button
         text={currentStep === 5 ? '시작하기' : '다음'}
-        className=""
+        className="h-11"
         onClick={onNext}
       />
     </div>

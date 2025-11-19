@@ -5,7 +5,6 @@ import { usePostureStore } from '../../../store/usePostureStore';
  localStorage의 storage 이벤트를 통해 창 간 통신 */
 
 export function usePostureSyncWithLocalStorage() {
-  const statusText = usePostureStore((state) => state.statusText);
   const postureClass = usePostureStore((state) => state.postureClass);
   const setStatus = usePostureStore((state) => state.setStatus);
 
@@ -16,15 +15,15 @@ export function usePostureSyncWithLocalStorage() {
 
       try {
         const storageData = JSON.parse(e.newValue);
-        const { statusText: newStatusText, postureClass: newPostureClass } =
+        const { postureClass: newPostureClass, score: newScore } =
           storageData.state;
 
         console.log('[위젯] 메인 창에서 자세 변경 감지:', {
-          from: { statusText, postureClass },
-          to: { statusText: newStatusText, postureClass: newPostureClass },
+          from: { postureClass },
+          to: { postureClass: newPostureClass, score: newScore },
         });
 
-        setStatus(newStatusText, newPostureClass);
+        setStatus(newPostureClass, newScore);
       } catch (error) {
         console.error('[위젯] localStorage 파싱 오류:', error);
       }
@@ -32,14 +31,13 @@ export function usePostureSyncWithLocalStorage() {
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, [statusText, postureClass, setStatus]);
+  }, [postureClass, setStatus]);
 
   /* 디버깅용 로그 */
   useEffect(() => {
     console.log('[위젯] 자세 상태 업데이트:', {
-      statusText,
       postureClass,
       timestamp: new Date().toLocaleTimeString(),
     });
-  }, [statusText, postureClass]);
+  }, [postureClass]);
 }

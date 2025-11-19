@@ -71,9 +71,11 @@ export const useNotificationScheduler = () => {
     };
   }, [isAllow, stretching.isEnabled, stretching.interval]);
 
-  /* 거북목 상태 추적 - postureClass가 'bad'로 바뀔 때 시작 시간 기록 */
+  /* 거북목 상태 추적 - postureClass가 4, 5, 6 (bugi 계열)일 때 시작 시간 기록 */
   useEffect(() => {
-    if (postureClass === 'bad') {
+    const isBadPosture = postureClass >= 4 && postureClass <= 6;
+
+    if (isBadPosture) {
       if (!badPostureStartTime.current) {
         badPostureStartTime.current = Date.now();
         console.log('🐢 거북목 상태 시작');

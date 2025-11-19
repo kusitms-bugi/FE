@@ -50,7 +50,6 @@ const WebcamView = ({
 
   // 저장된 카메라 deviceId 사용
   const preferredDeviceId = localStorage.getItem('preferred-camera-device');
-  console.log('[WebcamView] Preferred deviceId:', preferredDeviceId);
 
   const videoConstraints = preferredDeviceId
     ? {

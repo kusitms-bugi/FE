@@ -1,10 +1,10 @@
 /* 위젯 창에 표시될 페이지 - 반응형 */
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { WidgetTitleBar } from '../../components/WidgetTitleBar/WidgetTitleBar';
-import { MiniWidgetContent } from './components/MiniWidgetContent';
-import { MediumWidgetContent } from './components/MediumWidgetContent';
 import { usePostureStore } from '../../store/usePostureStore';
+import { MediumWidgetContent } from './components/MediumWidgetContent';
+import { MiniWidgetContent } from './components/MiniWidgetContent';
 import { usePostureSyncWithLocalStorage } from './hooks/usePostureSyncWithLocalStorage';
 import { useThemeSync } from './hooks/useThemeSync';
 
@@ -18,11 +18,9 @@ const BREAKPOINT = {
 
 export function WidgetPage() {
   const [widgetSize, setWidgetSize] = useState<WidgetSize>('medium');
+  const currentPostureClass = usePostureStore((state) => state.postureClass);
 
   /* usePostureStore에서 실시간 자세 상태 가져오기 */
-  const statusText = usePostureStore((state) => state.statusText);
-  const postureState: PostureState =
-    statusText === '거북목' ? 'turtle' : 'giraffe';
 
   /* 실시간 자세 상태 동기화 */
   usePostureSyncWithLocalStorage();
@@ -84,9 +82,9 @@ export function WidgetPage() {
 
         {/* 위젯 내용 - 창 크기에 따라 자동 전환 */}
         {isMini ? (
-          <MiniWidgetContent posture={postureState} />
+          <MiniWidgetContent posture={currentPostureClass} />
         ) : (
-          <MediumWidgetContent posture={postureState} />
+          <MediumWidgetContent posture={currentPostureClass} />
         )}
       </div>
     </div>

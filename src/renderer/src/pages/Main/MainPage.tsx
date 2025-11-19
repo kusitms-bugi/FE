@@ -10,8 +10,8 @@ import {
 import { useCameraStore } from '../../store/useCameraStore';
 import { usePostureStore } from '../../store/usePostureStore';
 import { MetricData } from '../../types/main/session';
-import AveragePosturePanel from './components/AveragePosturePanel';
 import AttendacePanel from './components/AttendacePanel';
+import AveragePosturePanel from './components/AveragePosturePanel';
 import HighlightsPanel from './components/HighlightsPanel';
 import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';
@@ -39,6 +39,8 @@ const MainPage = () => {
   // 마지막 저장 시간을 추적 (1초마다 저장용)
   const lastSaveTimeRef = useRef<number>(0);
 
+  const classifierRef = useRef(new PostureClassifier());
+
   const handleToggleWebcam = () => {
     if (cameraState === 'show') {
       setHide();
@@ -46,8 +48,6 @@ const MainPage = () => {
       setShow();
     }
   };
-
-  const classifierRef = useRef(new PostureClassifier());
 
   // 메트릭을 서버로 전송하는 함수
   const sendMetricsToServer = () => {
@@ -62,8 +62,6 @@ const MainPage = () => {
     }
   };
 
-  // 메트릭은 종료 시에만 서버로 전송됨 (WebcamPanel에서 호출)
-
   // 캘리브레이션 로드
   const calib = (() => {
     try {
@@ -76,7 +74,7 @@ const MainPage = () => {
     }
   })();
 
-  // 캘리브레이션이 로드될 때 EMA 초기화
+  // 캘리브레이션이 로드될 때 초기화
   useEffect(() => {
     if (calib) {
       classifierRef.current.reset();
@@ -102,13 +100,16 @@ const MainPage = () => {
     if (!pi) return;
     const frontal = checkFrontality(landmarks);
 
+    // PostureClassifier가 내부적으로 안정화 로직을 처리함
     const result = classifierRef.current.classify(
       pi,
       calib.mu,
       calib.sigma,
       frontal,
     );
-    setStatus(result.text as '정상' | '거북목', result.cls);
+
+    // 안정화된 결과로 상태 업데이트
+    setStatus(result.cls, result.Score);
 
     // 메트릭 데이터 수집 (1초마다 한 번씩만 저장)
     const currentTime = Date.now();
@@ -122,19 +123,6 @@ const MainPage = () => {
       });
       lastSaveTimeRef.current = currentTime;
     }
-
-    // 기존 결과 배열 가져오기
-    const existingData = localStorage.getItem('classificationResult');
-    const existingResults = existingData ? JSON.parse(existingData) : [];
-
-    // 배열이 아니면 새 배열로 시작
-    const resultsArray = Array.isArray(existingResults) ? existingResults : [];
-
-    // 새 결과 추가 (Score만)
-    resultsArray.push(result.Score);
-
-    // localStorage에 저장
-    // localStorage.setItem('classificationResult', JSON.stringify(resultsArray));
 
     // Electron 환경에서 로그 파일로 저장
     if (typeof window !== 'undefined' && window.electronAPI?.writeLog) {

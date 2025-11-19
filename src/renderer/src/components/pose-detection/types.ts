@@ -31,7 +31,7 @@ export interface FrontalityResult {
 // 자세 판정 결과
 export interface PostureClassification {
   text: string;
-  cls: 'ok' | 'warn' | 'bad';
+  cls: 1 | 2 | 3 | 4 | 5 | 6 | 0;
   zScore: number;
   PI_EMA: number;
   z_PI: number;

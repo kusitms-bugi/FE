@@ -12,11 +12,7 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   base: './',
   root: 'src/renderer',
-  plugins: [
-    svgr(),
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [svgr(), react(), tailwindcss()],
   resolve: {
     alias: {
       '@ui/': path.resolve(__dirname, 'src/renderer/src/components') + '/',

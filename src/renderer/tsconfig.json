@@ -13,6 +13,7 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
+    "resolveJsonModule": true,
     "lib": ["ES2015", "DOM"],
     "module": "ESNext",
     "target": "ES6",

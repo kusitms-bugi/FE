@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -28,8 +28,9 @@ const HighlightsPanel = () => {
     barSize,
     barRadius,
     categoryGap,
-    weeklyColors,
-    monthlyColor,
+    chartColors,
+    labelColor,
+    previousLabelColor,
     labelStyle,
     labelPosition,
     gridColor,
@@ -51,11 +52,13 @@ const HighlightsPanel = () => {
           onChange={handleToggleChange}
         />
       </div>
+
       <div className="flex items-center justify-end">
         <span className="text-caption-xs-regular text-grey-400">
           {unitLabel}
         </span>
       </div>
+
       <div className="mt-6 min-h-[220px] flex-1">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -64,41 +67,43 @@ const HighlightsPanel = () => {
             barCategoryGap={categoryGap}
             margin={{ top: 12, right: 8, left: 0, bottom: 0 }}
           >
-            {weeklyColors ? (
-              <defs>
-                <linearGradient
-                  id="previousBarGradient"
-                  x1="0"
-                  y1="1"
-                  x2="0"
-                  y2="0"
-                >
-                  <stop offset="0%" stopColor={weeklyColors.previous} />
-                  <stop offset="100%" stopColor={weeklyColors.previous} />
-                </linearGradient>
-                <linearGradient
-                  id="currentBarGradient"
-                  x1="0"
-                  y1="1"
-                  x2="0"
-                  y2="0"
-                >
-                  <stop offset="0%" stopColor={weeklyColors.current} />
-                  <stop offset="100%" stopColor={weeklyColors.current} />
-                </linearGradient>
-              </defs>
-            ) : null}
+            {/* 이번주/이번달(진한색), 저번주/저번달(연한색)용 그라디언트 정의 */}
+            <defs>
+              <linearGradient
+                id="previousBarGradient"
+                x1="0"
+                y1="1"
+                x2="0"
+                y2="0"
+              >
+                <stop offset="0%" stopColor={chartColors.previous} />
+                <stop offset="100%" stopColor={chartColors.previous} />
+              </linearGradient>
+              <linearGradient
+                id="currentBarGradient"
+                x1="0"
+                y1="1"
+                x2="0"
+                y2="0"
+              >
+                <stop offset="0%" stopColor={chartColors.current} />
+                <stop offset="100%" stopColor={chartColors.current} />
+              </linearGradient>
+            </defs>
+
             <CartesianGrid
               vertical={false}
               stroke={gridColor}
               strokeDasharray="0"
             />
+
             <XAxis
               dataKey="periodLabel"
               axisLine={false}
               tickLine={false}
               tick={{ fill: '#a8a7a4', fontSize: 10, fontWeight: 400 }}
             />
+
             <YAxis
               axisLine={false}
               tickLine={false}
@@ -107,32 +112,62 @@ const HighlightsPanel = () => {
               ticks={yAxisTicks}
               width={30}
             />
+
             <Bar dataKey="value" radius={barRadius} background={false}>
               {data.map((datum: HighlightDatum) => (
                 <Cell
                   key={datum.periodLabel}
                   fill={
-                    weeklyColors
-                      ? datum.barKey === 'current'
-                        ? 'url(#currentBarGradient)'
-                        : 'url(#previousBarGradient)'
-                      : (monthlyColor ?? undefined)
+                    datum.barKey === 'current'
+                      ? 'url(#currentBarGradient)' // 이번 주/달
+                      : 'url(#previousBarGradient)' // 저번 주/달
                   }
                 />
               ))}
+
               <LabelList
                 dataKey="value"
                 position={labelPosition}
-                formatter={(value: ReactNode) => {
-                  if (typeof value === 'number') {
-                    return value.toString();
-                  }
-                  if (typeof value === 'string') {
-                    return value;
-                  }
-                  return '';
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                content={(props: any) => {
+                  const { value, index, viewBox } = props;
+                  if (viewBox == null || index == null) return null;
+
+                  const { x, y, width, height } = viewBox as {
+                    x: number;
+                    y: number;
+                    width: number;
+                    height: number;
+                  };
+
+                  const datum = data[index] as HighlightDatum;
+                  const isCurrent = datum.barKey === 'current';
+
+                  // 막대 중앙 좌표
+                  const cx = x + width / 2;
+                  const cy = y + height / 2;
+
+                  const fill = isCurrent ? labelColor : previousLabelColor;
+
+                  let text: string;
+                  if (typeof value === 'number') text = value.toString();
+                  else if (typeof value === 'string') text = value;
+                  else return null;
+
+                  return (
+                    <text
+                      x={cx}
+                      y={cy}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fontSize={labelStyle.fontSize}
+                      fontWeight={labelStyle.fontWeight}
+                      fill={fill}
+                    >
+                      {text}
+                    </text>
+                  );
                 }}
-                style={labelStyle}
               />
             </Bar>
           </BarChart>

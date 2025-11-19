@@ -1,24 +1,80 @@
+import AngelRiniVideo from '@assets/video/angel-rini.webm';
 import BackgroundVideo from '@assets/video/background.webm';
 import BugiVideo from '@assets/video/bugi.webm';
+import PmRiniVideo from '@assets/video/pm-rini.webm';
 import RiniVideo from '@assets/video/rini.webm';
+import StoneBugiVideo from '@assets/video/stone-bugi.webm';
+import TireBugiVideo from '@assets/video/tire-bugi.webm';
 import WidgetIcon from '@assets/widget.svg?react';
 import { useEffect, useMemo, useState } from 'react';
 import { Button } from '../../../components/Button/Button';
 import { usePostureStore } from '../../../store/usePostureStore';
 import { cn } from '../../../utils/cn';
+import { getScoreLevel } from '../../../utils/getScoreLevel';
 
 const RunningPanel = () => {
-  const statusText = usePostureStore((state) => state.statusText);
-  const isTurtle = statusText === '거북목';
+  const score = usePostureStore((state) => state.score);
   const [isWidgetOpen, setIsWidgetOpen] = useState(false);
 
-  const gradient = isTurtle
-    ? 'linear-gradient(90deg, var(--color-coral-red) 0%, var(--color-error) 100%)'
-    : 'linear-gradient(90deg, var(--color-olive-green) 0.18%, var(--color-success) 99.7%)';
+  // 점수 기반 레벨 계산
+  const levelInfo = useMemo(() => getScoreLevel(score), [score]);
 
+  // 레벨에 따른 비디오 선택
+  const levelVideo = useMemo(() => {
+    switch (levelInfo.level) {
+      case 1:
+        return AngelRiniVideo;
+      case 2:
+        return PmRiniVideo;
+      case 3:
+        return RiniVideo;
+      case 4:
+        return BugiVideo;
+      case 5:
+        return StoneBugiVideo;
+      case 6:
+        return TireBugiVideo;
+      default:
+        return RiniVideo;
+    }
+  }, [levelInfo.level]);
+
+  // 레벨에 따른 게이지바 비율 (레벨이 낮을수록(좋을수록) 더 많이 채워짐)
+  const gaugeWidth = useMemo(() => {
+    // 레벨 1(가장 좋음): 100%, 레벨 2: 95%, 레벨 3: 70%, 레벨 4: 45%, 레벨 5: 20%, 레벨 6(가장 나쁨): 5%
+    const widthMap: Record<number, string> = {
+      1: '100%',
+      2: '75%',
+      3: '50%',
+      4: '50%',
+      5: '75%',
+      6: '100%',
+    };
+    return widthMap[levelInfo.level] || '70%';
+  }, [levelInfo.level]);
+
+  // 레벨에 따른 그라데이션 색상
+  const gradient = useMemo(() => {
+    // 레벨이 낮을수록(좋을수록) 초록색, 높을수록(나쁠수록) 빨간색
+    if (levelInfo.level <= 3) {
+      return 'linear-gradient(90deg, var(--color-olive-green) 0.18%, var(--color-success) 99.7%)';
+    } else {
+      return 'linear-gradient(90deg, var(--color-coral-red) 0%, var(--color-error) 100%)';
+    }
+  }, [levelInfo.level]);
+
+  // 레벨에 따른 상태 텍스트
   const runningStatus = useMemo(() => {
-    return isTurtle ? '엉금엉금 가는중..' : '씽씽 가는 중!';
-  }, [isTurtle]);
+    const statusMap: Record<number, string> = {
+      1: '최고 속도로 가는 중!', // 가장 좋음
+      2: '빠르게 가는 중!',
+      3: '씽씽 가는 중!',
+      4: '천천히 가는 중',
+      5: '느릿느릿 가는중..',
+      6: '엉금엉금 가는중..', // 가장 나쁨
+    };
+    return statusMap[levelInfo.level] || '가는 중';
+  }, [levelInfo.level]);
 
   // 위젯 창 상태 확인
   useEffect(() => {
@@ -117,7 +173,7 @@ const RunningPanel = () => {
             <div
               className="flex h-full items-center justify-end rounded-full py-[3px] pr-[3px] transition-all duration-1000"
               style={{
-                width: isTurtle ? '25%' : '75%',
+                width: gaugeWidth,
                 background: gradient,
               }}
             >
@@ -133,7 +189,7 @@ const RunningPanel = () => {
           )}
         >
           <video
-            src={isTurtle ? BugiVideo : RiniVideo}
+            src={levelVideo}
             autoPlay
             loop
             muted

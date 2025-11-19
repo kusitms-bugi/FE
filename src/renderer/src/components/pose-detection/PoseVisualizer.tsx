@@ -83,31 +83,11 @@ const PoseVisualizer = ({
       .trim();
 
     // --- 상태에 따른 색상 결정 ---
-    const shoulderColor =
-      postureClass === 'ok'
+    // 레벨 1-3: 초록색, 레벨 4-6: 빨간색, 레벨 0(측정중): 노란색
+    const LineColor =
+      postureClass >= 1 && postureClass <= 3
         ? successColor
-        : postureClass === 'bad'
-          ? errorColor
-          : defaultColor;
-
-    const earColor =
-      postureClass === 'ok'
-        ? successColor
-        : postureClass === 'bad'
-          ? errorColor
-          : defaultColor;
-
-    const shoulderLineColor =
-      postureClass === 'ok'
-        ? successColor
-        : postureClass === 'bad'
-          ? errorColor
-          : defaultColor;
-
-    const midpointLineColor =
-      postureClass === 'ok'
-        ? successColor
-        : postureClass === 'bad'
+        : postureClass >= 4 && postureClass <= 6
           ? errorColor
           : defaultColor;
 
@@ -160,10 +140,10 @@ const PoseVisualizer = ({
         // 색상 구분 (귀: 분홍색, 어깨: 파란색)
         if (index === 7 || index === 8) {
           // 귀
-          ctx.fillStyle = earColor;
+          ctx.fillStyle = LineColor;
         } else if (index === 11 || index === 12) {
           // 어깨
-          ctx.fillStyle = shoulderColor;
+          ctx.fillStyle = LineColor;
         }
 
         ctx.fill();
@@ -187,7 +167,7 @@ const PoseVisualizer = ({
       const rightShoulderX = displayWidth - rightShoulder.x * displayWidth;
       const rightShoulderY = rightShoulder.y * displayHeight;
 
-      ctx.strokeStyle = shoulderLineColor;
+      ctx.strokeStyle = LineColor;
       ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.moveTo(leftShoulderX, leftShoulderY);
@@ -209,7 +189,7 @@ const PoseVisualizer = ({
       const rightEarX = displayWidth - rightEarLine.x * displayWidth;
       const rightEarY = rightEarLine.y * displayHeight;
 
-      ctx.strokeStyle = earColor;
+      ctx.strokeStyle = LineColor;
       ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.moveTo(leftEarX, leftEarY);
@@ -250,7 +230,7 @@ const PoseVisualizer = ({
       const shoulderMidY = (leftShoulderY + rightShoulderY) / 2;
 
       // 귀-어깨 중점 연결선
-      ctx.strokeStyle = midpointLineColor;
+      ctx.strokeStyle = LineColor;
       ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.moveTo(shoulderMidX, shoulderMidY);
@@ -264,7 +244,7 @@ const PoseVisualizer = ({
       ctx.fill();
 
       // 어깨 중점 강조 (원래 점)
-      ctx.fillStyle = shoulderColor;
+      ctx.fillStyle = LineColor;
       ctx.beginPath();
       ctx.arc(shoulderMidX, shoulderMidY, 4, 0, Math.PI * 2);
       ctx.fill();
@@ -276,12 +256,12 @@ const PoseVisualizer = ({
       ctx.fill();
 
       // 귀 중점 강조 (원래 점)
-      ctx.fillStyle = earColor;
+      ctx.fillStyle = LineColor;
       ctx.beginPath();
       ctx.arc(earMidX, earMidY, 4, 0, Math.PI * 2);
       ctx.fill();
     }
-  }, [landmarks, videoWidth, videoHeight, isVisible]);
+  }, [landmarks, videoWidth, videoHeight, isVisible, postureClass]);
 
   if (!isVisible) return null;
 

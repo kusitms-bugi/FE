@@ -1,3 +1,6 @@
+// .env 파일 로드
+require('dotenv').config();
+
 if (process.env.VITE_APP_VERSION === undefined) {
   const now = new Date();
   process.env.VITE_APP_VERSION = `${now.getUTCFullYear() - 2000}.${
@@ -67,8 +70,10 @@ const config = {
     ],
     icon: 'buildResources/icon.icns',
     artifactName: '${productName}-${version}-${arch}.${ext}',
-    hardenedRuntime: false, // 코드 서명 없이 개발 시 false
-    gatekeeperAssess: false,
+    // 코드 서명 설정
+    identity: process.env.APPLE_IDENTITY || undefined, // 환경변수로 인증서 지정 가능
+    hardenedRuntime: true, // 코드 서명 시 true 권장
+    gatekeeperAssess: true, // Gatekeeper 검증 활성화
     entitlements: 'buildResources/entitlements.mac.plist',
     entitlementsInherit: 'buildResources/entitlements.mac.plist',
     extendInfo: {
@@ -77,6 +82,17 @@ const config = {
       NSMicrophoneUsageDescription:
         '거부기린은 사용자의 자세를 실시간으로 분석하기 위해 마이크에 접근합니다.',
     },
+    // 공증(Notarization) 설정
+    // 환경변수가 설정되어 있으면 자동으로 공증 활성화
+    // 필요한 환경변수:
+    // - APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID
+    // 또는
+    // - APPLE_API_KEY, APPLE_API_KEY_ID, APPLE_API_ISSUER
+    notarize: !!(
+      process.env.APPLE_ID &&
+      process.env.APPLE_APP_SPECIFIC_PASSWORD &&
+      process.env.APPLE_TEAM_ID
+    ),
   },
   win: {
     target: [

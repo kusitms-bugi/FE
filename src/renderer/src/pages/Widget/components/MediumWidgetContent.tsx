@@ -92,12 +92,9 @@ export function MediumWidgetContent({ posture }: MediumWidgetContentProps) {
         {/* 메시지 */}
         <div className="bg-grey-0 mt-2">
           <div className="text-body-md-semibold text-grey-700">{mainTitle}</div>
-          <div className="text-caption-xs-meidum text-grey-400">
-            {subTitle}
-          </div>
+          <div className="text-caption-xs-meidum text-grey-400">{subTitle}</div>
         </div>
       </div>
     </div>
   );
 }
-

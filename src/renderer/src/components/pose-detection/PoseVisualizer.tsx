@@ -261,7 +261,6 @@ const PoseVisualizer = ({
       ctx.arc(earMidX, earMidY, 4, 0, Math.PI * 2);
       ctx.fill();
     }
-
   }, [landmarks, videoWidth, videoHeight, isVisible, postureClass]);
 
   if (!isVisible) return null;

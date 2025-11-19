@@ -14,7 +14,6 @@ import { getScoreLevel } from '../../../utils/getScoreLevel';
 const RunningPanel = () => {
   const score = usePostureStore((state) => state.score);
 
-
   // 점수 기반 레벨 계산
   const levelInfo = useMemo(() => getScoreLevel(score), [score]);
 
@@ -92,12 +91,10 @@ const RunningPanel = () => {
 
   // 위젯 열기/닫기 핸들러
 
-
   return (
     <div className="">
       <div className="mb-4 flex items-center justify-between">
         <p className="text-caption-sm-medium text-grey-400">{runningStatus}</p>
-
       </div>
 
       <div className="relative h-[421px] w-full overflow-hidden rounded-xl">

@@ -18,7 +18,7 @@ const LEVEL_COLORS = [
   'bg-yellow-400', // 2레벨
   'bg-yellow-200', // 3레벨
   'bg-yellow-100', // 4레벨
-  'bg-yellow-50',  // 5레벨
+  'bg-yellow-50', // 5레벨
 ] as const;
 
 const Circle = ({ level, today }: CircleProps) => {
@@ -31,7 +31,7 @@ const Circle = ({ level, today }: CircleProps) => {
       className={[
         'h-[18px] w-[18px] rounded-full',
         colorClass,
-        today ? 'ring-[2px] ring-offset-[2px] ring-yellow-500' : '',
+        today ? 'ring-[2px] ring-yellow-500 ring-offset-[2px]' : '',
       ].join(' ')}
     />
   );
@@ -59,8 +59,7 @@ const Calendar = ({ year, month }: CalendarProps) => {
   const todayMonth = today.getMonth();
   const todayDate = today.getDate();
 
-  const isSameMonth =
-    todayYear === year && todayMonth === month;
+  const isSameMonth = todayYear === year && todayMonth === month;
 
   // 🔥 레벨/사용 여부는 실제 데이터 들어오면 여기만 갈아끼우면 됨
   const getLevelForDay = (day: number): number | null => {
@@ -75,7 +74,8 @@ const Calendar = ({ year, month }: CalendarProps) => {
     // 같은 달 기준으로 오늘 이후
     if (year > todayYear) return true;
     if (year === todayYear && month > todayMonth) return true;
-    if (year === todayYear && month === todayMonth && day > todayDate) return true;
+    if (year === todayYear && month === todayMonth && day > todayDate)
+      return true;
     return false;
   };
 
@@ -94,29 +94,30 @@ const Calendar = ({ year, month }: CalendarProps) => {
       <div className="mt-[5px] grid h-full grid-cols-7 gap-x-1 gap-y-1 text-center">
         {calendarDays.map((day, index) => (
           <div key={index} className="flex items-center justify-center">
-            {day !== null && (() => {
-              const future = isFutureDay(day);
-              const isToday = isSameMonth && day === todayDate;
+            {day !== null &&
+              (() => {
+                const future = isFutureDay(day);
+                const isToday = isSameMonth && day === todayDate;
 
-              if (future) {
-                // 👉 미래 날짜: bg-transparent border-bg-line
-                return (
-                  <div className="h-[18px] w-[18px] rounded-full bg-transparent border border-bg-line" />
-                );
-              }
+                if (future) {
+                  // 👉 미래 날짜: bg-transparent border-bg-line
+                  return (
+                    <div className="border-bg-line h-[18px] w-[18px] rounded-full border bg-transparent" />
+                  );
+                }
 
-              const level = getLevelForDay(day);
+                const level = getLevelForDay(day);
 
-              if (!level) {
-                // 👉 안 사용한 날: bg-grey-50
-                return (
-                  <div className="h-[18px] w-[18px] rounded-full bg-grey-50" />
-                );
-              }
+                if (!level) {
+                  // 👉 안 사용한 날: bg-grey-50
+                  return (
+                    <div className="bg-grey-50 h-[18px] w-[18px] rounded-full" />
+                  );
+                }
 
-              // 👉 사용한 날: 레벨 색 Circle
-              return <Circle level={level} today={isToday} />;
-            })()}
+                // 👉 사용한 날: 레벨 색 Circle
+                return <Circle level={level} today={isToday} />;
+              })()}
           </div>
         ))}
       </div>
@@ -179,7 +180,7 @@ const AttendacePanel = () => {
           uncheckedLabel="월간"
           checkedLabel="연간"
           checked={false}
-          onChange={() => { }}
+          onChange={() => {}}
         />
         <IntensitySlider leftLabel="Less" rightLabel="More" />
       </div>

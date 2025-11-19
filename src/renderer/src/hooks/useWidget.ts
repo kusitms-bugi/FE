@@ -38,7 +38,10 @@ export const useWidget = () => {
         });
         await window.electronAPI.writeLog(logData);
       } catch (error) {
-        console.error(`위젯 ${event === 'widget_opened' ? '열림' : '닫힘'} 로그 저장 실패:`, error);
+        console.error(
+          `위젯 ${event === 'widget_opened' ? '열림' : '닫힘'} 로그 저장 실패:`,
+          error,
+        );
       }
     }
   };
@@ -69,4 +72,3 @@ export const useWidget = () => {
     toggleWidget,
   };
 };
-

@@ -67,15 +67,15 @@ const WebcamView = ({
 
   const videoConstraints = preferredDeviceId
     ? {
-      deviceId: { exact: preferredDeviceId },
-      width: 1000,
-      height: 563,
-    }
+        deviceId: { exact: preferredDeviceId },
+        width: 1000,
+        height: 563,
+      }
     : {
-      facingMode: 'user',
-      width: 1000,
-      height: 563,
-    };
+        facingMode: 'user',
+        width: 1000,
+        height: 563,
+      };
 
   const handlePoseDetected = (
     landmarks: PoseLandmark[],
@@ -185,7 +185,7 @@ const WebcamView = ({
   }, [cameraState]);
 
   return (
-    <div className="relative w-full h-full" ref={containerRef}>
+    <div className="relative h-full w-full" ref={containerRef}>
       {cameraState === 'show' ? (
         <div className="relative">
           <Webcam
@@ -195,7 +195,7 @@ const WebcamView = ({
             videoConstraints={videoConstraints}
             onUserMedia={handleUserMedia}
             onUserMediaError={handleUserMediaError}
-            className="scale-x-[-1] rounded-[24px] object-fill w-full h-full"
+            className="h-full w-full scale-x-[-1] rounded-[24px] object-fill"
           />
           {showPoseOverlay && detectedLandmarks.length > 0 && (
             <PoseVisualizer
@@ -210,12 +210,12 @@ const WebcamView = ({
               <Timer
                 value={
                   Math.min(5, Math.max(0, remainingTime)) as
-                  | 0
-                  | 1
-                  | 2
-                  | 3
-                  | 4
-                  | 5
+                    | 0
+                    | 1
+                    | 2
+                    | 3
+                    | 4
+                    | 5
                 }
                 size={80}
               />

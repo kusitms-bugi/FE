@@ -70,4 +70,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     close: () => ipcRenderer.invoke('widget:close'),
     isOpen: () => ipcRenderer.invoke('widget:isOpen'),
   },
+
+  // 시스템 테마 조회
+  getSystemTheme: () => ipcRenderer.invoke('theme:getSystemTheme'),
 });

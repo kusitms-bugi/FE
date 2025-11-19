@@ -1,4 +1,4 @@
-import { app, ipcMain } from 'electron';
+import { app, ipcMain, nativeTheme } from 'electron';
 import { appendFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import './security-restrictions';
@@ -65,6 +65,11 @@ function setupAPIHandlers() {
       console.error('Failed to close widget window:', error);
       throw error;
     }
+  });
+
+  /* 시스템 테마 조회 핸들러 */
+  ipcMain.handle('theme:getSystemTheme', () => {
+    return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
   });
 }
 /* 위젯 상태 확인 요청 핸들러 */

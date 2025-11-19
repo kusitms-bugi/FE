@@ -119,12 +119,11 @@ const HighlightsPanel = () => {
                   key={datum.periodLabel}
                   fill={
                     datum.barKey === 'current'
-                      ? 'url(#currentBarGradient)'   // 이번 주/달
+                      ? 'url(#currentBarGradient)' // 이번 주/달
                       : 'url(#previousBarGradient)' // 저번 주/달
                   }
                 />
               ))}
-
 
               <LabelList
                 dataKey="value"

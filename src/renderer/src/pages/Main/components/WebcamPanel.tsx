@@ -105,7 +105,7 @@ const WebcamPanel = ({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <div className='aspect-video max-w-[352px] max-h-[198px] relative'>
+      <div className="relative aspect-video max-h-[198px] max-w-[352px]">
         <WebcamView onPoseDetected={onPoseDetected} showPoseOverlay={true} />
         <Button
           size={'md'}
@@ -119,7 +119,7 @@ const WebcamPanel = ({
           }
           onClick={handleToggleCamera}
           disabled={isPausingSession || isResumingSession}
-          className="h-[30px] w-[30px] px-0 absolute top-2 right-2"
+          className="absolute top-2 right-2 h-[30px] w-[30px] px-0"
         />
       </div>
       <div className="flex gap-2">
@@ -135,7 +135,7 @@ const WebcamPanel = ({
                   ? '시작하기'
                   : '종료하기'
           }
-          className="h-11 w-full max-w-[196px] labtop:max-w-[260px]"
+          className="labtop:max-w-[260px] h-11 w-full max-w-[196px]"
           onClick={handleStartStop}
           disabled={isCreatingSession || isStoppingSession}
         />
@@ -143,9 +143,9 @@ const WebcamPanel = ({
           size="md"
           variant="sub"
           onClick={toggleWidget}
-          className='w-[84px] h-11 py-[10px] px-[12px]'
+          className="h-11 w-[84px] px-[12px] py-[10px]"
           text={
-            <div className="flex items-center gap-1 text-yellow-500 text-body-md-medium">
+            <div className="text-body-md-medium flex items-center gap-1 text-yellow-500">
               <WidgetIcon className="h-6 w-6" />
               위젯
             </div>

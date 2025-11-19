@@ -25,6 +25,13 @@ const config = {
     'dist/renderer/**',
     'package.json',
   ],
+  /* 알림에 추가한 이미지 빌드 시 */
+  extraResources: [
+    {
+      from: 'src/main/assets/Symbol Logo.png',
+      to: 'Symbol Logo.png',
+    },
+  ],
   asar: true,
   // 빌드 전에 필요한 파일들이 존재하는지 확인
   beforeBuild: async (context) => {

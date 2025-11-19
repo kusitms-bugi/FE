@@ -22,6 +22,7 @@ import NotificationModal from '../../components/Modal/NotificationModal';
 import { ModalPortal } from '@ui/Modal/ModalPortal';
 import AverageGraphPannel from './components/AverageGraph/AverageGraphPannel';
 import { useModal } from '../../hooks/useModal';
+import { useNotificationScheduler } from '../../hooks/useNotificationScheduler';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 
@@ -142,6 +143,9 @@ const MainPage = () => {
 
   /* 모달 오픈 */
   const { isOpen, open: handleOpenModal, close: handleCloseModal } = useModal();
+
+  /* 알림 스케줄러 활성화 */
+  useNotificationScheduler();
 
   return (
     <>

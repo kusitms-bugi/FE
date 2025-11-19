@@ -128,6 +128,7 @@ const HighlightsPanel = () => {
               <LabelList
                 dataKey="value"
                 position={labelPosition}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 content={(props: any) => {
                   const { value, index, viewBox } = props;
                   if (viewBox == null || index == null) return null;

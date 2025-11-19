@@ -8,6 +8,7 @@ import {
   closeWidgetWindow,
   isWidgetWindowOpen,
 } from '/@/widgetWindow';
+import { setupNotificationHandlers } from '/@/notificationHandlers';
 
 /**
  * Setup IPC handlers for Electron-specific features
@@ -71,11 +72,21 @@ function setupAPIHandlers() {
   ipcMain.handle('theme:getSystemTheme', () => {
     return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
   });
+  /* Notification 핸들러 설정 */
+  setupNotificationHandlers();
 }
 /* 위젯 상태 확인 요청 핸들러 */
 ipcMain.handle('widget:isOpen', () => {
   return isWidgetWindowOpen();
 });
+
+/**
+ * Set App User Model ID for Windows notifications
+ * mac은 필요 x
+ */
+if (process.platform === 'win32') {
+  app.setAppUserModelId('거부기린');
+}
 
 /**
  * Prevent multiple instances

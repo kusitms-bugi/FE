@@ -38,7 +38,7 @@ export const useTimeEditor = ({
 
   /* 시간 제출 */
   const handleTimeSubmit = () => {
-    const newTime = Math.max(1, parseInt(tempTime) || 1);
+    const newTime = Math.min(300, Math.max(1, parseInt(tempTime) || 1));
     setTime(newTime);
     setIsEditing(false);
   };
@@ -52,9 +52,9 @@ export const useTimeEditor = ({
     }
   };
 
-  /* 시간 증가 */
+  /* 시간 증가 (최대 300분) */
   const increaseTime = () => {
-    setTime((prev) => prev + 1);
+    setTime((prev) => Math.min(300, prev + 1));
   };
 
   /* 시간 감소 */

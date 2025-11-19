@@ -21,6 +21,7 @@ export function MediumWidgetContent({ posture }: MediumWidgetContentProps) {
   const [mainTitle, setMainTitle] = useState('자세를 측정하고 있어요');
   const [subTitle, setSubTitle] = useState('잠시만 기다려주세요...');
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const messageData = messages.find((m: Message) => m.level === posture);
 
@@ -35,6 +36,7 @@ export function MediumWidgetContent({ posture }: MediumWidgetContentProps) {
       setSubTitle('잠시만 기다려주세요...');
     }
   }, [posture]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const isGiraffe = [1, 2, 3].includes(posture);
   const gradient = isGiraffe

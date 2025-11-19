@@ -4,12 +4,13 @@ import { cn } from '../../utils/cn';
 interface NotificationToggleSwitchProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
+  isDisabled?: boolean;
 }
 
 const NotificationToggleSwitch = React.forwardRef<
   HTMLButtonElement,
   NotificationToggleSwitchProps
->(({ checked, onChange }, ref) => {
+>(({ checked, onChange, isDisabled = false }, ref) => {
   return (
     <button
       ref={ref}
@@ -19,7 +20,11 @@ const NotificationToggleSwitch = React.forwardRef<
       onClick={() => onChange(!checked)}
       className={cn(
         'relative inline-flex h-[18px] w-[34px] cursor-pointer items-center rounded-full px-[3px] py-[2px] transition-colors duration-200 ease-in-out',
-        checked ? 'bg-yellow-400' : 'bg-grey-100',
+        checked && isDisabled
+          ? 'bg-global-yellow-100'
+          : checked
+            ? 'bg-yellow-400'
+            : 'bg-grey-100',
       )}
     >
       <span

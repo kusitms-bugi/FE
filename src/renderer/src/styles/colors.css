@@ -83,6 +83,7 @@
   --color-surface-modal-container: #f9f8f7;
   --color-modal-button: #f9f8f7;
   --color-modal-disabled: #e3e1df;
+  --color-global-yellow-100: #ffebb0;
 }
 
 @theme inline {
@@ -146,6 +147,8 @@
   --color-surface-modal-container: var(--color-surface-modal-container);
   --color-modal-button: var(--color-modal-button);
   --color-modal-disabled: var(--color-modal-disabled);
+  --color-sementic-brand-primary: var(--color-sementic-brand-primary);
+  --color-global-yellow-100: var(--color-global-yellow-100);
 }
 
 /* Dark mode colors */
@@ -213,4 +216,5 @@
   --color-surface-modal-container: #191917;
   --color-modal-button: #232323;
   --color-modal-disabled: #2c2c2c;
+  --color-global-yellow-100: rgba(73, 55, 4, 0.5);
 }

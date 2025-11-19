@@ -3,28 +3,60 @@ import { useState } from 'react';
 import { useTimeEditor } from './hooks/useTimeEditor';
 import { TimeControlSection } from './components/TimeControlSection';
 import { Button } from '@ui/Button/Button';
+import { useNotificationStore } from '../../store/useNotificationStore';
 
 interface NotificationModalProps {
   onClose: () => void;
 }
 
 const NotificationModal = ({ onClose }: NotificationModalProps) => {
+  const store = useNotificationStore();
+
   /* 알림 허용 */
-  const [isAllow, setIsAllow] = useState(false);
+  const [isAllow, setIsAllow] = useState(store.isAllow);
 
   /* 스트레칭 주기 */
-  const [isStretchingEnabled, setIsStretchingEnabled] = useState(false);
+  const [isStretchingEnabled, setIsStretchingEnabled] = useState(
+    store.stretching.isEnabled,
+  );
   const stretching = useTimeEditor({
-    initialTime: 30,
+    initialTime: store.stretching.interval,
     isEnabled: isAllow && isStretchingEnabled,
   });
 
   /* 거북목 경고 */
-  const [isTurtleNeckEnabled, setIsTurtleNeckEnabled] = useState(false);
+  const [isTurtleNeckEnabled, setIsTurtleNeckEnabled] = useState(
+    store.turtleNeck.isEnabled,
+  );
   const turtleNeck = useTimeEditor({
-    initialTime: 10,
+    initialTime: store.turtleNeck.interval,
     isEnabled: isAllow && isTurtleNeckEnabled,
   });
+
+  /* 저장하기 핸들러 - 알림 허용, 스트레칭, 거북목 시간 간격 전역 저장 */
+  const handleSave = async () => {
+    store.setSettings({
+      isAllow,
+      stretching: {
+        isEnabled: isStretchingEnabled,
+        interval: stretching.time,
+      },
+      turtleNeck: {
+        isEnabled: isTurtleNeckEnabled,
+        interval: turtleNeck.time,
+      },
+    });
+
+    /* 알림 권한 요청 (처음 활성화하는 경우) */
+    if (isAllow) {
+      try {
+        await window.electronAPI.notification.requestPermission();
+      } catch (error) {
+        console.error('Failed to request notification permission:', error);
+      }
+    }
+    onClose();
+  };
 
   return (
     <>
@@ -33,7 +65,7 @@ const NotificationModal = ({ onClose }: NotificationModalProps) => {
         onClick={onClose}
       >
         <div
-          className="bg-surface-modal fixed top-[45%] left-1/2 flex w-[339px] -translate-x-1/2 -translate-y-1/2 flex-col gap-2 rounded-[24px] p-4"
+          className="bg-surface-modal border-grey-0 fixed top-[45%] left-1/2 flex w-[339px] -translate-x-1/2 -translate-y-1/2 flex-col gap-2 rounded-[24px] border p-4"
           onClick={(e) => e.stopPropagation()}
         >
           {/* 알림 허용 */}
@@ -69,7 +101,7 @@ const NotificationModal = ({ onClose }: NotificationModalProps) => {
 
           {/* 저장하기 버튼 */}
           <Button
-            onClick={onClose}
+            onClick={handleSave}
             text="저장하기"
             variant="primary"
             size="md"

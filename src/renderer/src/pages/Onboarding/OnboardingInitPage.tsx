@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ImageDescriptionPannel from './components/ImageDescriptionPanel';
 import InfoPanel from './components/InfoPanel';
 
 const OnboardinInitPage = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
 
@@ -18,8 +20,8 @@ const OnboardinInitPage = () => {
       setDirection('next');
       setCurrentStep(currentStep + 1);
     } else {
-      // 5단계에서 시작하기 클릭 시 처리
-      console.log('시작하기 클릭');
+      // 5단계에서 시작하기 클릭 시 카메라 권한 요청 페이지로 이동
+      navigate('/onboarding');
     }
   };
 

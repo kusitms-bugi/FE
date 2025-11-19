@@ -30,7 +30,7 @@ async function createWindow() {
 
   const pageUrl =
     import.meta.env.DEV && process.env.VITE_DEV_SERVER_URL
-      ? 'http://localhost:3000/onboarding/init'
+      ? process.env.VITE_DEV_SERVER_URL
       : 'https://www.bugi.co.kr/';
 
   await win.loadURL(pageUrl);

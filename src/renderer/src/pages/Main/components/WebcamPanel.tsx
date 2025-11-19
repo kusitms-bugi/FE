@@ -103,7 +103,7 @@ const WebcamPanel = ({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <div className='aspect-video'>
+      <div className='aspect-video max-w-[352px] max-h-[198px] minimum:h-[162px]'>
         <WebcamView onPoseDetected={onPoseDetected} showPoseOverlay={true} />
       </div>
       <div className="flex gap-2">

@@ -1,5 +1,6 @@
 import HideIcon from '@assets/hide.svg?react';
 import ShowIcon from '@assets/show.svg?react';
+import WidgetIcon from '@assets/widget.svg?react';
 import { useCreateSessionMutation } from '../../../api/session/useCreateSessionMutation';
 import { usePauseSessionMutation } from '../../../api/session/usePauseSessionMutation';
 import { useResumeSessionMutation } from '../../../api/session/useResumeSessionMutation';
@@ -9,6 +10,7 @@ import {
   PoseLandmark,
   WorldLandmark,
 } from '../../../components/pose-detection';
+import { useWidget } from '../../../hooks/useWidget';
 import { useCameraStore } from '../../../store/useCameraStore';
 import WebcamView from '../../Calibration/components/WebcamView';
 
@@ -28,6 +30,7 @@ const WebcamPanel = ({
   onSendMetrics,
 }: Props) => {
   const { cameraState, setShow, setHide, setExit } = useCameraStore();
+  const { toggleWidget } = useWidget();
   const isWebcamOn = cameraState === 'show';
   const isExit = cameraState === 'exit';
 
@@ -39,7 +42,6 @@ const WebcamPanel = ({
     usePauseSessionMutation();
   const { mutate: resumeSession, isPending: isResumingSession } =
     useResumeSessionMutation();
-
   const handleStartStop = () => {
     if (isExit) {
       // 시작하기: 세션 생성 후 카메라 시작
@@ -133,11 +135,22 @@ const WebcamPanel = ({
                   ? '시작하기'
                   : '종료하기'
           }
-          className="h-11 w-full max-w-[300px]"
+          className="h-11 w-full max-w-[196px] labtop:max-w-[260px]"
           onClick={handleStartStop}
           disabled={isCreatingSession || isStoppingSession}
         />
-
+        <Button
+          size="md"
+          variant="sub"
+          onClick={toggleWidget}
+          className='w-[84px] h-11 py-[10px] px-[12px]'
+          text={
+            <div className="flex items-center gap-1 text-yellow-500 text-body-md-medium">
+              <WidgetIcon className="h-6 w-6" />
+              위젯
+            </div>
+          }
+        />
       </div>
     </div>
   );

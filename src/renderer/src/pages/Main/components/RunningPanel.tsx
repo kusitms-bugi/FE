@@ -5,16 +5,15 @@ import PmRiniVideo from '@assets/video/pm-rini.webm';
 import RiniVideo from '@assets/video/rini.webm';
 import StoneBugiVideo from '@assets/video/stone-bugi.webm';
 import TireBugiVideo from '@assets/video/tire-bugi.webm';
-import WidgetIcon from '@assets/widget.svg?react';
-import { useEffect, useMemo, useState } from 'react';
-import { Button } from '../../../components/Button/Button';
+
+import { useEffect, useMemo } from 'react';
 import { usePostureStore } from '../../../store/usePostureStore';
 import { cn } from '../../../utils/cn';
 import { getScoreLevel } from '../../../utils/getScoreLevel';
 
 const RunningPanel = () => {
   const score = usePostureStore((state) => state.score);
-  const [isWidgetOpen, setIsWidgetOpen] = useState(false);
+
 
   // 점수 기반 레벨 계산
   const levelInfo = useMemo(() => getScoreLevel(score), [score]);
@@ -81,7 +80,6 @@ const RunningPanel = () => {
     const checkWidgetStatus = async () => {
       if (window.electronAPI?.widget) {
         const isOpen = await window.electronAPI.widget.isOpen();
-        setIsWidgetOpen(isOpen);
       }
     };
 
@@ -93,65 +91,13 @@ const RunningPanel = () => {
   }, []);
 
   // 위젯 열기/닫기 핸들러
-  const handleToggleWidget = async () => {
-    try {
-      if (window.electronAPI?.widget) {
-        if (isWidgetOpen) {
-          await window.electronAPI.widget.close();
-          setIsWidgetOpen(false);
-          console.log('위젯 창이 닫혔습니다');
 
-          // 위젯 닫힘 로그 저장
-          if (window.electronAPI?.writeLog) {
-            try {
-              const logData = JSON.stringify({
-                event: 'widget_closed',
-                timestamp: new Date().toISOString(),
-              });
-              await window.electronAPI.writeLog(logData);
-            } catch (error) {
-              console.error('위젯 닫힘 로그 저장 실패:', error);
-            }
-          }
-        } else {
-          await window.electronAPI.widget.open();
-          setIsWidgetOpen(true);
-          console.log('위젯 창이 열렸습니다');
-
-          // 위젯 열림 로그 저장
-          if (window.electronAPI?.writeLog) {
-            try {
-              const logData = JSON.stringify({
-                event: 'widget_opened',
-                timestamp: new Date().toISOString(),
-              });
-              await window.electronAPI.writeLog(logData);
-            } catch (error) {
-              console.error('위젯 열림 로그 저장 실패:', error);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error('위젯 창 토글 실패:', error);
-    }
-  };
 
   return (
     <div className="">
       <div className="mb-4 flex items-center justify-between">
         <p className="text-caption-sm-medium text-grey-400">{runningStatus}</p>
-        <Button
-          size="xs"
-          variant="sub"
-          onClick={handleToggleWidget}
-          text={
-            <div className="flex items-center gap-2 text-yellow-500">
-              <WidgetIcon className="h-[18px] w-[18px]" />
-              위젯
-            </div>
-          }
-        />
+
       </div>
 
       <div className="relative h-[421px] w-full overflow-hidden rounded-xl">

@@ -31,7 +31,7 @@ const ImageDescriptionPannel = ({
             onClick={onPrev}
             className="absolute top-5 left-5 cursor-pointer p-2"
           >
-            <PrevIcon className="[&_path:first-child]:fill-grey-25 [&_path:last-child]:stroke-grey-500 [&_path:last-child]:fill-none" />
+            <PrevIcon className="[&_path:first-child]:fill-grey-25 [&_path:last-child]:stroke-grey-500 hover:[&_path:first-child]:fill-grey-0 [&_path:last-child]:fill-none" />
           </div>
         )}
 
@@ -51,7 +51,7 @@ const ImageDescriptionPannel = ({
           )}
         </div>
 
-        <p className="text-caption-xs-regular text-grey-200 absolute bottom-6 flex items-center gap-1">
+        <p className="text-caption-xs-regular text-grey-300 absolute bottom-6 flex items-center gap-1">
           <RockIcon />
           <span>
             영상은 사용자의 PC에서만 처리되며, 어디에도 저장되거나 전송되지

@@ -4,8 +4,80 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 
+// Health 응답 타입 (예시)
+// TODO: 실제 메인 프로세스에서 보내는 데이터 구조에 맞게 수정
+type HealthResponse = {
+  status: 'ok';
+  uptime: number;
+};
+
+// Version 응답 타입 (예시)
+type VersionInfo = {
+  appVersion: string;
+  electron: string;
+  chrome: string;
+  node: string;
+};
+
+// 플랫폼 정보 (예시)
+type PlatformInfo = {
+  os: NodeJS.Platform;
+  arch: string;
+};
+
+// 로그 작성 결과 (예시)
+type WriteLogResult = {
+  success: boolean;
+  path?: string;
+  error?: string;
+};
+
+// 시스템 테마 타입 (예시)
+type SystemTheme = 'light' | 'dark' | 'system';
+
+// window.bugi 타입
+type BugiAPI = {
+  version: number;
+};
+
+// window.nodeCrypto 타입
+type NodeCryptoAPI = {
+  sha256sum: (data: string) => Promise<string>;
+};
+
+// window.electronAPI 타입
+interface ElectronAPI {
+  // Health check
+  getHealth: () => Promise<HealthResponse>;
+
+  // Version info
+  getVersion: () => Promise<VersionInfo>;
+
+  // Hash generation
+  generateHash: (data: string) => Promise<string>;
+
+  // Batch hash generation
+  generateBatchHash: (dataList: string[]) => Promise<string[]>;
+
+  // Platform info
+  getPlatform: () => Promise<PlatformInfo>;
+
+  // Write log file
+  writeLog: (data: string, filename?: string) => Promise<WriteLogResult>;
+
+  widget: {
+    open: () => Promise<void>;
+    close: () => Promise<void>;
+    isOpen: () => Promise<boolean>;
+  };
+
+  // 시스템 테마 조회
+  getSystemTheme: () => Promise<SystemTheme>;
+}
+
 // Expose version number to renderer
-contextBridge.exposeInMainWorld('bugi', { version: 0.1 });
+const bugiAPI: BugiAPI = { version: 0.1 };
+contextBridge.exposeInMainWorld('bugi', bugiAPI);
 
 /**
  * The "Main World" is the JavaScript context that your main renderer code runs in.
@@ -28,7 +100,7 @@ contextBridge.exposeInMainWorld('bugi', { version: 0.1 });
  * @example
  * window.nodeCrypto.sha256sum('data')
  */
-contextBridge.exposeInMainWorld('nodeCrypto', {
+const nodeCryptoAPI: NodeCryptoAPI = {
   sha256sum: async (data: string) => {
     const encoder = new TextEncoder();
     const dataBuffer = encoder.encode(data);
@@ -36,47 +108,67 @@ contextBridge.exposeInMainWorld('nodeCrypto', {
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
   },
-});
+};
+contextBridge.exposeInMainWorld('nodeCrypto', nodeCryptoAPI);
 
 /**
  * Expose API functionality to renderer
  * @example
  * window.electronAPI.getHealth()
  */
-contextBridge.exposeInMainWorld('electronAPI', {
+const electronAPI: ElectronAPI = {
   // Health check
-  getHealth: () => ipcRenderer.invoke('api:health'),
+  getHealth: () =>
+    ipcRenderer.invoke('api:health') as ReturnType<ElectronAPI['getHealth']>,
 
   // Version info
-  getVersion: () => ipcRenderer.invoke('api:version'),
+  getVersion: () =>
+    ipcRenderer.invoke('api:version') as ReturnType<ElectronAPI['getVersion']>,
 
   // Hash generation
-  generateHash: (data: string) => ipcRenderer.invoke('api:hash', data),
+  generateHash: (data: string) =>
+    ipcRenderer.invoke('api:hash', data) as ReturnType<
+      ElectronAPI['generateHash']
+    >,
 
   // Batch hash generation
   generateBatchHash: (dataList: string[]) =>
-    ipcRenderer.invoke('api:hash:batch', dataList),
+    ipcRenderer.invoke('api:hash:batch', dataList) as ReturnType<
+      ElectronAPI['generateBatchHash']
+    >,
 
   // Platform info
-  getPlatform: () => ipcRenderer.invoke('api:platform'),
+  getPlatform: () =>
+    ipcRenderer.invoke('api:platform') as ReturnType<
+      ElectronAPI['getPlatform']
+    >,
 
   // Write log file
   writeLog: (data: string, filename?: string) =>
-    ipcRenderer.invoke('api:writeLog', data, filename),
+    ipcRenderer.invoke('api:writeLog', data, filename) as ReturnType<
+      ElectronAPI['writeLog']
+    >,
 
   /*electronAPI 객체에 widget 추가해서 리액트에서 접근 가능하도록 설정(리액트와 main process의 다리 역할) */
   widget: {
-    open: () => ipcRenderer.invoke('widget:open'),
-    close: () => ipcRenderer.invoke('widget:close'),
-    isOpen: () => ipcRenderer.invoke('widget:isOpen'),
+    open: () =>
+      ipcRenderer.invoke('widget:open') as ReturnType<
+        ElectronAPI['widget']['open']
+      >,
+    close: () =>
+      ipcRenderer.invoke('widget:close') as ReturnType<
+        ElectronAPI['widget']['close']
+      >,
+    isOpen: () =>
+      ipcRenderer.invoke('widget:isOpen') as ReturnType<
+        ElectronAPI['widget']['isOpen']
+      >,
   },
 
-  /* 시스템 알림 기능 */
-  notification: {
-    show: (title: string, body: string) =>
-      ipcRenderer.invoke('notification:show', title, body),
-    /* 알림 권한 요청 */
-    requestPermission: () =>
-      ipcRenderer.invoke('notification:requestPermission'),
-  },
-});
+  // 시스템 테마 조회
+  getSystemTheme: () =>
+    ipcRenderer.invoke('theme:getSystemTheme') as ReturnType<
+      ElectronAPI['getSystemTheme']
+    >,
+};
+contextBridge.exposeInMainWorld('electronAPI', electronAPI);

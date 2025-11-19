@@ -45,6 +45,20 @@ const WebcamView = ({
     height: 428,
   });
 
+  // 초기 마운트 시 container 크기로 초기화
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      const { clientWidth, clientHeight } = container;
+      if (clientWidth > 0 && clientHeight > 0) {
+        setVideoDimensions({
+          width: clientWidth,
+          height: clientHeight,
+        });
+      }
+    }
+  }, []);
+
   const { cameraState, setShow } = useCameraStore();
   const isWebcamOn = cameraState === 'show';
 
@@ -53,15 +67,15 @@ const WebcamView = ({
 
   const videoConstraints = preferredDeviceId
     ? {
-        deviceId: { exact: preferredDeviceId },
-        width: 1000,
-        height: 563,
-      }
+      deviceId: { exact: preferredDeviceId },
+      width: 1000,
+      height: 563,
+    }
     : {
-        facingMode: 'user',
-        width: 1000,
-        height: 563,
-      };
+      facingMode: 'user',
+      width: 1000,
+      height: 563,
+    };
 
   const handlePoseDetected = (
     landmarks: PoseLandmark[],
@@ -95,6 +109,7 @@ const WebcamView = ({
     }
   };
 
+  // 카메라 스트림 정리
   useEffect(() => {
     if (cameraState === 'hide' || cameraState === 'exit') {
       if (
@@ -109,20 +124,78 @@ const WebcamView = ({
     }
   }, [cameraState]);
 
+  // containerRef 크기 변경 감지
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        if (width > 0 && height > 0) {
+          setVideoDimensions((prev) => {
+            // 카메라가 켜져있을 때는 실제 비디오 크기를 우선 사용
+            if (cameraState === 'show' && webcamRef.current?.video) {
+              const video = webcamRef.current.video;
+              return {
+                width: video.videoWidth || width,
+                height: video.videoHeight || height,
+              };
+            }
+            // 카메라가 꺼져있을 때는 container 크기 사용
+            return {
+              width,
+              height,
+            };
+          });
+        }
+      }
+    });
+
+    resizeObserver.observe(container);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [cameraState]);
+
+  // 비디오 요소 크기 변경 감지 (카메라가 켜져있을 때)
+  useEffect(() => {
+    if (cameraState !== 'show') return;
+
+    const video = webcamRef.current?.video;
+    if (!video) return;
+
+    const handleResize = () => {
+      if (video.videoWidth > 0 && video.videoHeight > 0) {
+        setVideoDimensions({
+          width: video.videoWidth,
+          height: video.videoHeight,
+        });
+      }
+    };
+
+    video.addEventListener('loadedmetadata', handleResize);
+    video.addEventListener('resize', handleResize);
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleResize);
+      video.removeEventListener('resize', handleResize);
+    };
+  }, [cameraState]);
+
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative h-full w-full" ref={containerRef}>
       {cameraState === 'show' ? (
         <div className="relative">
           <Webcam
             ref={webcamRef}
-            width={videoDimensions.width}
-            height={videoDimensions.height}
             autoPlay
             playsInline
             videoConstraints={videoConstraints}
             onUserMedia={handleUserMedia}
             onUserMediaError={handleUserMediaError}
-            className="scale-x-[-1] rounded-[24px]"
+            className="h-full w-full scale-x-[-1] rounded-[24px] object-fill"
           />
           {showPoseOverlay && detectedLandmarks.length > 0 && (
             <PoseVisualizer
@@ -137,14 +210,14 @@ const WebcamView = ({
               <Timer
                 value={
                   Math.min(5, Math.max(0, remainingTime)) as
-                    | 0
-                    | 1
-                    | 2
-                    | 3
-                    | 4
-                    | 5
+                  | 0
+                  | 1
+                  | 2
+                  | 3
+                  | 4
+                  | 5
                 }
-                size={80}
+                size={58}
               />
             </div>
           )}

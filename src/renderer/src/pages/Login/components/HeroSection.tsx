@@ -1,10 +1,11 @@
 import Logo from '../../../assets/logo.svg?react';
+import Symbol from "../../../assets/symbol.svg?react";
 
 export default function HeroSection() {
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="hbp:gap-6 flex w-full flex-row items-center justify-center gap-5">
-        <span className="hbp:w-[92px] aspect-[1/1] w-[74px] bg-[rgba(255,191,0,0.10)]" />
+        <Symbol className='w-[62px] h-[62px]' />
         <Logo className="hbp:h-[55px] hbp:w-[230px] [&>path]:fill-logo-fill flex h-[44px] w-[184px]" />
       </div>
       <p className="text-body-lg-medium text-grey-400 hbp:text-headline-2xl-medium">

@@ -51,7 +51,7 @@
   /* notification colors*/
   --color-error: #ff351f;
   --color-success: #67b000;
-
+  --color-bg-line: var(--color-grey-50);
   --color-point-red: #ff6647;
   --color-point-green: #a1b100;
 
@@ -120,7 +120,7 @@
 
   --color-point-red: var(--color-point-red);
   --color-point-green: var(--color-point-green);
-
+  --color-bg-line: var(--color-grey-50);
   /* icon-color*/
   --color-dot: var(--color-dot);
   --color-icon-stroke: var(--color-icon-stroke);
@@ -211,6 +211,7 @@
   );
 
   /* 모달 컬러 */
+  --color-bg-line: var(--color-grey-50);
   --color-surface-modal: #131312;
   --color-surface-modal-container: #191917;
   --color-modal-button: #232323;

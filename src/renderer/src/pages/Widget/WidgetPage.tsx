@@ -37,7 +37,7 @@ export function WidgetPage() {
         event: 'widget_page_loaded',
         timestamp: new Date().toISOString(),
       });
-      window.electronAPI.writeLog(logData).catch((error) => {
+      window.electronAPI.writeLog(logData).catch((error: unknown) => {
         console.error('위젯 페이지 로드 로그 저장 실패:', error);
       });
     }

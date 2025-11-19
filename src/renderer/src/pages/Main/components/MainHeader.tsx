@@ -1,13 +1,13 @@
 import DashboardIcon from '@assets/dashboard.svg?react';
-import PlanIcon from '@assets/plan.svg?react';
-import NotificationIcon from '../../../assets/main/bell_icon.svg?react';
 import SettingIcon from '@assets/setting.svg?react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Logo from '../../../assets/logo.svg?react';
+import NotificationIcon from '../../../assets/main/bell_icon.svg?react';
 import Symbol from '../../../assets/symbol.svg?react';
 import { Button } from '../../../components/Button/Button';
 
 import { ThemeToggleSwitch } from '../../../components/ThemeToggleSwitch/ThemeToggleSwitch';
+import { useThemePreference } from '../../../hooks/useThemePreference';
 import { cn } from '../../../utils/cn';
 
 type TabType = 'dashboard' | 'plan' | 'settings';
@@ -17,28 +17,12 @@ interface MainHeaderProps {
 }
 
 const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    // SSR 안전 가드
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('theme') === 'dark';
-  });
-
-  // 테마 상태가 바뀔 때마다 HTML 클래스 + localStorage 업데이트
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark'); // 다크모드 기억
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light'); // 라이트모드 기억
-    }
-  }, [isDark]);
+  const [isDark, setIsDark] = useThemePreference();
 
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
 
   const tabs = [
     { id: 'dashboard' as TabType, label: '대시보드', icon: DashboardIcon },
-    { id: 'plan' as TabType, label: '계획', icon: PlanIcon },
     { id: 'settings' as TabType, label: '설정', icon: SettingIcon },
   ];
 

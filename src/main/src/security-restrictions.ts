@@ -159,4 +159,35 @@ app.on('web-contents-created', (_, contents) => {
     // Disable Node.js integration
     webPreferences.nodeIntegration = false;
   });
+
+  /**
+   * Prevent page reload (F5, Ctrl+R, Cmd+R)
+   * 개발 모드에서는 허용하고 프로덕션에서만 막기
+   */
+  contents.on('before-input-event', (event, input) => {
+    // 개발 모드에서는 새로고침 허용
+    if (import.meta.env.DEV) {
+      return;
+    }
+
+    // F5 또는 새로고침 단축키 (Ctrl+R, Cmd+R) 막기
+    if (
+      input.key === 'F5' ||
+      (input.key === 'r' && (input.control || input.meta))
+    ) {
+      event.preventDefault();
+    }
+  });
+
+  /**
+   * Prevent programmatic reload
+   * 개발 모드에서는 허용하고 프로덕션에서만 막기
+   */
+  if (import.meta.env.PROD) {
+    const originalReload = contents.reload.bind(contents);
+    contents.reload = () => {
+      console.warn('Page reload is disabled in production mode');
+      // 새로고침 실행하지 않음
+    };
+  }
 });

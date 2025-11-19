@@ -1,4 +1,4 @@
-import { app, ipcMain } from 'electron';
+import { app, ipcMain, nativeTheme } from 'electron';
 import { appendFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import './security-restrictions';
@@ -68,6 +68,10 @@ function setupAPIHandlers() {
     }
   });
 
+  /* 시스템 테마 조회 핸들러 */
+  ipcMain.handle('theme:getSystemTheme', () => {
+    return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+  });
   /* Notification 핸들러 설정 */
   setupNotificationHandlers();
 }

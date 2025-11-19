@@ -1,16 +1,18 @@
-import { Button } from '../../../components';
-import ShowIcon from '@assets/show.svg?react';
 import HideIcon from '@assets/hide.svg?react';
+import ShowIcon from '@assets/show.svg?react';
+import WidgetIcon from '@assets/widget.svg?react';
+import { useCreateSessionMutation } from '../../../api/session/useCreateSessionMutation';
+import { usePauseSessionMutation } from '../../../api/session/usePauseSessionMutation';
+import { useResumeSessionMutation } from '../../../api/session/useResumeSessionMutation';
+import { useStopSessionMutation } from '../../../api/session/useStopSessionMutation';
+import { Button } from '../../../components';
 import {
   PoseLandmark,
   WorldLandmark,
 } from '../../../components/pose-detection';
-import WebcamView from '../../Calibration/components/WebcamView';
+import { useWidget } from '../../../hooks/useWidget';
 import { useCameraStore } from '../../../store/useCameraStore';
-import { useCreateSessionMutation } from '../../../api/session/useCreateSessionMutation';
-import { useStopSessionMutation } from '../../../api/session/useStopSessionMutation';
-import { usePauseSessionMutation } from '../../../api/session/usePauseSessionMutation';
-import { useResumeSessionMutation } from '../../../api/session/useResumeSessionMutation';
+import WebcamView from '../../Calibration/components/WebcamView';
 
 interface Props {
   onUserMediaError: (e: string | DOMException) => void;
@@ -28,6 +30,7 @@ const WebcamPanel = ({
   onSendMetrics,
 }: Props) => {
   const { cameraState, setShow, setHide, setExit } = useCameraStore();
+  const { toggleWidget } = useWidget();
   const isWebcamOn = cameraState === 'show';
   const isExit = cameraState === 'exit';
 
@@ -39,7 +42,6 @@ const WebcamPanel = ({
     usePauseSessionMutation();
   const { mutate: resumeSession, isPending: isResumingSession } =
     useResumeSessionMutation();
-
   const handleStartStop = () => {
     if (isExit) {
       // 시작하기: 세션 생성 후 카메라 시작
@@ -103,8 +105,23 @@ const WebcamPanel = ({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <WebcamView onPoseDetected={onPoseDetected} showPoseOverlay={true} />
-
+      <div className="relative aspect-video max-h-[198px] max-w-[352px]">
+        <WebcamView onPoseDetected={onPoseDetected} showPoseOverlay={true} />
+        <Button
+          size={'md'}
+          variant={'grey'}
+          text={
+            isWebcamOn ? (
+              <HideIcon className="h-[18px] w-[18px]" />
+            ) : (
+              <ShowIcon className="h-[18px] w-[18px]" />
+            )
+          }
+          onClick={handleToggleCamera}
+          disabled={isPausingSession || isResumingSession}
+          className="absolute top-2 right-2 h-[30px] w-[30px] px-0"
+        />
+      </div>
       <div className="flex gap-2">
         <Button
           size={'md'}
@@ -118,23 +135,21 @@ const WebcamPanel = ({
                   ? '시작하기'
                   : '종료하기'
           }
-          className="h-11 w-full max-w-[300px]"
+          className="labtop:max-w-[260px] h-11 w-full max-w-[196px]"
           onClick={handleStartStop}
           disabled={isCreatingSession || isStoppingSession}
         />
         <Button
-          size={'md'}
-          variant={'grey'}
+          size="md"
+          variant="sub"
+          onClick={toggleWidget}
+          className="h-11 w-[84px] px-[12px] py-[10px]"
           text={
-            isWebcamOn ? (
-              <HideIcon className="h-6 w-6" />
-            ) : (
-              <ShowIcon className="h-6 w-6" />
-            )
+            <div className="text-body-md-medium flex items-center gap-1 text-yellow-500">
+              <WidgetIcon className="h-6 w-6" />
+              위젯
+            </div>
           }
-          onClick={handleToggleCamera}
-          disabled={isPausingSession || isResumingSession}
-          className="h-11 w-11 px-0"
         />
       </div>
     </div>

@@ -1,9 +1,8 @@
 import DashboardIcon from '@assets/dashboard.svg?react';
-import PlanIcon from '@assets/plan.svg?react';
-import NotificationIcon from '../../../assets/main/bell_icon.svg?react';
 import SettingIcon from '@assets/setting.svg?react';
 import { useEffect, useState } from 'react';
 import Logo from '../../../assets/logo.svg?react';
+import NotificationIcon from '../../../assets/main/bell_icon.svg?react';
 import Symbol from '../../../assets/symbol.svg?react';
 import { Button } from '../../../components/Button/Button';
 
@@ -38,7 +37,6 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
 
   const tabs = [
     { id: 'dashboard' as TabType, label: '대시보드', icon: DashboardIcon },
-    { id: 'plan' as TabType, label: '계획', icon: PlanIcon },
     { id: 'settings' as TabType, label: '설정', icon: SettingIcon },
   ];
 

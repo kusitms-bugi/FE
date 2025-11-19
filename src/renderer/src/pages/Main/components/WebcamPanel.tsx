@@ -1,16 +1,16 @@
-import { Button } from '../../../components';
-import ShowIcon from '@assets/show.svg?react';
 import HideIcon from '@assets/hide.svg?react';
+import ShowIcon from '@assets/show.svg?react';
+import { useCreateSessionMutation } from '../../../api/session/useCreateSessionMutation';
+import { usePauseSessionMutation } from '../../../api/session/usePauseSessionMutation';
+import { useResumeSessionMutation } from '../../../api/session/useResumeSessionMutation';
+import { useStopSessionMutation } from '../../../api/session/useStopSessionMutation';
+import { Button } from '../../../components';
 import {
   PoseLandmark,
   WorldLandmark,
 } from '../../../components/pose-detection';
-import WebcamView from '../../Calibration/components/WebcamView';
 import { useCameraStore } from '../../../store/useCameraStore';
-import { useCreateSessionMutation } from '../../../api/session/useCreateSessionMutation';
-import { useStopSessionMutation } from '../../../api/session/useStopSessionMutation';
-import { usePauseSessionMutation } from '../../../api/session/usePauseSessionMutation';
-import { useResumeSessionMutation } from '../../../api/session/useResumeSessionMutation';
+import WebcamView from '../../Calibration/components/WebcamView';
 
 interface Props {
   onUserMediaError: (e: string | DOMException) => void;
@@ -103,8 +103,9 @@ const WebcamPanel = ({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <WebcamView onPoseDetected={onPoseDetected} showPoseOverlay={true} />
-
+      <div className='aspect-video'>
+        <WebcamView onPoseDetected={onPoseDetected} showPoseOverlay={true} />
+      </div>
       <div className="flex gap-2">
         <Button
           size={'md'}

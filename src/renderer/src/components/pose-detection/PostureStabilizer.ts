@@ -49,7 +49,6 @@ export class PostureStabilizer {
     }
 
     // 현재 점수는 이미 버퍼에 추가되어 있으므로, 이전 점수들만으로 평균 계산
-    // 버퍼의 마지막 항목이 현재 점수이므로, 그 이전 항목들의 평균을 계산
     const previousScores = this.scoreBuffer.slice(0, -1);
 
     // 이전 점수가 없으면 (버퍼에 현재 점수만 있으면) 업데이트 허용
@@ -57,10 +56,11 @@ export class PostureStabilizer {
       return true;
     }
 
-    // 이전 점수들의 평균 계산
-    const averageScore =
-      previousScores.reduce((sum, entry) => sum + entry.score, 0) /
-      previousScores.length;
+    const currentEntry = this.scoreBuffer[this.scoreBuffer.length - 1];
+    const averageScore = this.calculateWeightedAverage(
+      previousScores,
+      currentEntry.timestamp,
+    );
 
     // 현재 프레임과 이전 점수들의 평균의 오차 계산
     const scoreDifference = Math.abs(currentScore - averageScore);
@@ -89,10 +89,10 @@ export class PostureStabilizer {
   } {
     // 현재 점수를 제외한 이전 점수들의 평균 계산
     const previousScores = this.scoreBuffer.slice(0, -1);
+    const currentEntry = this.scoreBuffer[this.scoreBuffer.length - 1];
     const averageScore =
       previousScores.length > 0
-        ? previousScores.reduce((sum, entry) => sum + entry.score, 0) /
-          previousScores.length
+        ? this.calculateWeightedAverage(previousScores, currentEntry.timestamp)
         : currentScore;
     const scoreDifference = Math.abs(currentScore - averageScore);
     const shouldUpdate = this.shouldUpdate(currentScore);
@@ -112,5 +112,37 @@ export class PostureStabilizer {
    */
   public reset(): void {
     this.scoreBuffer = [];
+  }
+
+  private calculateWeightedAverage(
+    entries: Array<{ score: number; timestamp: number }>,
+    currentTimestamp: number,
+  ): number {
+    if (entries.length === 0) {
+      return 0;
+    }
+
+    let weightedSum = 0;
+    let totalWeight = 0;
+
+    for (const entry of entries) {
+      const elapsed = currentTimestamp - entry.timestamp;
+      const weight = Math.max(0, 1 - elapsed / this.windowMs);
+
+      if (weight <= 0) {
+        continue;
+      }
+
+      weightedSum += entry.score * weight;
+      totalWeight += weight;
+    }
+
+    if (totalWeight === 0) {
+      return (
+        entries.reduce((sum, entry) => sum + entry.score, 0) / entries.length
+      );
+    }
+
+    return weightedSum / totalWeight;
   }
 }

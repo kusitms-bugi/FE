@@ -21,6 +21,7 @@ type VersionInfo = {
 
 // 플랫폼 정보 (예시)
 type PlatformInfo = {
+  // eslint-disable-next-line no-undef
   os: NodeJS.Platform;
   arch: string;
 };
@@ -73,6 +74,15 @@ interface ElectronAPI {
 
   // 시스템 테마 조회
   getSystemTheme: () => Promise<SystemTheme>;
+
+  // 알림 API
+  notification: {
+    show: (
+      title: string,
+      body: string,
+    ) => Promise<{ success: boolean; error?: string }>;
+    requestPermission: () => Promise<{ success: boolean; supported: boolean }>;
+  };
 }
 
 // Expose version number to renderer
@@ -170,5 +180,17 @@ const electronAPI: ElectronAPI = {
     ipcRenderer.invoke('theme:getSystemTheme') as ReturnType<
       ElectronAPI['getSystemTheme']
     >,
+
+  // 알림 API
+  notification: {
+    show: (title: string, body: string) =>
+      ipcRenderer.invoke('notification:show', title, body) as ReturnType<
+        ElectronAPI['notification']['show']
+      >,
+    requestPermission: () =>
+      ipcRenderer.invoke('notification:requestPermission') as ReturnType<
+        ElectronAPI['notification']['requestPermission']
+      >,
+  },
 };
 contextBridge.exposeInMainWorld('electronAPI', electronAPI);

@@ -27,6 +27,16 @@ export const useLoginMutation = () => {
       localStorage.setItem('accessToken', res.data.accessToken);
       localStorage.setItem('refreshToken', res.data.refreshToken);
 
+      /* 사용자 정보 조회 후 이름 저장 */
+      try {
+        const userResponse = await api.get('/users/me');
+        if (userResponse.data.success && userResponse.data.data.name) {
+          localStorage.setItem('userName', userResponse.data.data.name);
+        }
+      } catch (error) {
+        console.error('사용자 정보 조회 실패:', error);
+      }
+
       navigate('/onboarding/init');
     },
     onError: (error) => {

@@ -1,4 +1,16 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+import { Ref } from 'react';
+
+interface RefreshResponse {
+  timestamp: string;
+  success: boolean;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+  };
+  code: string;
+  message: string | null;
+}
 
 const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL as string,
@@ -28,28 +40,37 @@ api.interceptors.response.use(
       _retry?: boolean;
     }; // 무한 요청 방지
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    /* 에러가 401,403일 때  토큰 갱신 */
+    if (
+      (error.response?.status === 401 || error.response?.status === 403) &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
       try {
         const refreshToken = localStorage.getItem('refreshToken');
 
-        const { data: newToken } = await axios.post<{
-          accessToken: string;
-          refreshToken: string;
-        }>(
+        const { data: newToken } = await axios.post<RefreshResponse>(
           `${import.meta.env.VITE_BASE_URL}/auth/refresh`,
           { refreshToken },
           { withCredentials: true },
         );
 
-        localStorage.setItem('accessToken', newToken.accessToken);
-        localStorage.setItem('refreshToken', newToken.refreshToken);
+        /* success가 false이거나 응답으로 온 데이터가 비었을 때 */
+        if (!newToken.success || !newToken.data) {
+          throw new Error('Refresh token expired');
+        }
+
+        /* 새로 발급 받은 토큰 저장 */
+        const newAccessToken = newToken.data.accessToken;
+        const newRefreshToken = newToken.data.refreshToken;
+
+        localStorage.setItem('accessToken', newAccessToken);
+        localStorage.setItem('refreshToken', newRefreshToken);
 
         api.defaults.headers.common['Authorization'] =
-          `Bearer ${newToken.accessToken}`;
+          `Bearer ${newAccessToken}`;
         if (originalRequest.headers) {
-          originalRequest.headers['Authorization'] =
-            `Bearer ${newToken.accessToken}`;
+          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         }
 
         return api(originalRequest);

@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getColor } from '../../../../../utils/getColor';
-import { MONTHLY_DATA, WEEKLY_DATA, type AverageGraphDatum } from '../data';
+import { getColor } from '@utils/getColor';
+import { usePostureGraphQuery } from '@api/dashboard/usePostureGraphQuery';
 
-{
-  /* 주간/월간 */
-}
+type AverageGraphDatum = {
+  periodLabel: string;
+  score: number;
+};
+
 export type AverageGraphPeriod = 'weekly' | 'monthly';
 
 type ChartConfig = {
@@ -20,6 +22,8 @@ export function useAverageGraphChart(activePeriod: AverageGraphPeriod) {
   const [isDark, setIsDark] = useState(() =>
     document.documentElement.classList.contains('dark'),
   );
+
+  const { data: apiData } = usePostureGraphQuery();
 
   /* html의 class 속성 변경될 때마다 콜백 실행(다크모드 감지) */
   useEffect(() => {
@@ -42,7 +46,23 @@ export function useAverageGraphChart(activePeriod: AverageGraphPeriod) {
       '#ffbf00',
     );
 
-    const data = activePeriod === 'weekly' ? WEEKLY_DATA : MONTHLY_DATA;
+    /* API 데이터를 그래프 형식으로 변환 */
+    let data: AverageGraphDatum[] = [];
+    if (apiData?.data?.points) {
+      const points = apiData.data.points;
+      const sortedEntries = Object.entries(points).sort(([dateA], [dateB]) =>
+        dateA.localeCompare(dateB),
+      );
+
+      /* 주간: 최근 7일, 월간: 전체 31일 */
+      const slicedEntries =
+        activePeriod === 'weekly' ? sortedEntries.slice(-7) : sortedEntries;
+
+      data = slicedEntries.map(([date, score]) => ({
+        periodLabel: new Date(date).getDate().toString(),
+        score,
+      }));
+    }
 
     /* 최댓값 100 */
     const domainMax = 100;
@@ -58,7 +78,7 @@ export function useAverageGraphChart(activePeriod: AverageGraphPeriod) {
       gridColor: gridColorValue,
       yAxisTicks: ticks,
     };
-  }, [activePeriod, isDark]);
+  }, [activePeriod, isDark, apiData]);
 
   return chartConfig;
 }

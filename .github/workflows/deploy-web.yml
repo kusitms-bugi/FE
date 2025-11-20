@@ -63,6 +63,12 @@ jobs:
           fi
 
       - name: Build web app (renderer)
+        env:
+          # GitHub Secrets에서 환경변수 가져오기
+          # VITE_ 접두사가 붙은 환경변수만 클라이언트 번들에 포함됨
+          VITE_BASE_URL: ${{ secrets.VITE_BASE_URL }}
+          # 필요한 다른 환경변수들도 여기에 추가
+          # VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
         run: |
           pnpm run build:renderer
           echo "✅ Build completed"

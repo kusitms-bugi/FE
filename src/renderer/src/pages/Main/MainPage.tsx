@@ -11,7 +11,7 @@ import { useCameraStore } from '../../store/useCameraStore';
 import { usePostureStore } from '../../store/usePostureStore';
 import { MetricData } from '../../types/main/session';
 import AttendacePanel from './components/AttendacePanel';
-import AveragePosturePanel from './components/AveragePosturePanel';
+import AveragePosturePanel from './components/AveragePosture/AveragePosturePanel';
 import HighlightsPanel from './components/HighlightsPanel';
 import MainHeader from './components/MainHeader';
 import MiniRunningPanel from './components/MiniRunningPanel';

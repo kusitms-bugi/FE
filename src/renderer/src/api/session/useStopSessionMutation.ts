@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { SessionActionResponse } from '../../types/main/session';
 
@@ -29,6 +29,8 @@ const stopSession = async (
  * stopSession(sessionId);
  */
 export const useStopSessionMutation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: stopSession,
     onSuccess: () => {
@@ -42,6 +44,9 @@ export const useStopSessionMutation = () => {
 
       // sessionId를 localStorage에서 제거
       localStorage.removeItem('sessionId');
+
+      // 평균 자세 점수 쿼리 갱신
+      queryClient.invalidateQueries({ queryKey: ['averageScore'] });
     },
     onError: (error) => {
       console.error('세션 중단 오류:', error);

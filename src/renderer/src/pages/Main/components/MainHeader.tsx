@@ -1,6 +1,7 @@
 import DashboardIcon from '@assets/dashboard.svg?react';
 import SettingIcon from '@assets/setting.svg?react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Logo from '../../../assets/logo.svg?react';
 import NotificationIcon from '../../../assets/main/bell_icon.svg?react';
 import Symbol from '../../../assets/symbol.svg?react';
@@ -18,8 +19,15 @@ interface MainHeaderProps {
 
 const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
   const [isDark, setIsDark] = useThemePreference();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
+
+  /* 임시 로그아웃 기능 */
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
+  };
 
   const tabs = [
     { id: 'dashboard' as TabType, label: '대시보드', icon: DashboardIcon },
@@ -44,7 +52,13 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
             return (
               <Button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => {
+                  if (tab.id === 'settings') {
+                    handleLogout();
+                  } else {
+                    setActiveTab(tab.id);
+                  }
+                }}
                 variant={isActive ? 'primary' : 'grey'}
                 size="sm"
                 className={cn(

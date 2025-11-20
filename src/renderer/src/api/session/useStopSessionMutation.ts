@@ -47,6 +47,9 @@ export const useStopSessionMutation = () => {
 
       // 평균 자세 점수 쿼리 갱신
       queryClient.invalidateQueries({ queryKey: ['averageScore'] });
+
+      // 레벨 쿼리 갱신
+      queryClient.invalidateQueries({ queryKey: ['level'] });
     },
     onError: (error) => {
       console.error('세션 중단 오류:', error);

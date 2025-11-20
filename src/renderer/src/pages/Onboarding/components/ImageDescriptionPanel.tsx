@@ -81,9 +81,10 @@ const ImageDescriptionPannel = ({
           ) : (
             stepImage && (
               <img
+                key={`${currentStep}-${isDark}`}
                 src={stepImage}
                 alt={`step ${currentStep}`}
-                className="h-full object-contain"
+                className="animate-fade-in h-full object-contain"
               />
             )
           )}

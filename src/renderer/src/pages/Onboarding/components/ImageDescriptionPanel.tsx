@@ -1,13 +1,31 @@
 import FirstImageDescription from './FirstImageDescription';
 import PrevIcon from '@assets/onboarding/prev_icon.svg?react';
-import FirstImage from '@assets/onboarding/first_image.svg?react';
-import SecondImage from '@assets/onboarding/second_image.svg?react';
-import ThirdImage from '@assets/onboarding/third_image.svg?react';
-import FourthImage from '@assets/onboarding/fourth_image.svg?react';
+import firstImage from '@assets/onboarding/first_image.png';
+import secondImage from '@assets/onboarding/second_image.png';
+import thirdImage from '@assets/onboarding/third_image.png';
+import fourthImage from '@assets/onboarding/fourth_image.png';
+import firstDarkImage from '@assets/onboarding/first_dark_image.png';
+import secondDarkImage from '@assets/onboarding/second_dark_image.png';
+import thirdDarkImage from '@assets/onboarding/third_dark_image.png';
+import fourthDarkImage from '@assets/onboarding/fourth_dark_image.png';
 import RockIcon from '@assets/onboarding/rock_icon.svg?react';
+import { useState, useEffect } from 'react';
 
 /* 단계별 이미지 (1단계는 null, 2~5단계는 이미지) */
-const STEP_IMAGES = [null, FirstImage, SecondImage, ThirdImage, FourthImage];
+const STEP_IMAGES_LIGHT = [
+  null,
+  firstImage,
+  secondImage,
+  thirdImage,
+  fourthImage,
+];
+const STEP_IMAGES_DARK = [
+  null,
+  firstDarkImage,
+  secondDarkImage,
+  thirdDarkImage,
+  fourthDarkImage,
+];
 
 interface ImageDescriptionPannelProps {
   currentStep: number;
@@ -20,7 +38,25 @@ const ImageDescriptionPannel = ({
   onPrev,
   direction,
 }: ImageDescriptionPannelProps) => {
-  const StepImage = STEP_IMAGES[currentStep - 1];
+  const [isDark, setIsDark] = useState(() =>
+    document.documentElement.classList.contains('dark'),
+  );
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const stepImages = isDark ? STEP_IMAGES_DARK : STEP_IMAGES_LIGHT;
+  const stepImage = stepImages[currentStep - 1];
 
   return (
     <div className="h-full min-w-[894px] flex-1">
@@ -38,15 +74,17 @@ const ImageDescriptionPannel = ({
         {/* 1단계: FirstImageDescription, 2~5단계: 이미지 */}
         <div
           key={currentStep}
-          className={
-            direction === 'next' ? 'animate-slide-next' : 'animate-slide-prev'
-          }
+          className={`flex aspect-[784/510] w-full max-w-[1010px] items-center p-5 ${direction === 'next' ? 'animate-slide-next' : 'animate-slide-prev'}`}
         >
           {currentStep === 1 ? (
             <FirstImageDescription />
           ) : (
-            StepImage && (
-              <StepImage className="aspect-[784/510] w-full object-cover" />
+            stepImage && (
+              <img
+                src={stepImage}
+                alt={`step ${currentStep}`}
+                className="h-full object-contain"
+              />
             )
           )}
         </div>

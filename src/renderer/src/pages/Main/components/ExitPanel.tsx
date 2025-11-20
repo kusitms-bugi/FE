@@ -44,13 +44,12 @@ const ExitPanel = () => {
     );
   };
 
-  // 예시 데이터 , 세션 조회 api 수정 후 수정하기
-  const totalTime = 169; // 총 169분 (2시간 49분)
-  const correctPostureTime = 54; // 바른 자세 시간 (분)
-  const correctPosturePercentage = Math.round(
-    (correctPostureTime / totalTime) * 100,
-  ); // 32%
-  const score = 80; // 바른 자세 점수
+  // 세션 조회 API 데이터 사용
+  const totalTime = Math.round((data?.data.totalSeconds || 0) / 60); // 초를 분으로 변환
+  const correctPostureTime = Math.round((data?.data.goodSeconds || 0) / 60); // 바른 자세 시간 (분)
+  const correctPosturePercentage =
+    totalTime > 0 ? Math.round((correctPostureTime / totalTime) * 100) : 0;
+  const score = data?.data.score || 0; // 바른 자세 점수
 
   // CSS 변수에서 색상 가져오기 (다크모드 변경 시 재계산)
   const colors = useMemo(
@@ -179,7 +178,7 @@ const ExitPanel = () => {
 
               {/* 2. 바깥쪽 링 프로그레스 (녹색, 둥글게) */}
               <Pie
-                data={ScoreProgressData}
+                data={TimeProgressData}
                 cx="50%"
                 cy="50%"
                 innerRadius={92}
@@ -191,7 +190,7 @@ const ExitPanel = () => {
                 paddingAngle={0}
                 cornerRadius={10}
               >
-                <Cell fill={ScoreProgressData[0].color} />
+                <Cell fill={TimeProgressData[0].color} />
               </Pie>
 
               {/* 3. 안쪽 링 배경 (회색, 둥글지 않음) */}
@@ -214,7 +213,7 @@ const ExitPanel = () => {
 
               {/* 4. 안쪽 링 프로그레스 (노란색, 둥글게) */}
               <Pie
-                data={TimeProgressData}
+                data={ScoreProgressData}
                 cx="50%"
                 cy="50%"
                 innerRadius={77.75}
@@ -226,7 +225,7 @@ const ExitPanel = () => {
                 paddingAngle={0}
                 cornerRadius={10}
               >
-                <Cell fill={TimeProgressData[0].color} />
+                <Cell fill={ScoreProgressData[0].color} />
               </Pie>
             </PieChart>
           </ResponsiveContainer>

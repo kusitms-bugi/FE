@@ -7,6 +7,7 @@ import MainPage from '../pages/Main/MainPage';
 import OnboardingCompletionPage from '../pages/Onboarding/OnboardingCompletionPage';
 import OnboardingPage from '../pages/Onboarding/OnboardingPage';
 import EmailVerificationPage from '../pages/SignUp/EmailVerificationPage';
+import EmailVerificationCallbackPage from '../pages/SignUp/EmailVerificationCallbackPage';
 import ResendVerificationPage from '../pages/SignUp/ResendVerificationPage';
 import SignUpPage from '../pages/SignUp/SignUpPage';
 import { WidgetPage } from '../pages/Widget/WidgetPage';
@@ -61,6 +62,7 @@ export const router = createBrowserRouter([
       },
       { path: 'signup', element: <SignUpPage /> },
       { path: 'verify', element: <EmailVerificationPage /> },
+      { path: 'verify-callback', element: <EmailVerificationCallbackPage /> },
       { path: 'resend', element: <ResendVerificationPage /> },
     ],
   },

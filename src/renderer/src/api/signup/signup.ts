@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import api from '../api';
 import { useNavigate } from 'react-router-dom';
+import api from '../api';
 
 export interface SignupRequest {
   email: string;
@@ -20,7 +20,7 @@ const duplicatedEmail = async (email: string) => {
 const signupUser = async (data: SignupRequest) => {
   const response = await api.post(`/auth/sign-up`, {
     ...data,
-    callbackUrl: `${window.location.origin}/auth/verify`,
+    callbackUrl: `${window.location.origin}/auth/verify-callback`,
   });
   const result = response.data;
 

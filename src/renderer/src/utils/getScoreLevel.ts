@@ -109,3 +109,4 @@ export function getAllLevelDefinitions(): ScoreLevelInfo[] {
   return Object.values(LEVEL_DEFINITIONS);
 }
 
+

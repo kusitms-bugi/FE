@@ -141,6 +141,28 @@ const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
   );
 };
 
+// subContent 값에 따른 메시지 매핑
+const getSubContentMessage = (subContent?: string): string => {
+  if (!subContent) {
+    return '당신은 매일 골든리트리버 한 마리를 목에 업고 작업한 것과 같아요 🥺';
+  }
+
+  const messageMap: Record<string, string> = {
+    뽀각거부기:
+      '뚠뚠한 골든리트리버 한 마리를 매일 목에 업고 있어요🐶 귀엽지만, 당신의 목은 울고 있습니다...',
+    꾸부정거부기:
+      '기내용 캐리어를 목 위에 올려두고 앉아 있는 셈이에요 🧳 집중력도 꾸욱 같이 줌...',
+    아기기린:
+      '무거운 볼링공을 목에 걸고 일하는 중이에요 🎳 장난 같지만, 경추에겐 꽤 진지한 무게예요.',
+    쑥쑥기린:
+      '작은 수박 한 통 정도를 목에 얹은 상태예요 🍉 살짝만 목을 쑥쑥 펴볼까요?',
+    꽃꼿기린:
+      '머리 본연의 무게만 딱! 집중력, 체력, 생산성 버프 다 받는 중',
+  };
+
+  return messageMap[subContent] || subContent;
+};
+
 const AttendacePanel = () => {
   // 오늘 월(1일)로 정규화
   const today = new Date();
@@ -238,8 +260,7 @@ const AttendacePanel = () => {
         </div>
         <div className="bg-grey-50 h-px w-full" />
         <div className="text-grey-500 text-caption-sm-medium flex h-[calc(100%-84px)] w-full items-center">
-          {attendanceData?.data.subContent ||
-            '당신은 매일 골든리트리버 한 마리를 목에 업고 작업한 것과 같아요 🥺'}
+          {getSubContentMessage(attendanceData?.data.subContent)}
         </div>
       </div>
     </div>

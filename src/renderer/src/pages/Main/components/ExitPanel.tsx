@@ -175,7 +175,6 @@ const ExitPanel = () => {
                 <Cell fill={innerBackgroundData[0].color} />
               </Pie>
 
-              {/* 4. 안쪽 링 프로그레스 (노란색, 둥글게) */}
               <Pie
                 data={ScoreProgressData}
                 cx="50%"
@@ -183,7 +182,7 @@ const ExitPanel = () => {
                 innerRadius={77.75}
                 outerRadius={92}
                 startAngle={450}
-                endAngle={450 - (correctPosturePercentage / 100) * 360}
+                endAngle={450 - (75 / 100) * 360}
                 dataKey="value"
                 stroke="none"
                 paddingAngle={0}
@@ -215,7 +214,7 @@ const ExitPanel = () => {
                 바른 자세 시간
               </span>
               <span className="text-headline-2xl-semibold text-grey-600">
-                {correctPosturePercentage}%
+                {75}%
               </span>
             </p>
           </div>

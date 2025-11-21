@@ -118,7 +118,7 @@ const MainPage = () => {
     if (timeSinceLastSave >= 1000) {
       // 1초(1000ms) 이상 지났으면 저장
       metricsRef.current.push({
-        score: result.Score,
+        score: result.cls, // 자세 상태별 레벨 (1~6) 저장
         timestamp: new Date().toISOString(),
       });
       lastSaveTimeRef.current = currentTime;

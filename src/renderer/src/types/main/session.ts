@@ -19,7 +19,7 @@ export interface SessionActionResponse {
 
 /* 세션 메트릭 데이터 타입 */
 export interface MetricData {
-  score: number;
+  score: number; // 자세 상태별 레벨 (1~6)
   timestamp: string;
 }
 

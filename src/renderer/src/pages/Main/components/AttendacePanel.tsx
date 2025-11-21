@@ -22,9 +22,9 @@ interface CircleProps {
 const LEVEL_COLORS = [
   'bg-yellow-500', // 1레벨
   'bg-yellow-400', // 2레벨
-  'bg-yellow-200', // 3레벨
-  'bg-yellow-100', // 4레벨
-  'bg-yellow-50', // 5레벨
+  'bg-yellow-300', // 3레벨
+  'bg-yellow-200', // 4레벨
+  'bg-yellow-100', // 5레벨
 ] as const;
 
 const Circle = ({ level, today, future }: CircleProps) => {
@@ -96,7 +96,7 @@ const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
     if (level === undefined || level === null) return null;
 
     // 레벨이 1~5 범위를 벗어나면 클램프
-    return Math.min(Math.max(level, 1), LEVEL_COLORS.length);
+    return Math.min(Math.max(level / 60, 0), LEVEL_COLORS.length);
   };
 
   const isFutureDay = (day: number) => {
@@ -149,15 +149,15 @@ const getSubContentMessage = (subContent?: string): string => {
 
   const messageMap: Record<string, string> = {
     뽀각거부기:
-      '뚠뚠한 골든리트리버 한 마리를 매일 목에 업고 있어요🐶 귀엽지만, 당신의 목은 울고 있습니다...',
+      '뚠뚠한 골든리트리버 한 마리를 매일 목에 업고 있어요 🐶',
     꾸부정거부기:
-      '기내용 캐리어를 목 위에 올려두고 앉아 있는 셈이에요 🧳 집중력도 꾸욱 같이 줌...',
+      '기내용 캐리어를 목 위에 올려두고 앉아 있는 셈이에요 🧳',
     아기기린:
-      '무거운 볼링공을 목에 걸고 일하는 중이에요 🎳 장난 같지만, 경추에겐 꽤 진지한 무게예요.',
+      '무거운 볼링공을 목에 걸고 일하는 중이에요 🎳',
     쑥쑥기린:
-      '작은 수박 한 통 정도를 목에 얹은 상태예요 🍉 살짝만 목을 쑥쑥 펴볼까요?',
+      '작은 수박 한 통 정도를 목에 얹은 상태예요 🍉',
     꽃꼿기린:
-      '머리 본연의 무게만 딱! 집중력, 체력, 생산성 버프 다 받는 중',
+      '머리 본연의 무게만 딱! 지금 아주 좋아요 🌸',
   };
 
   return messageMap[subContent] || subContent;

@@ -22,9 +22,9 @@ interface CircleProps {
 const LEVEL_COLORS = [
   'bg-yellow-500', // 1레벨
   'bg-yellow-400', // 2레벨
-  'bg-yellow-200', // 3레벨
-  'bg-yellow-100', // 4레벨
-  'bg-yellow-50', // 5레벨
+  'bg-yellow-300', // 3레벨
+  'bg-yellow-200', // 4레벨
+  'bg-yellow-100', // 5레벨
 ] as const;
 
 const Circle = ({ level, today, future }: CircleProps) => {
@@ -96,7 +96,7 @@ const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
     if (level === undefined || level === null) return null;
 
     // 레벨이 1~5 범위를 벗어나면 클램프
-    return Math.min(Math.max(level, 1), LEVEL_COLORS.length);
+    return Math.min(Math.max(level / 60, 0), LEVEL_COLORS.length);
   };
 
   const isFutureDay = (day: number) => {

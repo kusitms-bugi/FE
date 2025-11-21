@@ -64,7 +64,7 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
                 className={cn(
                   'group',
                   isActive
-                    ? 'text-grey-1000 bg-yellow-400'
+                    ? 'text-grey-1000 dark:text-grey-0 bg-yellow-400'
                     : 'bg-grey-25 text-grey-400 group-hover:text-grey-700',
                 )}
                 text={
@@ -73,7 +73,7 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
                       className={cn(
                         'h-[18px] w-[18px]',
                         isActive
-                          ? 'text-grey-1000'
+                          ? 'text-grey-1000 dark:text-grey-0'
                           : 'text-grey-400 group-hover:text-grey-700',
                       )}
                     />

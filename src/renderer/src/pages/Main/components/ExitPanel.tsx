@@ -186,17 +186,28 @@ const ExitPanel = () => {
 
         {/* 하단 지표 */}
         <div className="flex flex-col gap-7">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center">
             <div
               className="h-4 w-2 rounded-full"
               style={{ backgroundColor: colors.time }}
             />
-            <p className="flex flex-1 items-center justify-between">
+            <p className="ml-1 flex flex-1 items-center justify-between">
               <span className="text-body-md-medium text-grey-400">
                 바른 자세 시간
               </span>
               <span className="text-headline-2xl-semibold text-grey-600">
                 {72}%
+              </span>
+            </p>
+          </div>
+
+          <div className="bg-grey-25 flex flex-col rounded-[24px] p-5">
+            <p className="flex flex-col gap-2 px-5">
+              <span className="text-body-sm-medium text-grey-400">
+                바른 자세 점수
+              </span>
+              <span className="text-body-xl-semibold text-grey-600">
+                {score}점
               </span>
             </p>
           </div>

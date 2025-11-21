@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useHighlightQuery } from '../../../../../api/dashboard/useHighlightQuery';
 import { getColor } from '../../../../../utils/getColor';
-import { MONTHLY_DATA, WEEKLY_DATA, type HighlightDatum } from '../data';
+import type { HighlightDatum } from '../data';
 
 export type HighlightPeriod = 'weekly' | 'monthly';
 
@@ -48,6 +49,43 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
     return () => observer.disconnect();
   }, []);
 
+  // 현재 날짜 기준으로 year, month 계산
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1; // getMonth()는 0-11 반환
+
+  // API 호출
+  const { data: highlightData, isLoading } = useHighlightQuery({
+    period: activePeriod === 'weekly' ? 'WEEKLY' : 'MONTHLY',
+    year: currentYear,
+    month: activePeriod === 'monthly' ? currentMonth : undefined,
+  });
+
+  // API 데이터를 차트 데이터 형식으로 변환
+  const chartData = useMemo<HighlightDatum[]>(() => {
+    if (!highlightData?.data) {
+      return [];
+    }
+
+    const periodLabel =
+      activePeriod === 'weekly'
+        ? ['저번 주', '이번 주']
+        : ['저번 달', '이번 달'];
+
+    return [
+      {
+        periodLabel: periodLabel[0],
+        value: highlightData.data.previous,
+        barKey: 'previous',
+      },
+      {
+        periodLabel: periodLabel[1],
+        value: highlightData.data.current,
+        barKey: 'current',
+      },
+    ];
+  }, [highlightData, activePeriod]);
+
   // CSS 변수에서 색상 가져오기 (다크모드 변경 시 재계산)
   const chartColors = useMemo<ChartColors>(
     () => ({
@@ -85,28 +123,12 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
 
     const domainPadding = 40;
 
-    if (activePeriod === 'weekly') {
-      const calculatedMaxValue =
-        WEEKLY_DATA.reduce((acc, item) => Math.max(acc, item.value), 0) +
-        domainPadding;
-      const maxValue = Math.ceil(calculatedMaxValue / 100) * 100;
-      const ticks: number[] = Array.from(
-        { length: maxValue / 100 + 1 },
-        (_, i) => i * 100,
-      );
-
-      return {
-        ...baseConfig,
-        data: WEEKLY_DATA,
-        maxDomain: maxValue,
-        yAxisTicks: ticks,
-      };
-    }
-
-    // activePeriod === 'monthly'
+    // 데이터가 없거나 로딩 중일 때 기본값 설정
     const calculatedMaxValue =
-      MONTHLY_DATA.reduce((acc, item) => Math.max(acc, item.value), 0) +
-      domainPadding;
+      chartData.length > 0
+        ? chartData.reduce((acc, item) => Math.max(acc, item.value), 0) +
+          domainPadding
+        : domainPadding;
     const maxValue = Math.ceil(calculatedMaxValue / 100) * 100;
     const ticks: number[] = Array.from(
       { length: maxValue / 100 + 1 },
@@ -115,11 +137,11 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
 
     return {
       ...baseConfig,
-      data: MONTHLY_DATA,
+      data: chartData,
       maxDomain: maxValue,
       yAxisTicks: ticks,
     };
-  }, [activePeriod, chartColors]);
+  }, [activePeriod, chartColors, chartData]);
 
   return chartConfig;
 }

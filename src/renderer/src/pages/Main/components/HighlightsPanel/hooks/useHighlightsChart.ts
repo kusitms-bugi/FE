@@ -63,14 +63,26 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
 
   // API 데이터를 차트 데이터 형식으로 변환
   const chartData = useMemo<HighlightDatum[]>(() => {
-    if (!highlightData?.data) {
-      return [];
-    }
-
     const periodLabel =
       activePeriod === 'weekly'
         ? ['저번 주', '이번 주']
         : ['저번 달', '이번 달'];
+
+    // 데이터가 없거나 로딩 중일 때 기본값 반환
+    if (!highlightData?.data || isLoading) {
+      return [
+        {
+          periodLabel: periodLabel[0],
+          value: 0,
+          barKey: 'previous',
+        },
+        {
+          periodLabel: periodLabel[1],
+          value: 0,
+          barKey: 'current',
+        },
+      ];
+    }
 
     return [
       {
@@ -84,7 +96,7 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
         barKey: 'current',
       },
     ];
-  }, [highlightData, activePeriod]);
+  }, [highlightData, activePeriod, isLoading]);
 
   // CSS 변수에서 색상 가져오기 (다크모드 변경 시 재계산)
   const chartColors = useMemo<ChartColors>(

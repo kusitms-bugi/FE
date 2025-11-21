@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
-import { Ref } from 'react';
 
 interface RefreshResponse {
   timestamp: string;
@@ -34,7 +33,25 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // 200 OK 응답이지만 세션 만료 코드인 경우 처리
+    const responseData = response.data as {
+      code?: string;
+      success?: boolean;
+      message?: string;
+    };
+
+    // AUTH-101 코드인 경우 세션 만료로 처리 (대소문자 구분 없음)
+    if (responseData.code?.toUpperCase() === 'AUTH-101') {
+      // 세션 만료 처리
+      localStorage.clear();
+      window.location.href = '/';
+      // 에러로 처리하여 이후 로직 실행 방지
+      throw new Error(responseData.message || 'Session expired');
+    }
+
+    return response;
+  },
   async (error: AxiosError) => {
     const originalRequest = error.config as AxiosRequestConfig & {
       _retry?: boolean;

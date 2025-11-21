@@ -1,19 +1,18 @@
-import { Button } from '@ui/index';
+import FifthIcon from '@assets/onboarding/fifth_progress_icon.svg?react';
 import FirstIcon from '@assets/onboarding/first_progress_icon.svg?react';
+import FourthIcon from '@assets/onboarding/fourth_progress_icon.svg?react';
 import SecondIcon from '@assets/onboarding/second_progress_icon.svg?react';
 import ThirdIcon from '@assets/onboarding/third_progress_icon.svg?react';
-import FourthIcon from '@assets/onboarding/fourth_progress_icon.svg?react';
-import FifthIcon from '@assets/onboarding/fifth_progress_icon.svg?react';
+import { Button } from '@ui/index';
 
 // 단계별 아이콘
 const STEP_ICONS = [FirstIcon, SecondIcon, ThirdIcon, FourthIcon, FifthIcon];
 
-// 단계별 데이터
-const STEP_DATA = [
+// 단계별 데이터 (userName은 컴포넌트에서 주입)
+const getStepData = (userName: string) => [
   {
     title: '바른 자세 분석',
-    description:
-      '이제부터 Username님이 일하는 동안 웹캠을 통해 실시간으로 자세를 분석해 드릴게요.',
+    description: `이제부터 ${userName}님이 일하는 동안 웹캠을 통해 실시간으로 자세를 분석해 드릴게요.`,
   },
   {
     title: '실시간 위젯 피드백',
@@ -48,6 +47,8 @@ interface InfoPanelProps {
 }
 
 const InfoPanel = ({ currentStep, onNext, direction }: InfoPanelProps) => {
+  const userName = localStorage.getItem('userName') || '사용자';
+  const STEP_DATA = getStepData(userName);
   const stepData = STEP_DATA[currentStep - 1];
   const StepIcon = STEP_ICONS[currentStep - 1];
 
@@ -60,9 +61,8 @@ const InfoPanel = ({ currentStep, onNext, direction }: InfoPanelProps) => {
             {Array.from({ length: 5 }).map((_, index) => (
               <span
                 key={index}
-                className={`bg-sementic-brand-primary h-[6px] flex-[1_0_0] rounded-full ${
-                  index < currentStep ? 'opacity-100' : 'opacity-20'
-                }`}
+                className={`bg-sementic-brand-primary h-[6px] flex-[1_0_0] rounded-full ${index < currentStep ? 'opacity-100' : 'opacity-20'
+                  }`}
               />
             ))}
           </div>

@@ -1,16 +1,22 @@
 import DownIcon from '@assets/arrow-narrow-down.svg?react';
 import UpIcon from '@assets/arrow-narrow-up.svg?react';
 import { useState } from 'react';
+import { useAttendanceQuery } from '../../../api/dashboard/useAttendanceQuery';
 import { IntensitySlider } from '../../../components/IntensitySlider/IntensitySlider';
 import { PageMoveButton } from '../../../components/PageMoveButton/PageMoveButton';
 import { PannelHeader } from '../../../components/PannelHeader/PannelHeader';
 import { ToggleSwitch } from '../../../components/ToggleSwitch/ToggleSwitch';
 
-type CalendarProps = { year: number; month: number }; // month: 0~11
+type CalendarProps = {
+  year: number;
+  month: number; // month: 0~11
+  attendances?: Record<string, number>; // 날짜별 레벨 값
+};
 
 interface CircleProps {
-  level: number; // 1~5
+  level: number | null; // 1~5 또는 null (데이터 없음)
   today: boolean;
+  future: boolean;
 }
 
 const LEVEL_COLORS = [
@@ -21,8 +27,27 @@ const LEVEL_COLORS = [
   'bg-yellow-50', // 5레벨
 ] as const;
 
-const Circle = ({ level, today }: CircleProps) => {
-  // 혹시 level이 1~5를 벗어나면 안전하게 클램프
+const Circle = ({ level, today, future }: CircleProps) => {
+  // 미래 날짜
+  if (future) {
+    return (
+      <div className="border-bg-line h-[18px] w-[18px] rounded-full border bg-transparent" />
+    );
+  }
+
+  // 데이터 없는 날 (안 사용한 날)
+  if (!level) {
+    return (
+      <div
+        className={[
+          'h-[18px] w-[18px] rounded-full bg-grey-50',
+          today ? 'ring-2 ring-yellow-500 ring-offset-2 ring-offset-grey-0' : '',
+        ].join(' ')}
+      />
+    );
+  }
+
+  // 데이터 있는 날 (레벨 색 Circle)
   const clampedLevel = Math.min(Math.max(level, 1), LEVEL_COLORS.length);
   const colorClass = LEVEL_COLORS[clampedLevel - 1];
 
@@ -31,15 +56,13 @@ const Circle = ({ level, today }: CircleProps) => {
       className={[
         'h-[18px] w-[18px] rounded-full',
         colorClass,
-        today
-          ? 'ring-[2px] ring-yellow-500 ring-offset-[2px] ring-offset-grey-0'
-          : ''
+        today ? 'ring-2 ring-yellow-500 ring-offset-2 ring-offset-grey-0' : '',
       ].join(' ')}
     />
   );
 };
 
-const Calendar = ({ year, month }: CalendarProps) => {
+const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
   const days = ['일', '월', '화', '수', '목', '금', '토'];
 
   const firstDayOfMonth = new Date(year, month, 1).getDay();
@@ -63,13 +86,17 @@ const Calendar = ({ year, month }: CalendarProps) => {
 
   const isSameMonth = todayYear === year && todayMonth === month;
 
-  // 🔥 레벨/사용 여부는 실제 데이터 들어오면 여기만 갈아끼우면 됨
+  // API 데이터에서 날짜별 레벨 가져오기
   const getLevelForDay = (day: number): number | null => {
-    // 예시: 4의 배수 날짜는 "안 사용한 날"이라고 가정해서 null 리턴
-    if (day % 4 === 0) return null;
+    // 날짜를 YYYY-MM-DD 형식으로 변환
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const level = attendances[dateStr];
 
-    // 그 외에는 1~5 레벨 순환
-    return ((day - 1) % LEVEL_COLORS.length) + 1;
+    // 레벨이 없으면 null (안 사용한 날)
+    if (level === undefined || level === null) return null;
+
+    // 레벨이 1~5 범위를 벗어나면 클램프
+    return Math.min(Math.max(level, 1), LEVEL_COLORS.length);
   };
 
   const isFutureDay = (day: number) => {
@@ -96,35 +123,44 @@ const Calendar = ({ year, month }: CalendarProps) => {
       <div className="mt-[5px] grid h-full grid-cols-7 gap-x-1 gap-y-1 text-center">
         {calendarDays.map((day, index) => (
           <div key={index} className="flex items-center justify-center">
-            {day !== null &&
-              (() => {
-                const future = isFutureDay(day);
-                const isToday = isSameMonth && day === todayDate;
-
-                if (future) {
-                  // 👉 미래 날짜: bg-transparent border-bg-line
-                  return (
-                    <div className="border-bg-line h-[18px] w-[18px] rounded-full border bg-transparent" />
-                  );
+            {day !== null && (
+              <Circle
+                level={getLevelForDay(day)}
+                today={
+                  year === todayYear &&
+                  month === todayMonth &&
+                  day === todayDate
                 }
-
-                const level = getLevelForDay(day);
-
-                if (!level) {
-                  // 👉 안 사용한 날: bg-grey-50
-                  return (
-                    <div className="bg-grey-50 h-[18px] w-[18px] rounded-full" />
-                  );
-                }
-
-                // 👉 사용한 날: 레벨 색 Circle
-                return <Circle level={level} today={isToday} />;
-              })()}
+                future={isFutureDay(day)}
+              />
+            )}
           </div>
         ))}
       </div>
     </div>
   );
+};
+
+// subContent 값에 따른 메시지 매핑
+const getSubContentMessage = (subContent?: string): string => {
+  if (!subContent) {
+    return '당신은 매일 골든리트리버 한 마리를 목에 업고 작업한 것과 같아요 🥺';
+  }
+
+  const messageMap: Record<string, string> = {
+    뽀각거부기:
+      '뚠뚠한 골든리트리버 한 마리를 매일 목에 업고 있어요🐶 귀엽지만, 당신의 목은 울고 있습니다...',
+    꾸부정거부기:
+      '기내용 캐리어를 목 위에 올려두고 앉아 있는 셈이에요 🧳 집중력도 꾸욱 같이 줌...',
+    아기기린:
+      '무거운 볼링공을 목에 걸고 일하는 중이에요 🎳 장난 같지만, 경추에겐 꽤 진지한 무게예요.',
+    쑥쑥기린:
+      '작은 수박 한 통 정도를 목에 얹은 상태예요 🍉 살짝만 목을 쑥쑥 펴볼까요?',
+    꽃꼿기린:
+      '머리 본연의 무게만 딱! 집중력, 체력, 생산성 버프 다 받는 중',
+  };
+
+  return messageMap[subContent] || subContent;
 };
 
 const AttendacePanel = () => {
@@ -135,6 +171,13 @@ const AttendacePanel = () => {
   const [viewDate, setViewDate] = useState<Date>(todayYm);
   const viewYear = viewDate.getFullYear();
   const viewMonth = viewDate.getMonth(); // 0~11
+
+  // API 호출
+  const { data: attendanceData } = useAttendanceQuery({
+    period: 'MONTHLY',
+    year: viewYear,
+    month: viewMonth + 1, // API는 1~12월 사용
+  });
 
   const clampToTodayMonth = (d: Date) => {
     const y = d.getFullYear();
@@ -188,28 +231,36 @@ const AttendacePanel = () => {
       </div>
 
       <div className="col-span-2 row-span-3">
-        <Calendar year={viewYear} month={viewMonth} />
+        <Calendar
+          year={viewYear}
+          month={viewMonth}
+          attendances={attendanceData?.data.attendances}
+        />
       </div>
 
       <div className="bg-grey-25 col-span-2 row-span-3 rounded-xl p-3">
         <div className="mb-2 flex h-[76px] flex-col gap-3">
           <div className="text-grey-700 text-body-md-semibold">
-            잘하고 있어요
+            {attendanceData?.data.title || '잘하고 있어요!'}
           </div>
           <div className="text-caption-2xs-regular text-grey-600 flex flex-col gap-1">
-            <div className="flex items-center gap-1">
-              <UpIcon />
-              첫날보다 기린 시간이 하루 평균 45분 늘었어요
-            </div>
-            <div className="flex items-center gap-1">
-              <DownIcon />
-              가장 나빴던 뽀각거부기 상태가 80% 감소했어요
-            </div>
+            {attendanceData?.data.content1 && (
+              <div className="flex items-center gap-1">
+                <UpIcon />
+                {attendanceData.data.content1}
+              </div>
+            )}
+            {attendanceData?.data.content2 && (
+              <div className="flex items-center gap-1">
+                <DownIcon />
+                {attendanceData.data.content2}
+              </div>
+            )}
           </div>
         </div>
         <div className="bg-grey-50 h-px w-full" />
         <div className="text-grey-500 text-caption-sm-medium flex h-[calc(100%-84px)] w-full items-center">
-          당신은 매일 골든리트리버 한 마리를 목에 업고 작업한 것과 같아요 🥺
+          {getSubContentMessage(attendanceData?.data.subContent)}
         </div>
       </div>
     </div>

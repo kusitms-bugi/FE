@@ -48,15 +48,15 @@ const ExitPanel = () => {
   const totalTime = Math.round((data?.data.totalSeconds || 0) / 60); // 초를 분으로 변환
   const correctPostureTime = Math.round((data?.data.goodSeconds || 0) / 60); // 바른 자세 시간 (분)
   const correctPosturePercentage =
-    totalTime > 0 ? Math.round((correctPostureTime / totalTime) * 100) : 0;
+    totalTime > 0 ? Math.round((correctPostureTime / totalTime) * 100) : 75;
   const score = data?.data.score || 0; // 바른 자세 점수
 
   // CSS 변수에서 색상 가져오기 (다크모드 변경 시 재계산)
   const colors = useMemo(
     () => ({
-      time: getColor('--color-point-green', '#22c55e'),
+      time: getColor('--color-yellow-400', '#ffcb31'),
       background: getColor('--color-grey-25', '#e5e7eb'),
-      score: getColor('--color-yellow-500', '#fbbf24'),
+      score: getColor('--color-yellow-400', '#fbbf24'),
     }),
     [isDark],
   );
@@ -144,8 +144,8 @@ const ExitPanel = () => {
 
   return (
     <div className="">
-      <div className="dark:bg-grey-100 rounded-xl bg-white p-6">
-        <div className="mb-12">
+      <div className="dark:bg-grey- bg-grey-0 rounded-xl py-6">
+        <div className="mb-12 flex flex-col">
           <h2 className="text-caption-sm-medium text-grey-400">
             오늘의 리포트
           </h2>
@@ -158,42 +158,6 @@ const ExitPanel = () => {
         <div className="relative mb-12 flex justify-center">
           <ResponsiveContainer width="100%" height={212.5}>
             <PieChart>
-              {/* 1. 바깥쪽 링 배경 (회색, 둥글지 않음) */}
-              <Pie
-                data={BackgroundData}
-                cx="50%"
-                cy="50%"
-                innerRadius={92}
-                outerRadius={106.25}
-                startAngle={450}
-                endAngle={90}
-                dataKey="value"
-                stroke="none"
-                paddingAngle={0}
-                cornerRadius={0}
-                isAnimationActive={false}
-              >
-                <Cell fill={BackgroundData[0].color} />
-              </Pie>
-
-              {/* 2. 바깥쪽 링 프로그레스 (녹색, 둥글게) */}
-              <Pie
-                data={TimeProgressData}
-                cx="50%"
-                cy="50%"
-                innerRadius={92}
-                outerRadius={106.25}
-                startAngle={450}
-                endAngle={450 - (correctPosturePercentage / 100) * 360}
-                dataKey="value"
-                stroke="none"
-                paddingAngle={0}
-                cornerRadius={10}
-              >
-                <Cell fill={TimeProgressData[0].color} />
-              </Pie>
-
-              {/* 3. 안쪽 링 배경 (회색, 둥글지 않음) */}
               <Pie
                 data={innerBackgroundData}
                 cx="50%"
@@ -219,7 +183,7 @@ const ExitPanel = () => {
                 innerRadius={77.75}
                 outerRadius={92}
                 startAngle={450}
-                endAngle={450 - (score / 100) * 360}
+                endAngle={450 - (correctPosturePercentage / 100) * 360}
                 dataKey="value"
                 stroke="none"
                 paddingAngle={0}
@@ -240,34 +204,30 @@ const ExitPanel = () => {
         </div>
 
         {/* 하단 지표 */}
-        <div className="flex justify-between">
-          <div className="flex flex-col">
-            <div className="mb-2 flex items-center gap-1">
-              <div
-                className="h-4 w-2 rounded-full"
-                style={{ backgroundColor: colors.time }}
-              />
+        <div className="flex flex-col gap-7">
+          <div className="flex items-center gap-1">
+            <div
+              className="h-4 w-2 rounded-full"
+              style={{ backgroundColor: colors.time }}
+            />
+            <p className="flex flex-1 items-center justify-between">
               <span className="text-body-md-medium text-grey-400">
                 바른 자세 시간
               </span>
-            </div>
-            <p className="text-headline-2xl-semibold text-grey-600 ml-3">
-              {correctPosturePercentage}%
+              <span className="text-headline-2xl-semibold text-grey-600">
+                {correctPosturePercentage}%
+              </span>
             </p>
           </div>
 
-          <div className="flex flex-col">
-            <div className="mb-2 flex items-center gap-1">
-              <div
-                className="h-4 w-2 rounded-full"
-                style={{ backgroundColor: colors.score }}
-              />
-              <span className="text-body-md-medium text-grey-400">
+          <div className="bg-grey-25 flex flex-col rounded-[24px] p-5">
+            <p className="flex flex-col gap-2 px-5">
+              <span className="text-body-sm-medium text-grey-400">
                 바른 자세 점수
               </span>
-            </div>
-            <p className="text-headline-2xl-semibold text-grey-600 ml-3">
-              {score}점
+              <span className="text-body-xl-semibold text-grey-600">
+                {score}점
+              </span>
             </p>
           </div>
         </div>

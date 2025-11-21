@@ -48,6 +48,11 @@
     #ffae00 100%
   );
 
+  /* gradation color*/
+  --color-sementic-gradation-Point3: #ffefaf;
+  --color-sementic-gradation-Point2: #ffc500;
+  --color-sementic-gradation-Point1: #ffbf00;
+
   /* notification colors*/
   --color-error: #ff351f;
   --color-success: #67b000;
@@ -134,12 +139,24 @@
   --color-olive-green: var(--color-olive-green);
   --color-coral-red: var(--color-coral-red);
 
+  /* gradation color */
+  --color-sementic-gradation-Point1: var(--color-sementic-gradation-Point1);
+  --color-sementic-gradation-Point2: var(--color-sementic-gradation-Point2);
+  --color-sementic-gradation-Point3: var(--color-sementic-gradation-Point3);
+
   /* main page color */
   --color-average-score: linear-gradient(
     130deg,
     var(--color-yellow-500) -9.87%,
     var(--color-yellow-400) 25.52%,
     var(--color-yellow-200) 97.31%
+  );
+
+  --color-turtle-gradient: linear-gradient(
+    216deg,
+    var(--color-sementic-gradation-Point3) -7.23%,
+    var(--color-sementic-gradation-Point2) 59.21%,
+    var(--color-sementic-gradation-Point1) 91.97%
   );
 
   /* 모달 컬러 */
@@ -208,6 +225,18 @@
     var(--color-yellow-500) -9.87%,
     var(--color-yellow-400) 25.52%,
     var(--color-yellow-200) 97.31%
+  );
+
+  /* gradation color*/
+  --color-sementic-gradation-Point3: #ffe88d;
+  --color-sementic-gradation-Point2: #ffd133;
+  --color-sementic-gradation-Point1: #ebb30a;
+
+  --color-turtle-gradient: linear-gradient(
+    216deg,
+    var(--color-sementic-gradation-Point3) -7.23%,
+    var(--color-sementic-gradation-Point2) 59.21%,
+    var(--color-sementic-gradation-Point1) 91.97%
   );
 
   /* 모달 컬러 */

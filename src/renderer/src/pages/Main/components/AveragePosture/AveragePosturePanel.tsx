@@ -7,8 +7,16 @@ const AveragePosturePanel = () => {
   const level = getLevel(score);
   const levelInfo = LEVEL_INFO[level - 1];
 
+  const isTurtle = level <= 2;
+
   return (
-    <div className="relative h-full w-full rounded-3xl bg-[image:var(--color-average-score)] p-4">
+    <div
+      className={`relative h-full w-full rounded-3xl p-4 ${
+        isTurtle
+          ? 'bg-[image:var(--color-turtle-gradient)]'
+          : 'bg-[image:var(--color-average-score)]'
+      }`}
+    >
       <div className="items center flex h-full justify-between">
         <p className="text-caption-sm-medium flex min-w-[120px] flex-col text-yellow-100">
           <span>평균 자세 점수</span>

@@ -19,13 +19,31 @@ interface CircleProps {
   future: boolean;
 }
 
+// 사용시간 0~1시간: 가장 연한 노란색
+// 1 초과~2 시간 미만: 2단계 노랑
+// 2 시간 이상~3 시간 미만: 3단계 노랑
+// 3 이상~4 미만 : 4단계 노랑
+// 4 이상 ~: 5단계 노랑
 const LEVEL_COLORS = [
-  'bg-yellow-500', // 1레벨
-  'bg-yellow-400', // 2레벨
-  'bg-yellow-300', // 3레벨
-  'bg-yellow-200', // 4레벨
-  'bg-yellow-100', // 5레벨
+  'bg-yellow-100', // 1레벨 (0~1시간): 가장 연한 노란색
+  'bg-yellow-200', // 2레벨 (1 초과~2 시간 미만): 2단계 노랑
+  'bg-yellow-300', // 3레벨 (2 시간 이상~3 시간 미만): 3단계 노랑
+  'bg-yellow-400', // 4레벨 (3 이상~4 미만): 4단계 노랑
+  'bg-yellow-500', // 5레벨 (4 이상): 5단계 노랑 (가장 진한 노란색)
 ] as const;
+
+/**
+ * 사용 시간(시간 단위)에 따라 레벨(1~5)을 반환합니다.
+ * @param hours 사용 시간 (시간 단위)
+ * @returns 레벨 1~5
+ */
+const getLevelFromHours = (hours: number): number => {
+  if (hours <= 1) return 1; // 0~1시간: 레벨 1
+  if (hours < 2) return 2; // 1 초과~2 시간 미만: 레벨 2
+  if (hours < 3) return 3; // 2 시간 이상~3 시간 미만: 레벨 3
+  if (hours < 4) return 4; // 3 이상~4 미만: 레벨 4
+  return 5; // 4 이상: 레벨 5
+};
 
 const Circle = ({ level, today, future }: CircleProps) => {
   // 미래 날짜
@@ -90,13 +108,18 @@ const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
   const getLevelForDay = (day: number): number | null => {
     // 날짜를 YYYY-MM-DD 형식으로 변환
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const level = attendances[dateStr];
+    const usageMinutes = attendances[dateStr];
 
-    // 레벨이 없으면 null (안 사용한 날)
-    if (level === undefined || level === null) return null;
+    // 사용 시간이 없거나 0이면 null (안 사용한 날 - 그레이로 표시)
+    if (usageMinutes === undefined || usageMinutes === null || usageMinutes === 0) {
+      return null;
+    }
 
-    // 레벨이 1~5 범위를 벗어나면 클램프
-    return Math.min(Math.max(level / 60, 0), LEVEL_COLORS.length);
+    // 분을 시간으로 변환
+    const usageHours = usageMinutes / 60;
+
+    // 사용 시간에 따라 레벨 결정 (1~5)
+    return getLevelFromHours(usageHours);
   };
 
   const isFutureDay = (day: number) => {

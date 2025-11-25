@@ -3,16 +3,22 @@ import CompletionCharacter from '../../assets/completion.svg?react';
 import { Button } from '../../components/Button/Button';
 import { useCreateSessionMutation } from '../../api/session/useCreateSessionMutation';
 import { useCameraStore } from '../../store/useCameraStore';
+import { useLevelQuery } from '../../api/dashboard/useLevelQuery';
 
 const OnboardingCompletionPage = () => {
   const navigate = useNavigate();
   const { mutate: createSession, isPending } = useCreateSessionMutation();
   const { setShow } = useCameraStore();
+  const { data: levelData } = useLevelQuery();
 
   const handleStart = () => {
     /* 세션 생성 후 메인 페이지로 이동 */
     createSession(undefined, {
       onSuccess: () => {
+        // 세션 시작 시점의 이동거리 저장
+        const startDistance = levelData?.data.current || 0;
+        localStorage.setItem('sessionStartDistance', startDistance.toString());
+
         setShow(); // 카메라 활성화
         navigate('/main');
       },

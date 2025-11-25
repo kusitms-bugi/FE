@@ -13,6 +13,7 @@ import {
 import { useWidget } from '../../../hooks/useWidget';
 import { useCameraStore } from '../../../store/useCameraStore';
 import WebcamView from '../../Calibration/components/WebcamView';
+import { useLevelQuery } from '../../../api/dashboard/useLevelQuery';
 
 interface Props {
   onUserMediaError: (e: string | DOMException) => void;
@@ -42,11 +43,20 @@ const WebcamPanel = ({
     usePauseSessionMutation();
   const { mutate: resumeSession, isPending: isResumingSession } =
     useResumeSessionMutation();
+  const { data: levelData } = useLevelQuery();
+
   const handleStartStop = () => {
     if (isExit) {
       // 시작하기: 세션 생성 후 카메라 시작
       createSession(undefined, {
         onSuccess: () => {
+          /* 세션 시작 시점의 이동거리 저장 */
+          const startDistance = levelData?.data.current || 0;
+          localStorage.setItem(
+            'sessionStartDistance',
+            startDistance.toString(),
+          );
+
           setShow();
         },
       });

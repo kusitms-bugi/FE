@@ -30,8 +30,18 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
   };
 
   const tabs = [
-    { id: 'dashboard' as TabType, label: '대시보드', icon: DashboardIcon },
-    { id: 'settings' as TabType, label: '설정', icon: SettingIcon },
+    {
+      id: 'dashboard' as TabType,
+      label: '대시보드',
+      icon: DashboardIcon,
+      disabled: false,
+    },
+    {
+      id: 'settings' as TabType,
+      label: '설정',
+      icon: SettingIcon,
+      disabled: true,
+    }, // 임시 비활성화
   ];
 
   return (
@@ -59,6 +69,7 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
                     setActiveTab(tab.id);
                   }
                 }}
+                disabled={tab.disabled}
                 variant={isActive ? 'primary' : 'grey'}
                 size="sm"
                 className={cn(

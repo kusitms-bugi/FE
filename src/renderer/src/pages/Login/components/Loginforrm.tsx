@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 import TextInput from '../../../components/InputField/TextField';
 import SaveIdIcon from '../../../assets/auth/saveid_icon.svg?react';
 import LoginButton from './LoginButton';
@@ -13,11 +14,14 @@ interface LoginFormData {
   saveId: boolean;
 }
 
+const SAVED_EMAIL_KEY = 'savedEmail';
+
 const LoginForm = () => {
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { isValid },
   } = useForm<LoginFormData>({
     mode: 'onChange',
@@ -28,21 +32,46 @@ const LoginForm = () => {
     },
   });
 
+  useEffect(() => {
+    const savedEmail = localStorage.getItem(SAVED_EMAIL_KEY);
+    if (savedEmail) {
+      setValue('email', savedEmail);
+      setValue('saveId', true);
+    }
+  }, [setValue]);
+
   const loginMutation = useLoginMutation();
   const navigate = useNavigate();
-
-  const onSubmit = (data: LoginFormData) => {
-    console.log('로그인 시도:', data);
-    loginMutation.mutate({
-      email: data.email,
-      password: data.password,
-    });
-  };
 
   /* @react-refresh-ignore */
   const email = watch('email');
   /* @react-refresh-ignore */
   const password = watch('password');
+
+  const handleSaveIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue('saveId', e.target.checked);
+  };
+
+  const onSubmit = (data: LoginFormData) => {
+    console.log('로그인 시도:', data);
+
+    loginMutation.mutate(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: () => {
+          /* 로그인 성공 시 아이디 저장 처리 */
+          if (data.saveId) {
+            localStorage.setItem(SAVED_EMAIL_KEY, data.email);
+          } else {
+            localStorage.removeItem(SAVED_EMAIL_KEY);
+          }
+        },
+      },
+    );
+  };
 
   return (
     <>
@@ -72,7 +101,8 @@ const LoginForm = () => {
           <label className="hbp:gap-2.5 flex cursor-pointer items-center gap-2">
             <input
               type="checkbox"
-              {...register('saveId')}
+              checked={watch('saveId')}
+              onChange={handleSaveIdChange}
               className="sr-only"
             />
             <SaveIdIcon

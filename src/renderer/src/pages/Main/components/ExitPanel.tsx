@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
-import { useSessionReportQuery } from '../../../api/session/useSessionReportQuery';
+import { useSessionReportQuery } from '@api/session/useSessionReportQuery';
+import { useLevelQuery } from '@api/dashboard/useLevelQuery';
 
 const ExitPanel = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -18,6 +19,9 @@ const ExitPanel = () => {
 
   // 세션 리포트 조회
   const { data, isLoading, error } = useSessionReportQuery(sessionId);
+
+  // 현재 이동거리 조회
+  const { data: levelData } = useLevelQuery();
 
   // 다크모드 상태 (간단한 방법)
   const [isDark, setIsDark] = useState(() =>
@@ -50,6 +54,17 @@ const ExitPanel = () => {
   const correctPosturePercentage =
     totalTime > 0 ? Math.round((correctPostureTime / totalTime) * 100) : 75;
   const score = data?.data.score || 0; // 바른 자세 점수
+
+  /* 이번 세션에서 이동한 거리 계산 */
+  const currentDistance = levelData?.data.current || 0;
+  const startDistance = parseInt(
+    localStorage.getItem('sessionStartDistance') || '0',
+    10,
+  );
+  const sessionDistance = Math.max(
+    0,
+    currentDistance - startDistance,
+  ); /* 오늘 이동거리 */
 
   // CSS 변수에서 색상 가져오기 (다크모드 변경 시 재계산)
   const colors = useMemo(
@@ -132,7 +147,7 @@ const ExitPanel = () => {
             오늘의 리포트
           </h2>
           <p className="text-headline-3xl-semibold text-grey-700">
-            뽀각거부기 2cm 성장
+            오늘 총 {sessionDistance.toLocaleString()}m 이동했어요
           </p>
         </div>
 

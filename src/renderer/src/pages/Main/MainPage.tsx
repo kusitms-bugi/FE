@@ -23,12 +23,14 @@ import { ModalPortal } from '@ui/Modal/ModalPortal';
 import AverageGraphPannel from './components/AverageGraph/AverageGraphPannel';
 import { useModal } from '../../hooks/useModal';
 import { useNotificationScheduler } from '../../hooks/useNotificationScheduler';
+import { useSessionCleanup } from '../../hooks/useSessionCleanup';
+import { useAutoMetricsSender } from '../../hooks/useAutoMetricsSender';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 
 const MainPage = () => {
   const setStatus = usePostureStore((state) => state.setStatus);
-  const { cameraState, setHide, setShow } = useCameraStore();
+  const { cameraState, setHide, setShow, setExit } = useCameraStore();
 
   // 메트릭 저장 mutation
   const { mutate: saveMetrics } = useSaveMetricsMutation();
@@ -41,14 +43,6 @@ const MainPage = () => {
 
   const classifierRef = useRef(new PostureClassifier());
 
-  const handleToggleWebcam = () => {
-    if (cameraState === 'show') {
-      setHide();
-    } else {
-      setShow();
-    }
-  };
-
   // 메트릭을 서버로 전송하는 함수
   const sendMetricsToServer = () => {
     const sessionId = localStorage.getItem('sessionId');
@@ -59,6 +53,20 @@ const MainPage = () => {
       });
       // 전송 후 메트릭 초기화
       metricsRef.current = [];
+    }
+  };
+
+  /* 창 닫기 시 세션 정리 (메트릭 전송, 세션 종료, 카메라 종료, 위젯 닫기) */
+  useSessionCleanup(metricsRef, setExit);
+
+  /* 5분마다 자동으로 메트릭 전송 */
+  useAutoMetricsSender(metricsRef, sendMetricsToServer);
+
+  const handleToggleWebcam = () => {
+    if (cameraState === 'show') {
+      setHide();
+    } else {
+      setShow();
     }
   };
 

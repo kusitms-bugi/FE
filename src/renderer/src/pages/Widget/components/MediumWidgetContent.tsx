@@ -64,10 +64,10 @@ export function MediumWidgetContent({ posture }: MediumWidgetContentProps) {
   }
 
   return (
-    <div className="flex h-full w-full flex-col transition-colors duration-500 ease-in-out">
+    <div className="flex h-full w-full flex-col pb-[20px] transition-colors duration-500 ease-in-out">
       {/* 캐릭터 영역 */}
       <div
-        className="mini:h-auto mini: mb-[3px] flex aspect-[1/1] h-full w-full flex-1 rounded-lg transition-all duration-500 ease-in-out"
+        className="mini:h-auto flex aspect-[1/1] h-full max-h-[235px] w-full flex-1 rounded-lg transition-all duration-500 ease-in-out"
         style={{ background: gradient }}
       >
         {isGiraffe ? (
@@ -78,7 +78,7 @@ export function MediumWidgetContent({ posture }: MediumWidgetContentProps) {
       </div>
 
       {/* 상세 정보 영역 */}
-      <div className="bg-grey-0 flex w-full flex-1 flex-col justify-center px-2">
+      <div className="bg-grey-0 mt-1 flex w-full flex-1 flex-col justify-center px-2">
         {/* 진행 바 */}
         <div className="h-fit w-full rounded-lg">
           <div className="bg-grey-50 h-3 w-full rounded-full">

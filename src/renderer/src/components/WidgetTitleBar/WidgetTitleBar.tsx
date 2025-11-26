@@ -40,8 +40,8 @@ export function WidgetTitleBar({
     <div
       className={`bg-grey-0 flex ${
         isMini
-          ? 'mr-1 h-full w-2 flex-col items-center justify-center'
-          : 'mb-1 h-2 w-full justify-center'
+          ? 'h-full w-[14px] flex-col items-center justify-center pr-1'
+          : 'mt-[-1px] h-5 w-full items-center justify-center pb-1'
       } `}
       style={{
         // 드래그 가능하게 설정 (Electron에서 창 이동 가능)
@@ -52,7 +52,7 @@ export function WidgetTitleBar({
       {/* 빨간 닫기 버튼 */}
       <button
         onClick={handleClose}
-        className="h-2 w-2 rounded-full bg-[#FF5154] hover:bg-red-600"
+        className="mini:mt-[2px] h-[10px] w-[10px] rounded-full bg-[#FF5154] hover:bg-red-600"
         style={{
           // 버튼은 클릭 가능하도록 드래그 비활성화
           // @ts-expect-error: electronAPI 타입 정의 없음

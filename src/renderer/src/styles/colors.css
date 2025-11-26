@@ -89,6 +89,9 @@
   --color-modal-button: #f9f8f7;
   --color-modal-disabled: #e3e1df;
   --color-global-yellow-100: #ffebb0;
+
+  /* 평균 자세 그래프 색깔 */
+  --color-dashboard-score: #ffe28a;
 }
 
 @theme inline {
@@ -166,6 +169,9 @@
   --color-modal-disabled: var(--color-modal-disabled);
   --color-sementic-brand-primary: var(--color-sementic-brand-primary);
   --color-global-yellow-100: var(--color-global-yellow-100);
+
+  /* 평균 자세 그래프 색깔*/
+  --color-dashboard-score: var(--color-dashboard-score);
 }
 
 /* Dark mode colors */
@@ -246,4 +252,7 @@
   --color-modal-button: #232323;
   --color-modal-disabled: #2c2c2c;
   --color-global-yellow-100: rgba(73, 55, 4, 0.5);
+
+  /* 평균 자세 그래프 색깔*/
+  --color-dashboard-score: #2c2c2c;
 }

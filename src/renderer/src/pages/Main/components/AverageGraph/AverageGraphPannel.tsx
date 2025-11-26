@@ -91,10 +91,10 @@ const AverageGraphPannel = () => {
             <Tooltip
               position={{ y: 20 }}
               contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #e5e5e5',
+                backgroundColor: 'var(--color-surface-modal)',
+                border: '1px solid var(--color-dashboard-score)',
                 borderRadius: '8px',
-                padding: '8px 12px',
+                padding: '8px 10px',
               }}
               labelFormatter={() => ''}
               itemStyle={{ fontSize: 12 }}

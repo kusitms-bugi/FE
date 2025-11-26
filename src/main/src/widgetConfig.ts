@@ -8,8 +8,8 @@ export const WIDGET_CONFIG = {
   defaultHeight: 320,
 
   // 최소 / 최대 크기 (사용자가 조절 가능한 범위)
-  minWidth: 150,
-  minHeight: 32,
+  minWidth: 160,
+  minHeight: 45,
   maxWidth: 260,
   maxHeight: 348,
 

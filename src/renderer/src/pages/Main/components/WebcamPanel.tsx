@@ -22,7 +22,7 @@ interface Props {
     worldLandmarks?: WorldLandmark[],
   ) => void;
   onToggleWebcam: () => void;
-  onSendMetrics: () => void;
+  onSendMetrics: () => Promise<void>;
 }
 
 const WebcamPanel = ({
@@ -45,7 +45,7 @@ const WebcamPanel = ({
     useResumeSessionMutation();
   const { data: levelData } = useLevelQuery();
 
-  const handleStartStop = () => {
+  const handleStartStop = async () => {
     if (isExit) {
       // 시작하기: 세션 생성 후 카메라 시작
       createSession(undefined, {
@@ -61,13 +61,13 @@ const WebcamPanel = ({
         },
       });
     } else {
-      // 종료하기: 메트릭 전송 → 세션 중단 → 카메라 종료 → 위젯 닫기
+      // 종료하기: 메트릭 전송 완료 → 세션 중단 → 카메라 종료 → 위젯 닫기
       const sessionId = localStorage.getItem('sessionId');
       if (sessionId) {
-        // 1. 수집된 메트릭을 서버로 전송
-        onSendMetrics();
+        // 1. 수집된 메트릭을 서버로 전송 (완료 대기)
+        await onSendMetrics();
 
-        // 2. 세션 종료
+        // 2. 세션 종료 (메트릭 전송 완료 후 실행)
         stopSession(sessionId, {
           onSuccess: () => {
             setExit();

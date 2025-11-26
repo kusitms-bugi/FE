@@ -20,6 +20,7 @@
 }
 
 /* 미디어 쿼리 헬퍼 */
+@custom-variant mini (@media(max-height: 62px));
 @custom-media --mobile (max-width: 30rem);
 @custom-media --tablet (min-width: 30rem) and (max-width: 56rem);
 @custom-media --large (min-width: 80rem);

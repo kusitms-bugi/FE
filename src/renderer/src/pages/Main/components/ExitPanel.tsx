@@ -49,10 +49,16 @@ const ExitPanel = () => {
   };
 
   // 세션 조회 API 데이터 사용
-  const totalTime = Math.round((data?.data.totalSeconds || 0) / 60); // 초를 분으로 변환
-  const correctPostureTime = Math.round((data?.data.goodSeconds || 0) / 60); // 바른 자세 시간 (분)
+  const totalSeconds = data?.data.totalSeconds || 0;
+  const goodSeconds = data?.data.goodSeconds || 0;
+
+  const totalTime = Math.round(totalSeconds / 60); // 초를 분으로 변환
+  const correctPostureTime = Math.round(goodSeconds / 60); // 바른 자세 시간 (분)
+
+  // 비율은 초 단위로 먼저 계산 후 반올림 (정확도 향상)
   const correctPosturePercentage =
-    totalTime > 0 ? Math.round((correctPostureTime / totalTime) * 100) : 75;
+    totalSeconds > 0 ? Math.round((goodSeconds / totalSeconds) * 100) : 0;
+
   const score = data?.data.score || 0; // 바른 자세 점수
 
   /* 이번 세션에서 이동한 거리 계산 */
@@ -82,10 +88,16 @@ const ExitPanel = () => {
     [colors.background],
   );
 
-  // 안쪽 링 프로그레스 데이터 (노란색) - 바른 자세 점수만큼 노란색
+  // 안쪽 링 프로그레스 데이터 (노란색) - 바른 자세 비율만큼 노란색
   const ScoreProgressData = useMemo(
-    () => [{ name: '바른 자세 점수', value: score, color: colors.score }],
-    [score, colors.score],
+    () => [
+      {
+        name: '바른 자세 비율',
+        value: correctPosturePercentage,
+        color: colors.score,
+      },
+    ],
+    [correctPosturePercentage, colors.score],
   );
 
   const formatTime = (minutes: number) => {
@@ -179,7 +191,7 @@ const ExitPanel = () => {
                 innerRadius={77.75}
                 outerRadius={92}
                 startAngle={450}
-                endAngle={450 - (72 / 100) * 360}
+                endAngle={450 - (correctPosturePercentage / 100) * 360}
                 dataKey="value"
                 stroke="none"
                 paddingAngle={0}
@@ -211,7 +223,7 @@ const ExitPanel = () => {
                 바른 자세 시간
               </span>
               <span className="text-headline-2xl-semibold text-grey-600">
-                {72}%
+                {correctPosturePercentage}%
               </span>
             </p>
           </div>

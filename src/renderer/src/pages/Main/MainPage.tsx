@@ -43,17 +43,34 @@ const MainPage = () => {
 
   const classifierRef = useRef(new PostureClassifier());
 
-  // 메트릭을 서버로 전송하는 함수
-  const sendMetricsToServer = () => {
-    const sessionId = localStorage.getItem('sessionId');
-    if (sessionId && metricsRef.current.length > 0) {
-      saveMetrics({
-        sessionId,
-        metrics: metricsRef.current,
-      });
-      // 전송 후 메트릭 초기화
-      metricsRef.current = [];
-    }
+  // 메트릭을 서버로 전송하는 함수 (Promise 반환)
+  const sendMetricsToServer = (): Promise<void> => {
+    return new Promise((resolve) => {
+      const sessionId = localStorage.getItem('sessionId');
+      if (sessionId && metricsRef.current.length > 0) {
+        saveMetrics(
+          {
+            sessionId,
+            metrics: metricsRef.current,
+          },
+          {
+            onSuccess: () => {
+              // 전송 완료 후 메트릭 초기화
+              metricsRef.current = [];
+              resolve();
+            },
+            onError: () => {
+              // 에러가 발생해도 resolve (계속 진행)
+              metricsRef.current = [];
+              resolve();
+            },
+          },
+        );
+      } else {
+        // 전송할 데이터가 없으면 즉시 완료
+        resolve();
+      }
+    });
   };
 
   /* 창 닫기 시 세션 정리 (메트릭 전송, 세션 종료, 카메라 종료, 위젯 닫기) */

@@ -9,6 +9,9 @@ const WelcomePanel = ({
   isPoseDetected,
   onStartMeasurement,
 }: WelcomePanelProps) => {
+  // localStorage에서 사용자 이름 가져오기
+  const username = localStorage.getItem('userName') || '사용자';
+
   return (
     <div className="flex w-[422px] min-w-[422px] shrink-0 flex-col pt-12">
       <div className="mb-12">
@@ -16,7 +19,7 @@ const WelcomePanel = ({
           바른자세 기준점 등록
         </h1>
         <p className="text-body-xl-medium text-grey-500 leading-relaxed">
-          거부기온앤온님의 바른 자세를 등록할 준비가 되셨다면
+          {username}님의 바른 자세를 등록할 준비가 되셨다면
           <br />
           측정하기 버튼을 눌러주세요.
         </p>

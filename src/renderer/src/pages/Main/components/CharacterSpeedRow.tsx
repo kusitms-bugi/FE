@@ -33,17 +33,21 @@ const CharacterSpeedRow = ({ level, name, speed }: CharacterSpeedRowProps) => {
     const CharacterComponent = CHARACTER_COMPONENTS[level];
 
     return (
-        <div className="flex justify-between items-center w-full max-[1439px]:flex-col max-[1439px]:gap-2 max-[1439px]:items-center">
-            <div className="flex gap-1 items-center w-25 max-[1439px]:w-full max-[1439px]:justify-center">
+        <div className="flex justify-between items-center w-full">
+            <div className="flex gap-1 items-center w-25">
                 <div className="bg-sementic-brand-primary text-grey-0 rounded-full w-4 h-[18px] flex justify-center items-center text-caption-xs-medium">
                     {level}
                 </div>
                 <span>{name}</span>
             </div>
-            <div className="flex justify-center w-[150px] max-[1439px]:w-full">
-                {CharacterComponent && <CharacterComponent />}
+            <div className="flex justify-center w-[150px]">
+                {CharacterComponent && (
+                    <div className="max-[1439px]:scale-[0.8]">
+                        <CharacterComponent />
+                    </div>
+                )}
             </div>
-            <div className="w-[43px] text-left max-[1439px]:w-full max-[1439px]:text-center">{speed}</div>
+            <div className="w-[43px] text-left">{speed}</div>
         </div>
     );
 };

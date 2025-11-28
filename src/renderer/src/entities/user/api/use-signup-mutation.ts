@@ -1,14 +1,7 @@
+import api from '@shared/api';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import api from '@shared/api';
-
-export interface SignupRequest {
-  email: string;
-  password: string;
-  name: string;
-  callbackUrl: string;
-  avatar?: string;
-}
+import { SignupRequest } from '../types';
 
 /* 이메일 중복 확인 api */
 const duplicatedEmail = async (email: string) => {

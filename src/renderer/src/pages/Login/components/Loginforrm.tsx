@@ -5,7 +5,7 @@ import SaveIdIcon from '../../../assets/auth/saveid_icon.svg?react';
 import LoginButton from './LoginButton';
 import PasswordField from './PasswordField';
 import { useNavigate } from 'react-router-dom';
-import { useLoginMutation } from '../../../api/login/useLoginMutation';
+import { useLoginMutation } from '@entities/user';
 import FailIcon from '../../../assets/auth/error_icon.svg?react';
 
 interface LoginFormData {

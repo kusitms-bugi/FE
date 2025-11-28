@@ -6,8 +6,8 @@ import { useSearchParams } from 'react-router-dom';
 import {
   useResendVerifyEmailMuation,
   useVerifyEmailMutation,
-} from '../../api/signup/verifyEmail';
-import { useEmailStore } from '../../store/useSignUpStore';
+} from '@entities/user';
+import { useEmailStore } from '@entities/user';
 
 const ResendVerificationPage = () => {
   const [searchParams] = useSearchParams();

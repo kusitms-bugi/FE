@@ -13,3 +13,16 @@ export interface LoginResponse {
   code: string;
   message: string;
 }
+
+export interface SignupRequest {
+  email: string;
+  password: string;
+  name: string;
+  callbackUrl: string;
+  avatar?: string;
+}
+
+export interface ResendVerifyEmailRequest {
+  email: string;
+  callbackUrl: string;
+}

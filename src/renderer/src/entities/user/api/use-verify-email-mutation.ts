@@ -1,11 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import api from '@shared/api';
-
-export interface ResendVerifyEmailRequest {
-  email: string;
-  callbackUrl: string;
-}
+import { ResendVerifyEmailRequest } from '../types';
 
 /*이메일 인증 api*/
 const verifyEmail = async (token: string) => {
@@ -67,3 +63,4 @@ export const useResendVerifyEmailMuation = () => {
     },
   });
 };
+

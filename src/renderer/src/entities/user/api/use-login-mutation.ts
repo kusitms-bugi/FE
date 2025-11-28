@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import api from '@shared/api';
-import { LoginInput, LoginResponse } from '../../types/login/mutation';
+import { LoginInput, LoginResponse } from '../types';
 
 /*로그인 api */
 const login = async (data: LoginInput): Promise<LoginResponse> => {
@@ -45,3 +45,4 @@ export const useLoginMutation = () => {
     },
   });
 };
+

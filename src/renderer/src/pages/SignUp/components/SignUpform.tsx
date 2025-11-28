@@ -6,12 +6,12 @@ import PasswordField from '../../Login/components/PasswordField';
 import SuccessIcon from '../../../assets/auth/success_icon.svg?react';
 import FailIcon from '../../../assets/auth/error_icon.svg?react';
 import { signUpSchema, SignUpFormData } from '../utils/SignupSchemas';
+import { useState } from 'react';
 import {
   useDuplicatedEmailMutation,
   useSignupMutation,
-} from '../../../api/signup/signup';
-import { useState } from 'react';
-import { useEmailStore } from '../../../store/useSignUpStore';
+  useEmailStore,
+} from '@entities/user';
 
 const SignUpForm = () => {
   const { mutate: checkDuplicateEmail } = useDuplicatedEmailMutation();

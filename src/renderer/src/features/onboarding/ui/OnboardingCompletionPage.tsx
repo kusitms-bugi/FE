@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import CompletionCharacter from '../../assets/completion.svg?react';
+import CompletionCharacter from '@assets/completion.svg?react';
 import { Button } from '@shared/ui/button';
 import { useCreateSessionMutation } from '@entities/session';
-import { useCameraStore } from '../../store/useCameraStore';
+import { useCameraStore } from '@widgets/camera';
 import { useLevelQuery } from '@entities/dashboard';
 
 const OnboardingCompletionPage = () => {

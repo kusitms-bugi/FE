@@ -14,7 +14,7 @@ import StoneBugiRestSvg from '@assets/video/stone-bugi-rest.svg';
 import TireBugiRestSvg from '@assets/video/tire-bugi-rest.svg';
 
 import { useEffect, useMemo, useRef } from 'react';
-import { useCameraStore } from '../../../store/useCameraStore';
+import { useCameraStore } from '@widgets/camera';
 import { usePostureStore } from '@entities/posture';
 import { cn } from '@shared/lib/cn';
 import { getScoreLevel } from '@shared/lib/get-score-level';

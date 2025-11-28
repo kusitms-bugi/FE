@@ -6,9 +6,9 @@ import {
   WorldLandmark,
 } from '@entities/posture';
 import { Timer } from '@shared/ui/timer';
+import { useCameraStore } from '@widgets/camera';
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import Webcam from 'react-webcam';
-import { useCameraStore } from '../../../../store/useCameraStore';
 
 interface WebcamViewProps {
   onPoseDetected?: (

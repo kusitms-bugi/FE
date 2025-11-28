@@ -2,9 +2,9 @@ import DashboardIcon from '@assets/dashboard.svg?react';
 import SettingIcon from '@assets/setting.svg?react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Logo from '../../../assets/logo.svg?react';
-import NotificationIcon from '../../../assets/main/bell_icon.svg?react';
-import Symbol from '../../../assets/symbol.svg?react';
+import Logo from '@assets/logo.svg?react';
+import NotificationIcon from '@assets/main/bell_icon.svg?react';
+import Symbol from '@assets/symbol.svg?react';
 import { Button } from '@shared/ui/button';
 
 import { ThemeToggleSwitch } from '@shared/ui/theme-toggle-switch';

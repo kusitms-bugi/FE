@@ -4,10 +4,12 @@ import { createBrowserRouter, redirect } from 'react-router-dom';
 import Layout from '../../layout/Layout';
 import { CalibrationPage } from '@features/calibration';
 import MainPage from '../../pages/Main/MainPage';
-import OnboardingCompletionPage from '../../pages/Onboarding/OnboardingCompletionPage';
-import OnboardinInitPage from '../../pages/Onboarding/OnboardingInitPage';
-import OnboardingPage from '../../pages/Onboarding/OnboardingPage';
-import { WidgetPage } from '../../pages/Widget/WidgetPage';
+import {
+  OnboardingPage,
+  OnboardingInitPage,
+  OnboardingCompletionPage,
+} from '@features/onboarding';
+import { WidgetPage } from '@widgets/widget';
 
 // 인증이 필요한 페이지용 loader
 const requireAuthLoader = async () => {
@@ -80,7 +82,7 @@ export const router = createBrowserRouter([
             { path: '', element: <OnboardingPage /> },
             { path: 'calibration', element: <CalibrationPage /> },
             { path: 'completion', element: <OnboardingCompletionPage /> },
-            { path: 'init', element: <OnboardinInitPage /> },
+            { path: 'init', element: <OnboardingInitPage /> },
         ],
     },
     {

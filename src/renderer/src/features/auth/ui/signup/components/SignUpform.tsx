@@ -3,8 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@shared/ui/button';
 import { TextField } from '@shared/ui/input-field';
 import PasswordField from '../../login/components/PasswordField';
-import SuccessIcon from '../../../../assets/auth/success_icon.svg?react';
-import FailIcon from '../../../../assets/auth/error_icon.svg?react';
+import SuccessIcon from '@assets/auth/success_icon.svg?react';
+import FailIcon from '@assets/auth/error_icon.svg?react';
 import { signUpSchema, SignUpFormData } from '../utils/SignupSchemas';
 import { useState } from 'react';
 import {

@@ -1,5 +1,5 @@
-import Logo from '../../assets/logo.svg?react';
-import Symbol from '../../assets/symbol.svg?react';
+import Logo from '@assets/logo.svg?react';
+import Symbol from '@assets/symbol.svg?react';
 import { ThemeToggleSwitch } from '@shared/ui/theme-toggle-switch';
 import { useThemePreference } from '@shared/hooks/use-theme-preference';
 

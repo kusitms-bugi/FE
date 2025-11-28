@@ -1,4 +1,4 @@
-import CameraIcon from '../../assets/camera.svg?react';
+import CameraIcon from '@assets/camera.svg?react';
 import CameraPermissionButton from './components/CameraPermissionButton';
 
 const OnboardingPage = () => {

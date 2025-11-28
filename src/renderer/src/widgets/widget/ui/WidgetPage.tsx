@@ -1,12 +1,12 @@
 /* 위젯 창에 표시될 페이지 - 반응형 */
 
-import { useEffect, useState } from 'react';
-import { WidgetTitleBar } from '../../components/WidgetTitleBar/WidgetTitleBar';
 import { usePostureStore } from '@entities/posture';
+import { useEffect, useState } from 'react';
 import { MediumWidgetContent } from './components/MediumWidgetContent';
 import { MiniWidgetContent } from './components/MiniWidgetContent';
 import { usePostureSyncWithLocalStorage } from './hooks/usePostureSyncWithLocalStorage';
 import { useThemeSync } from './hooks/useThemeSync';
+import { WidgetTitleBar } from './WidgetTitleBar/WidgetTitleBar';
 
 type WidgetSize = 'mini' | 'medium';
 

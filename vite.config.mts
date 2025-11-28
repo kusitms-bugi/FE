@@ -29,6 +29,8 @@ export default defineConfig({
       '@entities': path.resolve(__dirname, 'src/renderer/src/entities'),
       '@features/': path.resolve(__dirname, 'src/renderer/src/features') + '/',
       '@features': path.resolve(__dirname, 'src/renderer/src/features'),
+      '@widgets/': path.resolve(__dirname, 'src/renderer/src/widgets') + '/',
+      '@widgets': path.resolve(__dirname, 'src/renderer/src/widgets'),
       ui: path.resolve(__dirname, 'src/renderer/src/components'),
     },
   },

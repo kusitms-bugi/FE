@@ -12,8 +12,8 @@ import {
   PoseLandmark,
   WorldLandmark,
 } from '@entities/posture';
-import { useWidget } from '../../../hooks/useWidget';
-import { useCameraStore } from '../../../store/useCameraStore';
+import { useWidget } from '@widgets/widget';
+import { useCameraStore } from '@widgets/camera';
 import { WebcamView } from '@features/calibration/ui';
 import { useLevelQuery } from '@entities/dashboard';
 

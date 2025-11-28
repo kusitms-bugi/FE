@@ -1,4 +1,4 @@
-import { useCameraStore } from '../../../store/useCameraStore';
+import { useCameraStore } from '@widgets/camera';
 import ExitPanel from './ExitPanel';
 import RunningPanel from './RunningPanel';
 

@@ -1,7 +1,7 @@
 import { NotificationToggleSwitch } from '@shared/ui/toggle-switch';
 import { useTimeEditor } from '../hooks/useTimeEditor';
-import MinusIcon from '../../../../assets/main/minus_icon.svg?react';
-import PlusIcon from '../../../../assets/main/plus_icon.svg?react';
+import MinusIcon from '@assets/main/minus_icon.svg?react';
+import PlusIcon from '@assets/main/plus_icon.svg?react';
 
 interface TimeControlSectionProps {
   title: string;

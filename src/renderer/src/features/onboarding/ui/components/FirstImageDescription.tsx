@@ -1,5 +1,5 @@
-import GiraffeIcon from '../../../assets/onboarding/giraffe.svg?react';
-import TurtleIcon from '../../../assets/onboarding/turtle.svg?react';
+import GiraffeIcon from '@assets/onboarding/giraffe.svg?react';
+import TurtleIcon from '@assets/onboarding/turtle.svg?react';
 
 const FirstImageDescription = () => {
   const userName = localStorage.getItem('userName') || '사용자';

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useVerifyEmailMutation } from '@entities/user';
-import CompletionCharacter from '../../../assets/completion.svg?react';
+import CompletionCharacter from '@assets/completion.svg?react';
 
 const EmailVerificationCallbackPage = () => {
     const [searchParams] = useSearchParams()

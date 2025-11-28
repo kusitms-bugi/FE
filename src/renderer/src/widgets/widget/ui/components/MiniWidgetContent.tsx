@@ -1,5 +1,5 @@
-import MiniGiraffe from '../../../assets/widget/mini_giraffe.svg?react';
-import MiniTurtle from '../../../assets/widget/mini_turtle.svg?react';
+import MiniGiraffe from '@assets/widget/mini_giraffe.svg?react';
+import MiniTurtle from '@assets/widget/mini_turtle.svg?react';
 
 /* 실시간 자세 판별 */
 type PostureState = 0 | 1 | 2 | 3 | 4 | 5 | 6;

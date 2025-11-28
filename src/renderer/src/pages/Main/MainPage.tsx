@@ -26,7 +26,7 @@ import {
   WebcamPanel,
 } from '@features/dashboard';
 import { useNotificationScheduler } from '@features/calibration';
-import { useCameraStore } from '../../store/useCameraStore';
+import { useCameraStore } from '@widgets/camera';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 

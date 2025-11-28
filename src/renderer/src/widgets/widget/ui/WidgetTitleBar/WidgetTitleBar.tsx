@@ -1,5 +1,5 @@
-import MediumDragIcon from '../../assets/widget/drag_icon.svg?react';
-import MiniDragIcon from '../../assets/widget/mini_drag_icon.svg?react';
+import MediumDragIcon from '@assets/widget/drag_icon.svg?react';
+import MiniDragIcon from '@assets/widget/mini_drag_icon.svg?react';
 
 interface WidgetTitleBarProps {
   onClose?: () => void;

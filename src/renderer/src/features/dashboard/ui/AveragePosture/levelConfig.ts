@@ -1,8 +1,8 @@
-import stepOneCharacter from '../../../../assets/main/averagePosture/step_one_character.png';
-import stepTwoCharacter from '../../../../assets/main/averagePosture/step_two_character.png';
-import stepThreeCharacter from '../../../../assets/main/averagePosture/step_three_character.png';
-import stepFourCharacter from '../../../../assets/main/averagePosture/step_four_character.png';
-import stepFiveCharacter from '../../../../assets/main/averagePosture/step_five_character.png';
+import stepOneCharacter from '@assets/main/averagePosture/step_one_character.png';
+import stepTwoCharacter from '@assets/main/averagePosture/step_two_character.png';
+import stepThreeCharacter from '@assets/main/averagePosture/step_three_character.png';
+import stepFourCharacter from '@assets/main/averagePosture/step_four_character.png';
+import stepFiveCharacter from '@assets/main/averagePosture/step_five_character.png';
 
 export interface LevelInfo {
   level: number;

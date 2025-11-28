@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import MediumGiraffe from '../../../assets/widget/medium_giraffe.svg?react';
-import MediumTurtle from '../../../assets/widget/medium_turtle.svg?react';
+import MediumGiraffe from '@assets/widget/medium_giraffe.svg?react';
+import MediumTurtle from '@assets/widget/medium_turtle.svg?react';
 import messages from '../data.json';
 
 /* 실시간 자세 판별 */

@@ -15,7 +15,7 @@ import {
 import { useWidget } from '../../../hooks/useWidget';
 import { useCameraStore } from '../../../store/useCameraStore';
 import WebcamView from '../../Calibration/components/WebcamView';
-import { useLevelQuery } from '../../../api/dashboard/useLevelQuery';
+import { useLevelQuery } from '@entities/dashboard';
 
 interface Props {
   onUserMediaError: (e: string | DOMException) => void;

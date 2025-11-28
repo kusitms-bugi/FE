@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import api from '@shared/api';
 import {
   HighlightQueryParams,
   HighlightResponse,
-} from '../../types/dashboard/highlight';
-import api from '@shared/api';
+} from '../types';
 
 /**
  * 하이라이트 조회 API
@@ -58,3 +58,4 @@ export const useHighlightQuery = (
     retry: 1, // 실패 시 1번만 재시도
   });
 };
+

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 import { useSessionReportQuery } from '@entities/session';
-import { useLevelQuery } from '@api/dashboard/useLevelQuery';
+import { useLevelQuery } from '@entities/dashboard';
 
 const ExitPanel = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);

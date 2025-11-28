@@ -5,7 +5,7 @@ import ChevronRigthIcon from '@assets/chevron-right.svg?react';
 import ClockIcon from '@assets/clock.svg?react';
 import GlassHourIcon from '@assets/hourglass.svg?react';
 import TumbupIcon from '@assets/thumbup.svg?react';
-import { usePosturePatternQuery } from '../../../api/dashboard/usePosturePatternQuery';
+import { usePosturePatternQuery } from '@entities/dashboard';
 import { PannelHeader } from '@shared/ui/panel-header';
 
 // 시간 형식 변환: "14:00:00" -> "오후 2시"

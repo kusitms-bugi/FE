@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getColor } from '@shared/lib/get-color';
-import { usePostureGraphQuery } from '@api/dashboard/usePostureGraphQuery';
+import { usePostureGraphQuery } from '@entities/dashboard';
 
 type AverageGraphDatum = {
   periodLabel: string;

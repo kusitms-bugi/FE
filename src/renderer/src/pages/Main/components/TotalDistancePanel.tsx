@@ -1,5 +1,5 @@
 import { PannelHeader } from '@shared/ui/panel-header';
-import { useLevelQuery } from '../../../api/dashboard/useLevelQuery';
+import { useLevelQuery } from '@entities/dashboard';
 import AchivementMedal from '../../../assets/main/achivement_meadl.svg?react';
 import { useModal } from '@shared/hooks/use-modal';
 import TotalDistanceModal from './TotalDistanceModal';

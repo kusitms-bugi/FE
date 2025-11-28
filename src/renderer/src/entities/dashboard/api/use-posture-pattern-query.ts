@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@shared/api';
-import { PosturePatternResponse } from '../../types/dashboard/posturePattern';
+import { PosturePatternResponse } from '../types';
 
 /**
  * 자세 패턴 분석 조회 API
@@ -34,5 +34,4 @@ export const usePosturePatternQuery = () => {
     retry: 1, // 실패 시 1번만 재시도
   });
 };
-
 

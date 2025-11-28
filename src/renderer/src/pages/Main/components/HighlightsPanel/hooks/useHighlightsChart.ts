@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useHighlightQuery } from '../../../../../api/dashboard/useHighlightQuery';
+import { useHighlightQuery } from '@entities/dashboard';
 import { getColor } from '@shared/lib/get-color';
 import type { HighlightDatum } from '../data';
 

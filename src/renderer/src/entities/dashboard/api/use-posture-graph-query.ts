@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@shared/api';
-import { PostureGraphResponse } from '../../types/dashboard/postureGraph';
+import { PostureGraphResponse } from '../types';
 
 /**
  * 바른 자세 점수 그래프 조회 API (최근 31일)
@@ -32,3 +32,4 @@ export const usePostureGraphQuery = () => {
     queryFn: getPostureGraph,
   });
 };
+

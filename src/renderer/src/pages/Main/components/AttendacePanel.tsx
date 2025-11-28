@@ -1,7 +1,7 @@
 import DownIcon from '@assets/arrow-narrow-down.svg?react';
 import UpIcon from '@assets/arrow-narrow-up.svg?react';
 import { useState } from 'react';
-import { useAttendanceQuery } from '../../../api/dashboard/useAttendanceQuery';
+import { useAttendanceQuery } from '@entities/dashboard';
 import { IntensitySlider } from '@shared/ui/intensity-slider';
 import { PageMoveButton } from '@shared/ui/page-move-button';
 import { PannelHeader } from '@shared/ui/panel-header';

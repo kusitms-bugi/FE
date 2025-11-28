@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@shared/api';
-import { AverageScoreResponse } from '../../types/dashboard/averageScore';
+import { AverageScoreResponse } from '../types';
 
 /**
  * 평균 자세 점수 조회 API
@@ -31,3 +31,4 @@ export const useAverageScoreQuery = () => {
     queryFn: getAverageScore,
   });
 };
+

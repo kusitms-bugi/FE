@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import api from '@shared/api';
 import {
   AttendanceQueryParams,
   AttendanceResponse,
-} from '../../types/dashboard/attendance';
-import api from '@shared/api';
+} from '../types';
 
 /**
  * 출석 현황 조회 API
@@ -58,3 +58,4 @@ export const useAttendanceQuery = (
     retry: 1, // 실패 시 1번만 재시도
   });
 };
+

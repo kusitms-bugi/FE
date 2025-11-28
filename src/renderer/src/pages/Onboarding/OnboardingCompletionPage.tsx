@@ -3,7 +3,7 @@ import CompletionCharacter from '../../assets/completion.svg?react';
 import { Button } from '@shared/ui/button';
 import { useCreateSessionMutation } from '@entities/session';
 import { useCameraStore } from '../../store/useCameraStore';
-import { useLevelQuery } from '../../api/dashboard/useLevelQuery';
+import { useLevelQuery } from '@entities/dashboard';
 
 const OnboardingCompletionPage = () => {
   const navigate = useNavigate();

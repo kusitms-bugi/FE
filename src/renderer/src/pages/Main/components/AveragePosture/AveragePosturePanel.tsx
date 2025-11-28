@@ -1,4 +1,4 @@
-import { useAverageScoreQuery } from '../../../../api/dashboard/useAverageScoreQuery';
+import { useAverageScoreQuery } from '@entities/dashboard';
 import { LEVEL_INFO, getLevel } from './levelConfig';
 
 const AveragePosturePanel = () => {

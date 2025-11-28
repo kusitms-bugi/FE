@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@shared/api';
-import { LevelResponse } from '../../types/dashboard/level';
+import { LevelResponse } from '../types';
 
 /**
  * 레벨 도달 현황 조회 API
@@ -31,3 +31,4 @@ export const useLevelQuery = () => {
     queryFn: getLevel,
   });
 };
+

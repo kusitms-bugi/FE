@@ -12,19 +12,21 @@ import { useModal } from '@shared/hooks/use-modal';
 import { ModalPortal } from '@shared/ui/modal';
 import { useEffect, useRef } from 'react';
 import NotificationModal from '../../components/Modal/NotificationModal';
-import { useAutoMetricsSender } from '../../hooks/useAutoMetricsSender';
+import {
+  useAutoMetricsSender,
+  useSessionCleanup,
+  AttendacePanel,
+  AverageGraphPannel,
+  AveragePosturePanel,
+  HighlightsPanel,
+  MainHeader,
+  MiniRunningPanel,
+  PosePatternPanel,
+  TotalDistancePanel,
+  WebcamPanel,
+} from '@features/dashboard';
 import { useNotificationScheduler } from '@features/calibration';
-import { useSessionCleanup } from '../../hooks/useSessionCleanup';
 import { useCameraStore } from '../../store/useCameraStore';
-import AttendacePanel from './components/AttendacePanel';
-import AverageGraphPannel from './components/AverageGraph/AverageGraphPannel';
-import AveragePosturePanel from './components/AveragePosture/AveragePosturePanel';
-import HighlightsPanel from './components/HighlightsPanel';
-import MainHeader from './components/MainHeader';
-import MiniRunningPanel from './components/MiniRunningPanel';
-import PosePatternPanel from './components/PosePatternPanel';
-import TotalDistancePanel from './components/TotalDistancePanel';
-import WebcamPanel from './components/WebcamPanel';
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 

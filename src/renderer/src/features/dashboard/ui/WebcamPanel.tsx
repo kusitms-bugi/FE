@@ -7,14 +7,14 @@ import {
   useResumeSessionMutation,
   useStopSessionMutation,
 } from '@entities/session';
-import { Button } from '../../../components';
+import { Button } from '@shared/ui/button';
 import {
   PoseLandmark,
   WorldLandmark,
 } from '@entities/posture';
 import { useWidget } from '../../../hooks/useWidget';
 import { useCameraStore } from '../../../store/useCameraStore';
-import WebcamView from '../../Calibration/components/WebcamView';
+import { WebcamView } from '@features/calibration/ui';
 import { useLevelQuery } from '@entities/dashboard';
 
 interface Props {

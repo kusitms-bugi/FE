@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { WidgetTitleBar } from '../../components/WidgetTitleBar/WidgetTitleBar';
-import { usePostureStore } from '../../store/usePostureStore';
+import { usePostureStore } from '@entities/posture';
 import { MediumWidgetContent } from './components/MediumWidgetContent';
 import { MiniWidgetContent } from './components/MiniWidgetContent';
 import { usePostureSyncWithLocalStorage } from './hooks/usePostureSyncWithLocalStorage';

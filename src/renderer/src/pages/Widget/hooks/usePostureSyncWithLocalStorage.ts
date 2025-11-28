@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { usePostureStore } from '../../../store/usePostureStore';
+import { usePostureStore } from '@entities/posture';
 
 /* 메인 창의  실시간 자세 상태 위젯 창에 실시간 동기화
  localStorage의 storage 이벤트를 통해 창 간 통신 */

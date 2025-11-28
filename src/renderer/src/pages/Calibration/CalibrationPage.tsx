@@ -18,7 +18,7 @@ import {
   PIResult,
   processCalibrationData,
   WorldLandmark,
-} from '../../components/pose-detection';
+} from '@entities/posture';
 import MeasuringPanel from './components/MeasuringPanel';
 import WebcamView from './components/WebcamView';
 import WelcomePanel from './components/WelcomePanel';

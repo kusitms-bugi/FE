@@ -1,8 +1,8 @@
 import {
+  FrontalityResult,
+  PIResult,
   PoseLandmark,
   WorldLandmark,
-  PIResult,
-  FrontalityResult,
 } from './types';
 
 // EMA 스무딩 클래스

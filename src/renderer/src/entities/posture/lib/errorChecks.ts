@@ -218,3 +218,4 @@ export function getStep2Error(frames: CalibrationFrame[]): string | null {
     checkPostureStability(frames)
   );
 }
+

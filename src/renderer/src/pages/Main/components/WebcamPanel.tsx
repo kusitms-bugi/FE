@@ -9,7 +9,7 @@ import { Button } from '../../../components';
 import {
   PoseLandmark,
   WorldLandmark,
-} from '../../../components/pose-detection';
+} from '@entities/posture';
 import { useWidget } from '../../../hooks/useWidget';
 import { useCameraStore } from '../../../store/useCameraStore';
 import WebcamView from '../../Calibration/components/WebcamView';

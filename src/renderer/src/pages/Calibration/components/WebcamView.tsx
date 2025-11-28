@@ -5,9 +5,9 @@ import { Timer } from '@shared/ui/timer';
 import {
   PoseLandmark,
   WorldLandmark,
-} from '../../../components/pose-detection';
-import PoseDetection from '../../../components/pose-detection/PoseDetection';
-import PoseVisualizer from '../../../components/pose-detection/PoseVisualizer';
+  PoseDetection,
+  PoseVisualizer,
+} from '@entities/posture';
 import { useCameraStore } from '../../../store/useCameraStore';
 
 interface WebcamViewProps {

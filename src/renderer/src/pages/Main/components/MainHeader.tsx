@@ -8,7 +8,7 @@ import Symbol from '../../../assets/symbol.svg?react';
 import { Button } from '@shared/ui/button';
 
 import { ThemeToggleSwitch } from '@shared/ui/theme-toggle-switch';
-import { useThemePreference } from '../../../hooks/useThemePreference';
+import { useThemePreference } from '@shared/hooks/use-theme-preference';
 import { cn } from '@shared/lib/cn';
 
 type TabType = 'dashboard' | 'plan' | 'settings';

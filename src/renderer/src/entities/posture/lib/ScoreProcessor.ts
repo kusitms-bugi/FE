@@ -14,43 +14,6 @@ function getPercentile(data: number[], percentile: number): number {
   );
 }
 
-// function getMedian(data: number[]): number {
-//   if (data.length === 0) return 0;
-//   const sortedData = [...data].sort((a, b) => a - b);
-//   const mid = Math.floor(sortedData.length / 2);
-//   if (sortedData.length % 2 === 0) {
-//     return (sortedData[mid - 1] + sortedData[mid]) / 2;
-//   }
-//   return sortedData[mid];
-// }
-
-// function removeOutliersIqr(scores: number[], multiplier: number): number[] {
-//   if (scores.length === 0) return [];
-
-//   const q1 = getPercentile(scores, 25);
-//   const q3 = getPercentile(scores, 75);
-//   const iqr = q3 - q1;
-//   const lowerBound = q1 - multiplier * iqr;
-//   const upperBound = q3 + multiplier * iqr;
-
-//   const cleanedScores: number[] = [];
-//   const median = getMedian(scores);
-
-//   for (let i = 0; i < scores.length; i++) {
-//     const score = scores[i];
-//     if (score < lowerBound || score > upperBound) {
-//       if (i > 0) {
-//         cleanedScores.push(cleanedScores[cleanedScores.length - 1]);
-//       } else {
-//         cleanedScores.push(median);
-//       }
-//     } else {
-//       cleanedScores.push(score);
-//     }
-//   }
-//   return cleanedScores;
-// }
-
 function applyMovingAverage(scores: number[], window: number): number[] {
   if (scores.length === 0) return [];
 
@@ -135,3 +98,4 @@ export class ScoreProcessor {
     this.scoreBuffer = [];
   }
 }
+

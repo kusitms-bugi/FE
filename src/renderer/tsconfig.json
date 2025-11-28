@@ -26,13 +26,15 @@
       "@assets/*": ["./src/assets/*"],
       "@api/*": ["./src/api/*"],
       "@utils/*": ["./src/utils/*"],
-      "@shared/*": ["./src/shared/*"]
+      "@shared/*": ["./src/shared/*"],
+      "@entities/*": ["./src/entities/*"]
     }
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
     "../preload/exposedInMainWorld.d.ts",
+    "src/shared/types/*.d.ts",
     "src/types/*.d.ts"
   ],
   "exclude": ["node_modules", "dist"]

@@ -173,3 +173,4 @@ export class PostureClassifier {
     this.lastScoreUpdateTime = 0;
   }
 }
+

@@ -1,6 +1,5 @@
+import { checkFrontality, trimmedStats } from './calculations';
 import { CalibrationState } from './types';
-import { checkFrontality } from './calculations';
-import { trimmedStats } from './calculations';
 
 // 캘리브레이션 데이터 처리
 export function processCalibrationData(

@@ -1,12 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { usePostureStore } from '../../store/usePostureStore';
-
-interface PoseLandmark {
-  x: number;
-  y: number;
-  z: number;
-  visibility?: number;
-}
+import { usePostureStore } from '@entities/posture';
+import { PoseLandmark } from './types';
 
 interface PoseVisualizerProps {
   landmarks: PoseLandmark[];
@@ -274,3 +268,4 @@ const PoseVisualizer = ({
 };
 
 export default PoseVisualizer;
+

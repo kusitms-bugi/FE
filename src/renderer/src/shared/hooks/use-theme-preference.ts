@@ -72,4 +72,3 @@ export function useThemePreference(): UseThemePreferenceReturn {
 
   return [isDark, setIsDark];
 }
-

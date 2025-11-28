@@ -146,3 +146,4 @@ export class PostureStabilizer {
     return weightedSum / totalWeight;
   }
 }
+

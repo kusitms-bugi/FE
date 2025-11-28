@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useHighlightQuery } from '../../../../../api/dashboard/useHighlightQuery';
-import { getColor } from '../../../../../utils/getColor';
+import { getColor } from '@shared/lib/get-color';
 import type { HighlightDatum } from '../data';
 
 export type HighlightPeriod = 'weekly' | 'monthly';

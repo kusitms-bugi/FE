@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getColor } from '@utils/getColor';
+import { getColor } from '@shared/lib/get-color';
 import { usePostureGraphQuery } from '@api/dashboard/usePostureGraphQuery';
 
 type AverageGraphDatum = {

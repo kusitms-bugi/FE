@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cn } from '../../utils/cn';
+import { cn } from '@shared/lib/cn';
 
 interface IntensitySliderProps {
   leftLabel?: string;

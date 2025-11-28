@@ -1,6 +1,6 @@
 import PageMoveIcon from '@assets/page-move-button.svg?react';
 import * as React from 'react';
-import { cn } from '../../utils/cn';
+import { cn } from '@shared/lib/cn';
 
 interface PageMoveButtonProps {
   direction?: 'prev' | 'next';

@@ -1,4 +1,4 @@
-import { getScoreLevel } from '../../utils/getScoreLevel';
+import { getScoreLevel } from '@shared/lib/get-score-level';
 import { EmaSmoother } from './calculations';
 import { PostureStabilizer } from './PostureStabilizer';
 import { ScoreProcessor } from './ScoreProcessor';

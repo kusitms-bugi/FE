@@ -1,7 +1,7 @@
 import * as React from 'react';
 import MoonIcon from '../../assets/moon_icon.svg?react';
 import SunIcon from '../../assets/sun_icon.svg?react';
-import { cn } from '../../utils/cn';
+import { cn } from '@shared/lib/cn';
 
 interface ThemeToggleSwitchProps {
   checked: boolean;

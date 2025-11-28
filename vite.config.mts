@@ -23,6 +23,8 @@ export default defineConfig({
       '@api': path.resolve(__dirname, 'src/renderer/src/api'),
       '@utils/': path.resolve(__dirname, 'src/renderer/src/utils') + '/',
       '@utils': path.resolve(__dirname, 'src/renderer/src/utils'),
+      '@shared/': path.resolve(__dirname, 'src/renderer/src/shared') + '/',
+      '@shared': path.resolve(__dirname, 'src/renderer/src/shared'),
       ui: path.resolve(__dirname, 'src/renderer/src/components'),
     },
   },

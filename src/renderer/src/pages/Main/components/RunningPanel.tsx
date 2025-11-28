@@ -16,8 +16,8 @@ import TireBugiRestSvg from '@assets/video/tire-bugi-rest.svg';
 import { useEffect, useMemo, useRef } from 'react';
 import { useCameraStore } from '../../../store/useCameraStore';
 import { usePostureStore } from '../../../store/usePostureStore';
-import { cn } from '../../../utils/cn';
-import { getScoreLevel } from '../../../utils/getScoreLevel';
+import { cn } from '@shared/lib/cn';
+import { getScoreLevel } from '@shared/lib/get-score-level';
 
 const RunningPanel = () => {
   const score = usePostureStore((state) => state.score);

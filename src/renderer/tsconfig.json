@@ -25,7 +25,8 @@
       "@ui/*": ["./src/components/*"],
       "@assets/*": ["./src/assets/*"],
       "@api/*": ["./src/api/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@shared/*": ["./src/shared/*"]
     }
   },
   "include": [

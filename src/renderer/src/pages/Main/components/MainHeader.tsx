@@ -9,7 +9,7 @@ import { Button } from '../../../components/Button/Button';
 
 import { ThemeToggleSwitch } from '../../../components/ThemeToggleSwitch/ThemeToggleSwitch';
 import { useThemePreference } from '../../../hooks/useThemePreference';
-import { cn } from '../../../utils/cn';
+import { cn } from '@shared/lib/cn';
 
 type TabType = 'dashboard' | 'plan' | 'settings';
 

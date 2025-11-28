@@ -1,4 +1,4 @@
-import { NotificationToggleSwitch } from '@ui/ToggleSwitch/NotificationToggleSwitch';
+import { NotificationToggleSwitch } from '@shared/ui/toggle-switch';
 import { useTimeEditor } from '../hooks/useTimeEditor';
 import MinusIcon from '../../../assets/main/minus_icon.svg?react';
 import PlusIcon from '../../../assets/main/plus_icon.svg?react';

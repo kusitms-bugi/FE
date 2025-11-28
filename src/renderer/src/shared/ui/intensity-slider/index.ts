@@ -1,0 +1,2 @@
+export { IntensitySlider } from './IntensitySlider';
+

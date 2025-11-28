@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
-import TextInput from '../../../components/InputField/TextField';
+import { TextField as TextInput } from '@shared/ui/input-field';
 import SaveIdIcon from '../../../assets/auth/saveid_icon.svg?react';
 import LoginButton from './LoginButton';
 import PasswordField from './PasswordField';

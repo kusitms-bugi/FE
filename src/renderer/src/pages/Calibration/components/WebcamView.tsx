@@ -1,7 +1,7 @@
 import SleepIcon from '@assets/sleep.svg?react';
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import Webcam from 'react-webcam';
-import { Timer } from '../../../components/Timer/Timer';
+import { Timer } from '@shared/ui/timer';
 import {
   PoseLandmark,
   WorldLandmark,

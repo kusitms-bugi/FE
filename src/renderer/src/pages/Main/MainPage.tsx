@@ -19,7 +19,7 @@ import PosePatternPanel from './components/PosePatternPanel';
 import WebcamPanel from './components/WebcamPanel';
 import TotalDistancePanel from './components/TotalDistancePanel';
 import NotificationModal from '../../components/Modal/NotificationModal';
-import { ModalPortal } from '@ui/Modal/ModalPortal';
+import { ModalPortal } from '@shared/ui/modal';
 import AverageGraphPannel from './components/AverageGraph/AverageGraphPannel';
 import { useModal } from '../../hooks/useModal';
 import { useNotificationScheduler } from '../../hooks/useNotificationScheduler';

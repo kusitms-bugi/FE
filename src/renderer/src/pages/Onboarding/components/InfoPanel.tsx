@@ -3,7 +3,7 @@ import FirstIcon from '@assets/onboarding/first_progress_icon.svg?react';
 import FourthIcon from '@assets/onboarding/fourth_progress_icon.svg?react';
 import SecondIcon from '@assets/onboarding/second_progress_icon.svg?react';
 import ThirdIcon from '@assets/onboarding/third_progress_icon.svg?react';
-import { Button } from '@ui/index';
+import { Button } from '@shared/ui/button';
 
 // 단계별 아이콘
 const STEP_ICONS = [FirstIcon, SecondIcon, ThirdIcon, FourthIcon, FifthIcon];

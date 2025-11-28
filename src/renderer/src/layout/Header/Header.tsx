@@ -1,6 +1,6 @@
 import Logo from '../../assets/logo.svg?react';
 import Symbol from '../../assets/symbol.svg?react';
-import { ThemeToggleSwitch } from '../../components/ThemeToggleSwitch/ThemeToggleSwitch';
+import { ThemeToggleSwitch } from '@shared/ui/theme-toggle-switch';
 import { useThemePreference } from '../../hooks/useThemePreference';
 
 const Header = () => {

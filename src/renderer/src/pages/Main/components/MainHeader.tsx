@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import Logo from '../../../assets/logo.svg?react';
 import NotificationIcon from '../../../assets/main/bell_icon.svg?react';
 import Symbol from '../../../assets/symbol.svg?react';
-import { Button } from '../../../components/Button/Button';
+import { Button } from '@shared/ui/button';
 
-import { ThemeToggleSwitch } from '../../../components/ThemeToggleSwitch/ThemeToggleSwitch';
+import { ThemeToggleSwitch } from '@shared/ui/theme-toggle-switch';
 import { useThemePreference } from '../../../hooks/useThemePreference';
 import { cn } from '@shared/lib/cn';
 

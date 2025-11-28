@@ -2,10 +2,10 @@ import DownIcon from '@assets/arrow-narrow-down.svg?react';
 import UpIcon from '@assets/arrow-narrow-up.svg?react';
 import { useState } from 'react';
 import { useAttendanceQuery } from '../../../api/dashboard/useAttendanceQuery';
-import { IntensitySlider } from '../../../components/IntensitySlider/IntensitySlider';
-import { PageMoveButton } from '../../../components/PageMoveButton/PageMoveButton';
-import { PannelHeader } from '../../../components/PannelHeader/PannelHeader';
-import { ToggleSwitch } from '../../../components/ToggleSwitch/ToggleSwitch';
+import { IntensitySlider } from '@shared/ui/intensity-slider';
+import { PageMoveButton } from '@shared/ui/page-move-button';
+import { PannelHeader } from '@shared/ui/panel-header';
+import { ToggleSwitch } from '@shared/ui/toggle-switch';
 
 type CalendarProps = {
   year: number;

@@ -1,5 +1,5 @@
-import { Button } from '../../../components/Button/Button';
-import TextField from '../../../components/InputField/TextField';
+import { Button } from '@shared/ui/button';
+import { TextField } from '@shared/ui/input-field';
 import { useNavigate } from 'react-router-dom';
 
 export default function VerifyAction({ email }: { email: string }) {

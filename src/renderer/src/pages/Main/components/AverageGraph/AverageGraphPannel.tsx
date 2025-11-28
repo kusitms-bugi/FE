@@ -8,8 +8,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { PannelHeader } from '@ui/PannelHeader/PannelHeader';
-import { ToggleSwitch } from '@ui/ToggleSwitch/ToggleSwitch';
+import { PannelHeader } from '@shared/ui/panel-header';
+import { ToggleSwitch } from '@shared/ui/toggle-switch';
 import {
   useAverageGraphChart,
   type AverageGraphPeriod,

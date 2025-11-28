@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import CompletionCharacter from '../../assets/completion.svg?react';
-import { Button } from '../../components/Button/Button';
+import { Button } from '@shared/ui/button';
 import { useCreateSessionMutation } from '../../api/session/useCreateSessionMutation';
 import { useCameraStore } from '../../store/useCameraStore';
 import { useLevelQuery } from '../../api/dashboard/useLevelQuery';

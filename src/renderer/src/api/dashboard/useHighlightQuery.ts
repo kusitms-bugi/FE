@@ -3,7 +3,7 @@ import {
   HighlightQueryParams,
   HighlightResponse,
 } from '../../types/dashboard/highlight';
-import api from '../api';
+import api from '@shared/api';
 
 /**
  * 하이라이트 조회 API

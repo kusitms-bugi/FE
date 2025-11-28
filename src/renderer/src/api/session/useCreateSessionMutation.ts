@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import api from '../api';
+import api from '@shared/api';
 import { CreateSessionResponse } from '../../types/main/session';
 
 /**

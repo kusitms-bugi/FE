@@ -1,4 +1,4 @@
-import NotificateMessage from '../../../components/NotificateMessage/NotificateMessage';
+import { NotificateMessage } from '@shared/ui/notification-message';
 
 interface MeasuringPanelProps {
   step1Error?: string | null;

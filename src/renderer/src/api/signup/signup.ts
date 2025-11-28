@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import api from '@shared/api';
 
 export interface SignupRequest {
   email: string;

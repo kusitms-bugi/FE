@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import api from '../api';
+import api from '@shared/api';
 import { LevelResponse } from '../../types/dashboard/level';
 
 /**

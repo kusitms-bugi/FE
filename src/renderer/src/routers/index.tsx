@@ -1,5 +1,5 @@
 import { createBrowserRouter, redirect } from 'react-router-dom';
-import api from '../api/api';
+import api from '@shared/api';
 import Layout from '../layout/Layout';
 import CalibrationPage from '../pages/Calibration/CalibrationPage';
 import LoginPage from '../pages/Login/LoginPage';

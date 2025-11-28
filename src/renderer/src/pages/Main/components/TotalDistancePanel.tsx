@@ -1,4 +1,4 @@
-import { PannelHeader } from '@ui/PannelHeader/PannelHeader';
+import { PannelHeader } from '@shared/ui/panel-header';
 import { useLevelQuery } from '../../../api/dashboard/useLevelQuery';
 import AchivementMedal from '../../../assets/main/achivement_meadl.svg?react';
 import { useModal } from '../../../hooks/useModal';

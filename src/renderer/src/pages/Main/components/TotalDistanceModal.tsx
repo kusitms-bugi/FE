@@ -1,5 +1,5 @@
-import { Button } from '@ui/Button/Button';
-import { ModalPortal } from '@ui/Modal/ModalPortal';
+import { Button } from '@shared/ui/button';
+import { ModalPortal } from '@shared/ui/modal';
 import CharacterSpeedRow, { CHARACTER_SPEED_DATA } from './CharacterSpeedRow';
 
 interface TotalDistanceModalProps {

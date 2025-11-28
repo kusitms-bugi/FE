@@ -3,7 +3,7 @@ import {
   AttendanceQueryParams,
   AttendanceResponse,
 } from '../../types/dashboard/attendance';
-import api from '../api';
+import api from '@shared/api';
 
 /**
  * 출석 현황 조회 API

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../../../components/Button/Button';
+import { Button } from '@shared/ui/button';
 import { useCameraStore } from '../../../store/useCameraStore';
 
 const CameraPermissionButton = () => {

@@ -1,8 +1,8 @@
-import { NotificationToggleSwitch } from '@ui/ToggleSwitch/NotificationToggleSwitch';
+import { NotificationToggleSwitch } from '@shared/ui/toggle-switch';
 import { useState } from 'react';
 import { useTimeEditor } from './hooks/useTimeEditor';
 import { TimeControlSection } from './components/TimeControlSection';
-import { Button } from '@ui/Button/Button';
+import { Button } from '@shared/ui/button';
 import { useNotificationStore } from '../../store/useNotificationStore';
 
 interface NotificationModalProps {

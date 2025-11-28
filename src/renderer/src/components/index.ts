@@ -1,6 +1,6 @@
 // UI 컴포넌트 export
-export { Button } from './Button/Button';
-export { default as TextField } from './InputField/TextField';
-export * from './NotificateMessage';
-export { Timer } from './Timer/Timer';
-export { Typography } from './Typography/Typography';
+export { Button } from '@shared/ui/button';
+export { TextField } from '@shared/ui/input-field';
+export * from '@shared/ui/notification-message';
+export { Timer } from '@shared/ui/timer';
+export { Typography } from '@shared/ui/typography';

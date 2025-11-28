@@ -1,5 +1,5 @@
 import { useState, forwardRef, type ChangeEvent } from 'react';
-import TextInput from '../../../components/InputField/TextField';
+import { TextField as TextInput } from '@shared/ui/input-field';
 import VisibleIcon from '../../../assets/auth/visible_icon.svg?react';
 import InvisibleIcon from '../../../assets/auth/invisible_icon.svg?react';
 

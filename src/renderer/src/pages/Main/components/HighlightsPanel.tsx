@@ -10,8 +10,8 @@ import {
   YAxis,
 } from 'recharts';
 
-import { PannelHeader } from '../../../components/PannelHeader/PannelHeader';
-import { ToggleSwitch } from '../../../components/ToggleSwitch/ToggleSwitch';
+import { PannelHeader } from '@shared/ui/panel-header';
+import { ToggleSwitch } from '@shared/ui/toggle-switch';
 import type { HighlightDatum } from './HighlightsPanel/data';
 import {
   useHighlightsChart,

@@ -2,7 +2,7 @@ import { EmailVerificationCallbackPage, EmailVerificationPage, LoginPage, Resend
 import api from '@shared/api';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import Layout from '../../layout/Layout';
-import CalibrationPage from '../../pages/Calibration/CalibrationPage';
+import { CalibrationPage } from '@features/calibration';
 import MainPage from '../../pages/Main/MainPage';
 import OnboardingCompletionPage from '../../pages/Onboarding/OnboardingCompletionPage';
 import OnboardinInitPage from '../../pages/Onboarding/OnboardingInitPage';

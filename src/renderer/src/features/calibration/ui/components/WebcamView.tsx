@@ -1,14 +1,14 @@
 import SleepIcon from '@assets/sleep.svg?react';
+import {
+  PoseDetection,
+  PoseLandmark,
+  PoseVisualizer,
+  WorldLandmark,
+} from '@entities/posture';
+import { Timer } from '@shared/ui/timer';
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import Webcam from 'react-webcam';
-import { Timer } from '@shared/ui/timer';
-import {
-  PoseLandmark,
-  WorldLandmark,
-  PoseDetection,
-  PoseVisualizer,
-} from '@entities/posture';
-import { useCameraStore } from '../../../store/useCameraStore';
+import { useCameraStore } from '../../../../store/useCameraStore';
 
 interface WebcamViewProps {
   onPoseDetected?: (
@@ -67,15 +67,15 @@ const WebcamView = ({
 
   const videoConstraints = preferredDeviceId
     ? {
-        deviceId: { exact: preferredDeviceId },
-        width: 1000,
-        height: 563,
-      }
+      deviceId: { exact: preferredDeviceId },
+      width: 1000,
+      height: 563,
+    }
     : {
-        facingMode: 'user',
-        width: 1000,
-        height: 563,
-      };
+      facingMode: 'user',
+      width: 1000,
+      height: 563,
+    };
 
   const handlePoseDetected = (
     landmarks: PoseLandmark[],
@@ -210,12 +210,12 @@ const WebcamView = ({
               <Timer
                 value={
                   Math.min(5, Math.max(0, remainingTime)) as
-                    | 0
-                    | 1
-                    | 2
-                    | 3
-                    | 4
-                    | 5
+                  | 0
+                  | 1
+                  | 2
+                  | 3
+                  | 4
+                  | 5
                 }
                 size={58}
               />

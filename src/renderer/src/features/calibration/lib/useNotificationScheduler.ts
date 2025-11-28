@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useNotificationStore } from '../store/useNotificationStore';
+import { useNotificationStore } from '../../../store/useNotificationStore';
 import { usePostureStore } from '@entities/posture';
 
 /* 알림 스케줄러 훅 , 설정된 시간에 따라 시스템 알림을 자동으로 표시 */

@@ -13,7 +13,7 @@ import { ModalPortal } from '@shared/ui/modal';
 import { useEffect, useRef } from 'react';
 import NotificationModal from '../../components/Modal/NotificationModal';
 import { useAutoMetricsSender } from '../../hooks/useAutoMetricsSender';
-import { useNotificationScheduler } from '../../hooks/useNotificationScheduler';
+import { useNotificationScheduler } from '@features/calibration';
 import { useSessionCleanup } from '../../hooks/useSessionCleanup';
 import { useCameraStore } from '../../store/useCameraStore';
 import AttendacePanel from './components/AttendacePanel';

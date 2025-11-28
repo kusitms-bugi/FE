@@ -1,14 +1,4 @@
 import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type RefObject,
-} from 'react';
-import { useNavigate } from 'react-router-dom';
-import Webcam from 'react-webcam';
-import CalibrationGuide from '../../assets/calibration_guide.svg?react';
-import {
   PoseLandmark as AnalyzerPoseLandmark,
   calculateFrameBrightness,
   calculatePI,
@@ -19,6 +9,16 @@ import {
   processCalibrationData,
   WorldLandmark,
 } from '@entities/posture';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type RefObject,
+} from 'react';
+import { useNavigate } from 'react-router-dom';
+import Webcam from 'react-webcam';
+import CalibrationGuide from '../../../assets/calibration_guide.svg?react';
 import MeasuringPanel from './components/MeasuringPanel';
 import WebcamView from './components/WebcamView';
 import WelcomePanel from './components/WelcomePanel';

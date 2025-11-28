@@ -27,6 +27,8 @@ export default defineConfig({
       '@shared': path.resolve(__dirname, 'src/renderer/src/shared'),
       '@entities/': path.resolve(__dirname, 'src/renderer/src/entities') + '/',
       '@entities': path.resolve(__dirname, 'src/renderer/src/entities'),
+      '@features/': path.resolve(__dirname, 'src/renderer/src/features') + '/',
+      '@features': path.resolve(__dirname, 'src/renderer/src/features'),
       ui: path.resolve(__dirname, 'src/renderer/src/components'),
     },
   },

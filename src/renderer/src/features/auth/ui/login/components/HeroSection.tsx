@@ -1,5 +1,5 @@
-import Logo from '../../../assets/logo.svg?react';
-import Symbol from "../../../assets/symbol.svg?react";
+import Logo from '../../../../assets/logo.svg?react';
+import Symbol from '../../../../assets/symbol.svg?react';
 
 export default function HeroSection() {
   return (

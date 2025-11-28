@@ -1,7 +1,7 @@
-import { useState, forwardRef, type ChangeEvent } from 'react';
 import { TextField as TextInput } from '@shared/ui/input-field';
-import VisibleIcon from '../../../assets/auth/visible_icon.svg?react';
-import InvisibleIcon from '../../../assets/auth/invisible_icon.svg?react';
+import { forwardRef, useState, type ChangeEvent } from 'react';
+import InvisibleIcon from '../../../../assets/auth/invisible_icon.svg?react';
+import VisibleIcon from '../../../../assets/auth/visible_icon.svg?react';
 
 interface PasswordFieldProps {
   hasValue?: boolean;

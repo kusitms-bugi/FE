@@ -1,16 +1,12 @@
+import { EmailVerificationCallbackPage, EmailVerificationPage, LoginPage, ResendVerificationPage, SignUpPage } from '@features/auth';
 import api from '@shared/api';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import Layout from '../../layout/Layout';
 import CalibrationPage from '../../pages/Calibration/CalibrationPage';
-import LoginPage from '../../pages/Login/LoginPage';
 import MainPage from '../../pages/Main/MainPage';
 import OnboardingCompletionPage from '../../pages/Onboarding/OnboardingCompletionPage';
 import OnboardinInitPage from '../../pages/Onboarding/OnboardingInitPage';
 import OnboardingPage from '../../pages/Onboarding/OnboardingPage';
-import EmailVerificationCallbackPage from '../../pages/SignUp/EmailVerificationCallbackPage';
-import EmailVerificationPage from '../../pages/SignUp/EmailVerificationPage';
-import ResendVerificationPage from '../../pages/SignUp/ResendVerificationPage';
-import SignUpPage from '../../pages/SignUp/SignUpPage';
 import { WidgetPage } from '../../pages/Widget/WidgetPage';
 
 // 인증이 필요한 페이지용 loader

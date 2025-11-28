@@ -27,7 +27,8 @@
       "@api/*": ["./src/api/*"],
       "@utils/*": ["./src/utils/*"],
       "@shared/*": ["./src/shared/*"],
-      "@entities/*": ["./src/entities/*"]
+      "@entities/*": ["./src/entities/*"],
+      "@features/*": ["./src/features/*"]
     }
   },
   "include": [

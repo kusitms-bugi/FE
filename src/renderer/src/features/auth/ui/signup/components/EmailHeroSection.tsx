@@ -1,5 +1,5 @@
 import { useEmailStore } from '@entities/user';
-import EmailIcon from '../../../assets/auth/email_icon.svg?react';
+import EmailIcon from '../../../../assets/auth/email_icon.svg?react';
 
 export default function EmailHeroSection() {
   const email = useEmailStore((state) => state.email);

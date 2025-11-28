@@ -21,4 +21,3 @@ export const usePostureStore = create<PostureState>()(
     },
   ),
 );
-

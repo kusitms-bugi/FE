@@ -15,4 +15,3 @@ export { default as TotalDistanceModal } from './TotalDistanceModal';
 export { default as TotalDistancePanel } from './TotalDistancePanel';
 export { default as TrendPanel } from './TrendPanel';
 export { default as WebcamPanel } from './WebcamPanel';
-

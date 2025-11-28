@@ -38,4 +38,3 @@ const IntensitySlider = React.forwardRef<HTMLDivElement, IntensitySliderProps>(
 
 IntensitySlider.displayName = 'IntensitySlider';
 export { IntensitySlider };
-

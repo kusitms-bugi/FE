@@ -268,4 +268,3 @@ const PoseVisualizer = ({
 };
 
 export default PoseVisualizer;
-

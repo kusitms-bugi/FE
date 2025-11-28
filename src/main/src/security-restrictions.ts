@@ -184,7 +184,6 @@ app.on('web-contents-created', (_, contents) => {
    * 개발 모드에서는 허용하고 프로덕션에서만 막기
    */
   if (import.meta.env.PROD) {
-    const originalReload = contents.reload.bind(contents);
     contents.reload = () => {
       console.warn('Page reload is disabled in production mode');
       // 새로고침 실행하지 않음

@@ -9,4 +9,3 @@ export type {
   SignupRequest,
   ResendVerifyEmailRequest,
 } from './types';
-

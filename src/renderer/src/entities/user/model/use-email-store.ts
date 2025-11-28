@@ -18,4 +18,3 @@ export const useEmailStore = create<EmailState>()(
     },
   ),
 );
-

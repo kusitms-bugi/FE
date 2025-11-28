@@ -108,7 +108,7 @@ api.interceptors.response.use(
           originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         }
         return api(originalRequest);
-      } catch (refreshError) {
+      } catch {
         // 리프레시 토큰도 만료되거나 유효하지 않은 경우 로그아웃 처리
         localStorage.clear();
         window.location.href = '/';

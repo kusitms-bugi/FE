@@ -7,8 +7,7 @@ type Props = {
   off?: string; // 비활성 색 (기본 grey-50)
 };
 
-const SEG_KEYS = ['LT', 'TOP', 'LB', 'RT', 'RB'] as const;
-type SegmentKey = (typeof SEG_KEYS)[number];
+type SegmentKey = 'LT' | 'TOP' | 'LB' | 'RT' | 'RB';
 
 // Tailwind 기준 (CSS 변수 사용해 다크/라이트 테마 자동 대응)
 const DEFAULT_ON = 'var(--color-yellow-500)';
@@ -116,4 +115,3 @@ const Timer = function Timer({
 
 export { Timer };
 export default Timer;
-

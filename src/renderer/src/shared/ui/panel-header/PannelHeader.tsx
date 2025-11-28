@@ -1,4 +1,4 @@
-import InfoIcon from '@assets/info-circle.svg?react';
+import InfoIcon from '@assets/common/icons/info-circle.svg?react';
 import * as React from 'react';
 
 interface PannelHeaderProps {
@@ -21,4 +21,3 @@ const PannelHeader = React.forwardRef<HTMLDivElement, PannelHeaderProps>(
 
 PannelHeader.displayName = 'PannelHeader';
 export { PannelHeader };
-

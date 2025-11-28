@@ -7,4 +7,3 @@ export {
   useVerifyEmailMutation,
   useResendVerifyEmailMuation,
 } from './use-verify-email-mutation';
-

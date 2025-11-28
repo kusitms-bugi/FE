@@ -1,16 +1,16 @@
 import * as React from 'react';
 
-import CalendarIcon from '@assets/calendar.svg?react';
-import ChevronRigthIcon from '@assets/chevron-right.svg?react';
-import ClockIcon from '@assets/clock.svg?react';
-import GlassHourIcon from '@assets/hourglass.svg?react';
-import TumbupIcon from '@assets/thumbup.svg?react';
+import CalendarIcon from '@assets/common/icons/calendar.svg?react';
+import ChevronRigthIcon from '@assets/common/icons/chevron-right.svg?react';
+import ClockIcon from '@assets/common/icons/clock.svg?react';
+import GlassHourIcon from '@assets/common/icons/hourglass.svg?react';
+import TumbupIcon from '@assets/common/icons/thumbup.svg?react';
 import { usePosturePatternQuery } from '@entities/dashboard';
 import { PannelHeader } from '@shared/ui/panel-header';
 
 // 시간 형식 변환: "14:00:00" -> "오후 2시"
 const formatTime = (timeStr: string): string => {
-  const [hours, minutes] = timeStr.split(':').map(Number);
+  const [hours,] = timeStr.split(':').map(Number);
   const hour12 = hours % 12 || 12;
   const period = hours < 12 ? '오전' : '오후';
   return `${period} ${hour12}시`;
@@ -76,7 +76,7 @@ const PatternHeader = React.forwardRef<HTMLDivElement, PatternHeaderProps>(
 PatternHeader.displayName = 'PatternHeader';
 
 const PosePatternPanel = () => {
-  const { data: patternData, isLoading } = usePosturePatternQuery();
+  const { data: patternData } = usePosturePatternQuery();
 
   const worstTime = patternData?.data.worstTime
     ? formatTime(patternData.data.worstTime)

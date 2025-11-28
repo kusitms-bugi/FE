@@ -13,11 +13,11 @@ import RiniSvg from '@assets/video/rini.svg';
 import StoneBugiRestSvg from '@assets/video/stone-bugi-rest.svg';
 import TireBugiRestSvg from '@assets/video/tire-bugi-rest.svg';
 
-import { useEffect, useMemo, useRef } from 'react';
-import { useCameraStore } from '@widgets/camera';
 import { usePostureStore } from '@entities/posture';
 import { cn } from '@shared/lib/cn';
 import { getScoreLevel } from '@shared/lib/get-score-level';
+import { useCameraStore } from '@widgets/camera';
+import { useEffect, useMemo, useRef } from 'react';
 
 const RunningPanel = () => {
   const score = usePostureStore((state) => state.score);
@@ -118,23 +118,6 @@ const RunningPanel = () => {
       video.pause();
     }
   }, [isCameraShow]);
-
-  // 위젯 창 상태 확인
-  useEffect(() => {
-    const checkWidgetStatus = async () => {
-      if (window.electronAPI?.widget) {
-        const isOpen = await window.electronAPI.widget.isOpen();
-      }
-    };
-
-    checkWidgetStatus();
-
-    // 주기적으로 위젯 상태 확인 (위젯이 외부에서 닫힐 수 있음)
-    const interval = setInterval(checkWidgetStatus, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // 위젯 열기/닫기 핸들러
 
   return (
     <div className="">

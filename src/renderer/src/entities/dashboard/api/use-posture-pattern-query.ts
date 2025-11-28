@@ -34,4 +34,3 @@ export const usePosturePatternQuery = () => {
     retry: 1, // 실패 시 1번만 재시도
   });
 };
-

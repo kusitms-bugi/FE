@@ -1,11 +1,11 @@
-import DownIcon from '@assets/arrow-narrow-down.svg?react';
-import UpIcon from '@assets/arrow-narrow-up.svg?react';
-import { useState } from 'react';
+import DownIcon from '@assets/common/icons/arrow-narrow-down.svg?react';
+import UpIcon from '@assets/common/icons/arrow-narrow-up.svg?react';
 import { useAttendanceQuery } from '@entities/dashboard';
 import { IntensitySlider } from '@shared/ui/intensity-slider';
 import { PageMoveButton } from '@shared/ui/page-move-button';
 import { PannelHeader } from '@shared/ui/panel-header';
 import { ToggleSwitch } from '@shared/ui/toggle-switch';
+import { useState } from 'react';
 
 type CalendarProps = {
   year: number;
@@ -104,7 +104,7 @@ const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
   const todayMonth = today.getMonth();
   const todayDate = today.getDate();
 
-  const isSameMonth = todayYear === year && todayMonth === month;
+
 
   // API 데이터에서 날짜별 레벨 가져오기
   const getLevelForDay = (day: number): number | null => {
@@ -113,7 +113,11 @@ const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
     const usageMinutes = attendances[dateStr];
 
     // 사용 시간이 없거나 0이면 null (안 사용한 날 - 그레이로 표시)
-    if (usageMinutes === undefined || usageMinutes === null || usageMinutes === 0) {
+    if (
+      usageMinutes === undefined ||
+      usageMinutes === null ||
+      usageMinutes === 0
+    ) {
       return null;
     }
 
@@ -245,7 +249,7 @@ const AttendacePanel = () => {
           uncheckedLabel="월간"
           checkedLabel="연간"
           checked={false}
-          onChange={() => {}}
+          onChange={() => { }}
         />
         <IntensitySlider leftLabel="Less" rightLabel="More" />
       </div>

@@ -1,6 +1,6 @@
-import HideIcon from '@assets/hide.svg?react';
-import ShowIcon from '@assets/show.svg?react';
-import WidgetIcon from '@assets/widget.svg?react';
+import HideIcon from '@assets/common/icons/hide.svg?react';
+import ShowIcon from '@assets/common/icons/show.svg?react';
+import WidgetIcon from '@assets/common/icons/widget.svg?react';
 import {
   useCreateSessionMutation,
   usePauseSessionMutation,
@@ -8,10 +8,7 @@ import {
   useStopSessionMutation,
 } from '@entities/session';
 import { Button } from '@shared/ui/button';
-import {
-  PoseLandmark,
-  WorldLandmark,
-} from '@entities/posture';
+import { PoseLandmark, WorldLandmark } from '@entities/posture';
 import { useWidget } from '@widgets/widget';
 import { useCameraStore } from '@widgets/camera';
 import { WebcamView } from '@features/calibration/ui';

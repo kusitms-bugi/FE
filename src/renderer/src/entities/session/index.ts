@@ -11,4 +11,3 @@ export type {
   SessionReportData,
   SessionReportResponse,
 } from './types';
-

@@ -1,5 +1,6 @@
 // Helper functions from the python script, translated to JS
-function getPercentile(data: number[], percentile: number): number {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function _getPercentile(data: number[], percentile: number): number {
   if (data.length === 0) return 0;
   const sortedData = [...data].sort((a, b) => a - b);
   const index = (percentile / 100) * (sortedData.length - 1);
@@ -98,4 +99,3 @@ export class ScoreProcessor {
     this.scoreBuffer = [];
   }
 }
-

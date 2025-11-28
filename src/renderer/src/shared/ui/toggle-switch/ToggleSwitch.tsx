@@ -88,4 +88,3 @@ const ToggleSwitch = React.forwardRef<HTMLButtonElement, ToggleSwitchProps>(
 
 ToggleSwitch.displayName = 'ToggleSwitch';
 export { ToggleSwitch };
-

@@ -1,2 +1,1 @@
 export { ThemeToggleSwitch } from './ThemeToggleSwitch';
-

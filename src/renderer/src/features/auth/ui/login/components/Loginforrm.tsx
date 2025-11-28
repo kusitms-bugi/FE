@@ -1,10 +1,10 @@
+import FailIcon from '@assets/auth/error_icon.svg?react';
+import SaveIdIcon from '@assets/auth/saveid_icon.svg?react';
 import { useLoginMutation } from '@entities/user';
 import { TextField as TextInput } from '@shared/ui/input-field';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import FailIcon from '@assets/auth/error_icon.svg?react';
-import SaveIdIcon from '@assets/auth/saveid_icon.svg?react';
 import LoginButton from './LoginButton';
 import PasswordField from './PasswordField';
 
@@ -22,7 +22,7 @@ const LoginForm = () => {
     handleSubmit,
     watch,
     setValue,
-    formState: { isValid },
+
   } = useForm<LoginFormData>({
     mode: 'onChange',
     defaultValues: {

@@ -20,4 +20,3 @@ export type {
   PosturePatternData,
   PosturePatternResponse,
 } from './types';
-

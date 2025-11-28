@@ -53,4 +53,3 @@ export function ErrorIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-

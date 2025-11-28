@@ -1,4 +1,4 @@
-import SleepIcon from '@assets/sleep.svg?react';
+import SleepIcon from '@assets/common/icons/sleep.svg?react';
 import {
   PoseDetection,
   PoseLandmark,
@@ -133,7 +133,7 @@ const WebcamView = ({
       for (const entry of entries) {
         const { width, height } = entry.contentRect;
         if (width > 0 && height > 0) {
-          setVideoDimensions((prev) => {
+          setVideoDimensions((_prev) => {
             // 카메라가 켜져있을 때는 실제 비디오 크기를 우선 사용
             if (cameraState === 'show' && webcamRef.current?.video) {
               const video = webcamRef.current.video;

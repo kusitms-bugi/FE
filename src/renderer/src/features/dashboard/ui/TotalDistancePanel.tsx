@@ -16,13 +16,13 @@ const TotalDistance = () => {
   return (
     <>
       <div className="flex flex-col pl-3">
-        <div className='flex justify-between'>
+        <div className="flex justify-between">
           <PannelHeader>
             {isLoading ? '로딩 중...' : `Level.${level + 1}  `}
           </PannelHeader>
           <button
             onClick={open}
-            className='cursor-pointer text-yellow-400 text-caption-xs-meidum'
+            className="text-caption-xs-meidum cursor-pointer text-yellow-400"
           >
             자세히 보기 &gt;
           </button>

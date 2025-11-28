@@ -20,16 +20,16 @@
     "jsx": "react-jsx",
     "allowImportingTsExtensions": true,
     "noEmit": true,
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "@ui/*": ["./src/components/*"],
-      "@assets/*": ["./src/assets/*"],
-      "@api/*": ["./src/api/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@shared/*": ["./src/shared/*"],
-      "@entities/*": ["./src/entities/*"],
-      "@features/*": ["./src/features/*"],
-      "@widgets/*": ["./src/widgets/*"]
+      "@ui/*": ["./components/*"],
+      "@assets/*": ["./assets/*"],
+      "@api/*": ["./api/*"],
+      "@utils/*": ["./utils/*"],
+      "@shared/*": ["./shared/*"],
+      "@entities/*": ["./entities/*"],
+      "@features/*": ["./features/*"],
+      "@widgets/*": ["./widgets/*"]
     }
   },
   "include": [

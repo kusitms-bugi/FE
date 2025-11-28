@@ -39,4 +39,3 @@ const NotificationToggleSwitch = React.forwardRef<
 
 NotificationToggleSwitch.displayName = 'NotificationToggleSwitch';
 export { NotificationToggleSwitch };
-

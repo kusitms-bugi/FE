@@ -31,4 +31,3 @@ export const useLevelQuery = () => {
     queryFn: getLevel,
   });
 };
-

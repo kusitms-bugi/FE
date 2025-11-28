@@ -142,7 +142,7 @@ const HighlightsPanel = () => {
 
                   const datum = data[index] as HighlightDatum | undefined;
                   if (!datum) return null;
-                  
+
                   const isCurrent = datum.barKey === 'current';
 
                   // 막대 중앙 좌표

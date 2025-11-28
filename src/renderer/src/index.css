@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import './styles/globals.css';
+@import './shared/styles/globals.css';
 
 @font-face {
   font-family: 'Pretendard';

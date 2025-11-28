@@ -2,11 +2,6 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { ErrorIcon, SuccessIcon } from './icons';
 
-/** 작은 clsx 유틸 */
-function cn(...a: Array<string | false | null | undefined>) {
-  return a.filter(Boolean).join(' ');
-}
-
 const notification = cva(
   'w-[544px] p-[18px] text-body-md-regular transition-all duration-200 ease-in-out rounded-full',
   {
@@ -91,4 +86,3 @@ export function NotificateMessage({
 }
 
 export default NotificateMessage;
-

@@ -1,7 +1,7 @@
+import { useLevelQuery } from '@entities/dashboard';
+import { useSessionReportQuery } from '@entities/session';
 import { useEffect, useMemo, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
-import { useSessionReportQuery } from '@entities/session';
-import { useLevelQuery } from '@entities/dashboard';
 
 const ExitPanel = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -15,29 +15,13 @@ const ExitPanel = () => {
     if (id && id !== sessionId) {
       setSessionId(id);
     }
-  }, []);
+  }, [sessionId]);
 
   // 세션 리포트 조회
   const { data, isLoading, error } = useSessionReportQuery(sessionId);
 
   // 현재 이동거리 조회
   const { data: levelData } = useLevelQuery();
-
-  // 다크모드 상태 (간단한 방법)
-  const [isDark, setIsDark] = useState(() =>
-    document.documentElement.classList.contains('dark'),
-  );
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-    return () => observer.disconnect();
-  }, []);
 
   // CSS 변수에서 색상 가져오기
   const getColor = (cssVar: string, fallback: string) => {
@@ -53,7 +37,6 @@ const ExitPanel = () => {
   const goodSeconds = data?.data.goodSeconds || 0;
 
   const totalTime = Math.round(totalSeconds / 60); // 초를 분으로 변환
-  const correctPostureTime = Math.round(goodSeconds / 60); // 바른 자세 시간 (분)
 
   // 비율은 초 단위로 먼저 계산 후 반올림 (정확도 향상)
   const correctPosturePercentage =
@@ -79,7 +62,7 @@ const ExitPanel = () => {
       background: getColor('--color-grey-25', '#e5e7eb'),
       score: getColor('--color-yellow-400', '#fbbf24'),
     }),
-    [isDark],
+    [],
   );
 
   // 안쪽 링 배경 데이터 (회색) - 전체를 회색으로 채움

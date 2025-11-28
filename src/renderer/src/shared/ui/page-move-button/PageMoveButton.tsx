@@ -1,4 +1,4 @@
-import PageMoveIcon from '@assets/page-move-button.svg?react';
+import PageMoveIcon from '@assets/common/icons/page-move-button.svg?react';
 import * as React from 'react';
 import { cn } from '@shared/lib/cn';
 
@@ -42,4 +42,3 @@ const PageMoveButton = React.forwardRef<HTMLButtonElement, PageMoveButtonProps>(
 
 PageMoveButton.displayName = 'PageMoveButton';
 export { PageMoveButton };
-

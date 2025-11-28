@@ -1,9 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import api from '@shared/api';
-import {
-  SaveMetricsRequest,
-  SaveMetricsResponse,
-} from '../types';
+import { SaveMetricsRequest, SaveMetricsResponse } from '../types';
 
 /**
  * 세션 메트릭 저장 API
@@ -50,4 +47,3 @@ export const useSaveMetricsMutation = () => {
     },
   });
 };
-

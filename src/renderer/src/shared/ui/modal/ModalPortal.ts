@@ -13,4 +13,3 @@ export const ModalPortal = ({ children }: ModalPortalProps) => {
   }
   return ReactDOM.createPortal(children, el);
 };
-

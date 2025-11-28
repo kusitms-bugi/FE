@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
 import { useHighlightQuery } from '@entities/dashboard';
 import { getColor } from '@shared/lib/get-color';
+import { useMemo } from 'react';
 import type { HighlightDatum } from '../data';
 
 export type HighlightPeriod = 'weekly' | 'monthly';
@@ -33,22 +33,6 @@ type ChartConfig = {
 };
 
 export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
-  // 다크모드 상태 감지
-  const [isDark, setIsDark] = useState(() =>
-    document.documentElement.classList.contains('dark'),
-  );
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-    return () => observer.disconnect();
-  }, []);
-
   // 현재 날짜 기준으로 year, month 계산
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -84,15 +68,19 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
       ];
     }
 
+    // highlightData.data.current와 highlightData.data.previous를 직접 참조하여 React Compiler 경고 해결
+    const previousValue = highlightData.data.previous;
+    const currentValue = highlightData.data.current;
+
     return [
       {
         periodLabel: periodLabel[0],
-        value: highlightData.data.previous,
+        value: previousValue,
         barKey: 'previous',
       },
       {
         periodLabel: periodLabel[1],
-        value: highlightData.data.current,
+        value: currentValue,
         barKey: 'current',
       },
     ];
@@ -104,7 +92,7 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
       previous: getColor('--color-grey-100', '#e3e1df'), // 저번 주/달 바 색
       current: getColor('--color-sementic-brand-primary', '#ffbf00'), // 이번 주/달 바 색
     }),
-    [isDark],
+    [],
   );
 
   const chartConfig = useMemo<ChartConfig>(() => {
@@ -153,7 +141,7 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
       maxDomain: maxValue,
       yAxisTicks: ticks,
     };
-  }, [activePeriod, chartColors, chartData]);
+  }, [chartColors, chartData]);
 
   return chartConfig;
 }

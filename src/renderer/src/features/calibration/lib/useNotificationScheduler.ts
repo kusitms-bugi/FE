@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useNotificationStore } from '@features/notification';
 import { usePostureStore } from '@entities/posture';
 
@@ -18,7 +18,7 @@ export const useNotificationScheduler = () => {
   const badPostureStartTime = useRef<number | null>(null);
 
   /* 스트레칭 알림 표시 */
-  const showStretchingNotification = async () => {
+  const showStretchingNotification = useCallback(async () => {
     try {
       await window.electronAPI.notification.show(
         '스트레칭 시간이에요! 🧘',
@@ -27,10 +27,10 @@ export const useNotificationScheduler = () => {
     } catch (error) {
       console.error('Failed to show stretching notification:', error);
     }
-  };
+  }, [stretching.interval]);
 
   /* 거북목 알림 표시 */
-  const showTurtleNeckNotification = async () => {
+  const showTurtleNeckNotification = useCallback(async () => {
     try {
       await window.electronAPI.notification.show(
         '자세를 확인해주세요! 🐢',
@@ -39,7 +39,7 @@ export const useNotificationScheduler = () => {
     } catch (error) {
       console.error('Failed to show turtle neck notification:', error);
     }
-  };
+  }, [turtleNeck.interval]);
 
   /* 스트레칭 타이머 설정 */
   useEffect(() => {
@@ -69,7 +69,7 @@ export const useNotificationScheduler = () => {
         stretchingTimerRef.current = null;
       }
     };
-  }, [isAllow, stretching.isEnabled, stretching.interval]);
+  }, [isAllow, stretching.isEnabled, stretching.interval, showStretchingNotification]);
 
   /* 거북목 상태 추적 - postureClass가 4, 5, 6 (bugi 계열)일 때 시작 시간 기록 */
   useEffect(() => {
@@ -124,7 +124,7 @@ export const useNotificationScheduler = () => {
         turtleNeckCheckRef.current = null;
       }
     };
-  }, [isAllow, turtleNeck.isEnabled, turtleNeck.interval]);
+  }, [isAllow, turtleNeck.isEnabled, turtleNeck.interval, showTurtleNeckNotification]);
 
   /* 수동으로 알림을 트리거하는 함수들 (테스트용) */
   return {

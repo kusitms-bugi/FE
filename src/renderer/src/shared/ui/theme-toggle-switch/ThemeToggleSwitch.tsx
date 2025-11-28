@@ -1,6 +1,6 @@
 import * as React from 'react';
-import MoonIcon from '@assets/moon_icon.svg?react';
-import SunIcon from '@assets/sun_icon.svg?react';
+import MoonIcon from '@assets/common/icons/moon_icon.svg?react';
+import SunIcon from '@assets/common/icons/sun_icon.svg?react';
 import { cn } from '@shared/lib/cn';
 
 interface ThemeToggleSwitchProps {
@@ -43,4 +43,3 @@ const ThemeToggleSwitch = React.forwardRef<
 
 ThemeToggleSwitch.displayName = 'ThemeToggleSwitch';
 export { ThemeToggleSwitch };
-

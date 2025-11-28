@@ -33,7 +33,7 @@ export class PostureClassifier {
     piData: PIResult,
     mu: number,
     sigma: number,
-    frontality: FrontalityResult,
+    _frontality: FrontalityResult,
   ): PostureClassification {
     const currentTime = Date.now();
 
@@ -173,4 +173,3 @@ export class PostureClassifier {
     this.lastScoreUpdateTime = 0;
   }
 }
-

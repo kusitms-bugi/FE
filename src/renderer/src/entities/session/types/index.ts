@@ -52,4 +52,3 @@ export interface SessionReportResponse {
   code: string;
   message: string;
 }
-

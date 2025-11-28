@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
-import { getColor } from '@shared/lib/get-color';
 import { usePostureGraphQuery } from '@entities/dashboard';
+import { getColor } from '@shared/lib/get-color';
+import { useMemo } from 'react';
 
 type AverageGraphDatum = {
   periodLabel: string;
@@ -19,23 +19,7 @@ type ChartConfig = {
 };
 
 export function useAverageGraphChart(activePeriod: AverageGraphPeriod) {
-  const [isDark, setIsDark] = useState(() =>
-    document.documentElement.classList.contains('dark'),
-  );
-
   const { data: apiData } = usePostureGraphQuery();
-
-  /* html의 class 속성 변경될 때마다 콜백 실행(다크모드 감지) */
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-    return () => observer.disconnect();
-  }, []);
 
   /* 그래프 색상 */
   const chartConfig = useMemo<ChartConfig>(() => {
@@ -88,7 +72,7 @@ export function useAverageGraphChart(activePeriod: AverageGraphPeriod) {
       gridColor: gridColorValue,
       yAxisTicks: ticks,
     };
-  }, [activePeriod, isDark, apiData]);
+  }, [activePeriod, apiData]);
 
   return chartConfig;
 }

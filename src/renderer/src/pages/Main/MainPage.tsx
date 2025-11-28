@@ -11,7 +11,7 @@ import { useSaveMetricsMutation } from '@entities/session';
 import { useModal } from '@shared/hooks/use-modal';
 import { ModalPortal } from '@shared/ui/modal';
 import { useEffect, useRef } from 'react';
-import NotificationModal from '../../components/Modal/NotificationModal';
+import { NotificationModal } from '@features/notification';
 import {
   useAutoMetricsSender,
   useSessionCleanup,

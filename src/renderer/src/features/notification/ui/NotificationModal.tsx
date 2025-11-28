@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTimeEditor } from './hooks/useTimeEditor';
 import { TimeControlSection } from './components/TimeControlSection';
 import { Button } from '@shared/ui/button';
-import { useNotificationStore } from '../../store/useNotificationStore';
+import { useNotificationStore } from '../model/use-notification-store';
 
 interface NotificationModalProps {
   onClose: () => void;

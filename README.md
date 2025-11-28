@@ -3,14 +3,14 @@
 > 실시간 웹캠 자세 인식을 통해 거북목과 같은 잘못된 자세를 교정하고 사용자에게 통계 피드백을 제공하는 데스크탑 애플리케이션
 
 <p align="center">
-  <img src="buildResources/icon.png" alt="거부기린 아이콘" width="200" />
+  <img src="bg.png" alt="거부기린 아이콘"  />
 </p>
 
 ---
 
 ## 🔗 데모 & 자료
 
-- 서비스 홈페이지: [https://bugi.co.kr](https://bugi.co.kr)
+- 서비스 다운로드 페이지: [https://choihooo.github.io/bugi-download/](https://choihooo.github.io/bugi-download/)
 
 ---
 
@@ -33,12 +33,15 @@
 
 1. **실시간 자세 분석 및 위젯**
    - 설명: 웹캠을 통해 사용자의 자세를 실시간으로 분석하고, MediaPipe를 활용해 신체 키포인트를 추출합니다. 메인 화면과 데스크탑 위젯을 통해 현재 자세 상태(거북목/기린)를 실시간으로 확인하고 세션을 제어할 수 있습니다. 위젯은 항상 위에 표시되며 크기 조절이 가능합니다.
-   - 기술 포인트: `react-webcam`, `@mediapipe/tasks-vision`, Electron `BrowserWindow`, `PostureClassifier` (안정화 로직 포함)
+   - 기술 포인트: `react-webcam`, `@mediapipe/tasks-vision`, Electron `BrowserWindow`, `PostureClassifier`
    - 주요 특징:
      - PI(Posture Index) 계산을 통한 정량적 자세 평가
      - EMA(Exponential Moving Average) 스무딩으로 노이즈 제거
-     - PostureStabilizer를 통한 안정화된 자세 판정
+     - ScoreProcessor를 통한 다단계 스무딩 (Moving Average → EMA(30) → EMA(70))
+     - 히스테리시스 로직으로 채터링 방지 (enter_bad: 1.2, exit_bad: 0.8)
      - 정면성 검사(roll, centerRatio)로 측정 신뢰도 보장
+     - **위젯 독립 동작**: 메인 창이 없어도 위젯만으로 자세 판정 가능
+     - **스마트 동기화**: 메인 창이 활성화되어 있으면 위젯은 판정을 하지 않고 동기화만 수행
 
 2. **캘리브레이션 시스템**
    - 설명: 사용자 개인의 정상 자세를 기준으로 설정하는 캘리브레이션 기능입니다. 측정 중 밝기, 자세 안정성 등을 검사하여 신뢰할 수 있는 기준값을 확보합니다.
@@ -87,6 +90,16 @@
 
 ## 📁 프로젝트 구조
 
+Electron 프로젝트는 일반적으로 **Main Process**, **Preload Scripts**, **Renderer Process** 세 가지 프로세스로 구성됩니다. 이 프로젝트는 Vite를 사용하여 각 프로세스를 독립적으로 빌드하고, TypeScript와 React를 활용한 구조로 설계되었습니다.
+
+**참고 보일러플레이트**:
+
+- [electron-vite-react](https://github.com/electron-vite/electron-vite-react) - Electron Vite React 템플릿
+- [electron-vite](https://github.com/alex8088/electron-vite) - Vite 기반 Electron 보일러플레이트
+- [electron-react-boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) - Webpack 기반 Electron + React 보일러플레이트
+- [vite-electron-builder](https://github.com/cawa-93/vite-electron-builder) - Vite + Electron Builder 보일러플레이트
+
+
 ```bash
 src/
 ├── main/           # Electron 메인 프로세스
@@ -105,11 +118,13 @@ src/
         │   ├── session/          # 세션 관리 뮤테이션
         │   └── login/            # 인증 관련
         ├── assets/               # 이미지, 폰트 등 정적 에셋
-        ├── components/           # 재사용 가능한 공통 컴포넌트
-        │   ├── pose-detection/   # 자세 인식 관련 컴포넌트
-        │   │   ├── PostureClassifier.ts    # 자세 분류 엔진
-        │   │   ├── PostureStabilizer.ts   # 안정화 로직
-        │   │   └── calculations.ts        # PI 계산 등
+        ├── entities/             # 비즈니스 엔티티 (FSD 아키텍처)
+        │   └── posture/          # 자세 분석 엔티티
+        │       └── lib/
+        │           ├── PostureClassifier.ts    # 자세 분류 엔진
+        │           ├── ScoreProcessor.ts       # 점수 처리 파이프라인
+        │           ├── calculations.ts         # PI 계산, EMA 스무딩
+        │           └── errorChecks.ts          # 캘리브레이션 검증
         │   ├── Button/           # 버튼 컴포넌트
         │   ├── Modal/            # 모달 컴포넌트
         │   └── ...
@@ -143,13 +158,6 @@ src/
 
 ## 🚀 실행 방법
 
-`.env.example` 파일을 참고하여 프로젝트 루트에 `.env` 파일을 생성해주세요.
-
-```bash
-# .env
-VITE_BASE_URL=http://localhost:8080
-```
-
 ```bash
 # 1. 의존성 설치
 pnpm install
@@ -169,50 +177,27 @@ pnpm build:win    # Windows 빌드
 pnpm build:all    # 모든 플랫폼 빌드
 ```
 
-## 🧪 테스트 & 품질
-
-- **Lint & Format**:
-  - `pnpm lint`: ESLint를 통해 코드 컨벤션을 검사하고 자동 수정합니다.
-  - `pnpm lint:check`: ESLint 검사만 수행 (수정 없음)
-  - `pnpm format`: Prettier를 통해 코드 스타일을 통일합니다.
-  - `pnpm format:check`: Prettier 검사만 수행 (수정 없음)
-  - `pnpm typecheck`: TypeScript 컴파일러로 타입 오류를 검사합니다 (main, preload, renderer 모두)
-- **Git Hooks**: `husky`와 `lint-staged`를 통해 커밋 전 자동으로 lint와 format을 실행합니다.
-- **Unit/E2E Test**: 현재 테스트 코드는 없으나, 향후 `Vitest`와 `Testing Library`를 도입하여 훅, 유틸 및 주요 컴포넌트의 안정성을 높일 계획입니다.
-
----
-
-## 🎨 UI/UX & 접근성
-
-- **디자인 원칙**:
-  - **명확한 피드백**: 사용자의 자세 상태(거북목/기린)를 캐릭터 애니메이션과 색상으로 직관적으로 표현합니다. 실시간 점수와 레벨을 통해 현재 자세를 즉시 파악할 수 있습니다.
-  - **최소한의 방해**: 위젯 모드를 통해 사용자의 작업 흐름을 방해하지 않으면서 핵심 기능을 이용할 수 있도록 설계했습니다. 위젯은 항상 위에 표시되며 크기 조절이 가능합니다.
-  - **다크 모드 지원**: 시스템 테마를 감지하여 자동으로 다크/라이트 모드를 전환합니다.
-- **디자인 시스템**:
-  - **Component**: `Button`, `TextField`, `Modal`, `ToggleSwitch`, `Typography` 등 재사용 가능한 컴포넌트를 구축했습니다.
-  - **Tokens**: `styles/colors.css`, `styles/typography.css`, `styles/breakpoint.css` 등에서 색상, 폰트, 간격, 브레이크포인트 시스템을 정의하여 일관된 디자인을 유지합니다.
-  - **애니메이션**: `framer-motion`을 활용하여 부드러운 전환 효과를 제공합니다.
-- **접근성**: 향후 키보드 네비게이션, `aria-*` 속성 적용, 색상 대비 준수 등 웹 접근성 표준을 고려하여 개선할 예정입니다.
-
 ---
 
 ## 📌 개발 의도 & 기술적 도전
 
 - **기술적 도전 과제**:
   1.  **실시간 영상 처리 성능**: 저사양 컴퓨터에서도 부드럽게 작동하도록 웹캠 영상 분석 과정의 성능을 최적화하는 것이 중요했습니다.
-  2.  **다중 윈도우 상태 관리**: Electron의 메인 윈도우와 위젯 윈도우 간의 상태(세션, 시간 등)를 일관성 있게 동기화하는 것이 복잡했습니다.
+  2.  **다중 윈도우 상태 관리**: Electron의 메인 윈도우와 위젯 윈도우 간의 상태(세션, 시간 등)를 일관성 있게 동기화하는 것이 복잡했습니다. 특히 메인 창과 위젯이 각각 독립적으로 판정을 수행하면 상태가 달라질 수 있는 문제가 있었습니다.
   3.  **크로스 플랫폼 호환성**: macOS와 Windows 환경 모두에서 안정적으로 빌드되고 실행되도록 `electron-builder` 설정을 구성했습니다.
 
 - **해결 과정**:
   1.  **성능 최적화**:
   - MediaPipe의 `detectForVideo`를 프레임별로 호출하여 중복 처리 방지
-  - `PostureStabilizer`를 통해 자세 판정의 안정성 확보 (300ms 윈도우, 0.6 임계값)
-  - `ScoreProcessor`의 EMA 스무딩으로 노이즈 제거
-  - 레벨 변경 시 업데이트 주기 조절 (경계 전환: 50ms, 레벨 변경: 150ms, 일반: 200ms)
+  - `ScoreProcessor`의 다단계 스무딩 파이프라인으로 노이즈 제거 (Moving Average → EMA(30) → EMA(70))
+  - 히스테리시스 로직으로 채터링 방지하여 안정적인 상태 전환
+  - 점수 클램핑(-10 ~ 40)으로 이상치 제거
   2.  **다중 윈도우 동기화**:
   - 메인 프로세스를 중앙 허브로 삼아 `ipcMain`과 `ipcRenderer`를 통해 위젯 창 열기/닫기 제어
   - 위젯과 메인 윈도우 간 자세 상태 동기화는 `localStorage`의 `storage` 이벤트 활용 (IPC 대신 사용하여 간단하고 안정적으로 구현)
   - `usePostureSyncWithLocalStorage` 훅으로 위젯에서 메인 창의 상태 변경 감지
+  - **스마트 판정 전략**: 메인 창이 활성화되어 있으면 위젯은 판정을 하지 않고 메인 창의 결과만 동기화받음. 메인 창이 없으면 위젯이 독립적으로 판정 수행
+  - 메인 창 활성화 상태는 localStorage의 타임스탬프로 추적 (2초 이내 업데이트가 없으면 비활성화로 간주)
   3.  **크로스 플랫폼 호환성**:
   - GitHub Actions를 이용해 각기 다른 OS 환경의 빌드를 자동화
   - `entitlements.mac.plist`에 카메라/마이크 권한 명시
@@ -222,21 +207,8 @@ pnpm build:all    # 모든 플랫폼 빌드
 
 ## 👥 팀 구성 & 역할
 
-- **Frontend**:
-  - 최호 ([@choihooo](https://github.com/choihooo)): 프론트엔드 리드, 페이지 설계, 상태 관리, 디자인 시스템
-  - 이환석 ([@hwanseok1014](https://github.com/hwanseok1014)): 프론트엔드, API 연동, 데이터 시각화, Electron 기능 구현
-- **Backend**:
-  - 손대현 ([@son-daehyeon](https://github.com/son-daehyeon)): 백엔드 리드, API 설계, 인증, 배포
-
----
-
-## 📚 향후 개선 계획
-
-- [ ] 반응형 레이아웃 더 세분화 (태블릿 최적화)
-- [ ] Skeleton UI / Loading 상태 고도화
-- [ ] 추가 접근성 검사 및 개선 (WAI-ARIA 표준 적용)
-- [ ] 다국어(i18n) 지원
-- [ ] Vitest를 이용한 단위 테스트 코드 작성
-- [ ] 자세 인식 정확도 향상을 위한 추가 캘리브레이션 옵션
-- [ ] 오프라인 모드 지원 (로컬 저장 후 동기화)
-- [ ] 사용자 커스터마이징 옵션 확대 (알림 설정, 테마 등)
+|                                            프로필                                            | 역할         | 이름   | GitHub                                           |
+| :------------------------------------------------------------------------------------------: | ------------ | ------ | ------------------------------------------------ |
+|    <img src="https://github.com/choihooo.png" width="80" height="80" alt="최호 프로필" />    | **Frontend** | 최호   | [@choihooo](https://github.com/choihooo)         |
+| <img src="https://github.com/hwanseok1014.png" width="80" height="80" alt="이환석 프로필" /> | **Frontend** | 이환석 | [@hwanseok1014](https://github.com/hwanseok1014) |
+| <img src="https://github.com/son-daehyeon.png" width="80" height="80" alt="손대현 프로필" /> | **Backend**  | 손대현 | [@son-daehyeon](https://github.com/son-daehyeon) |

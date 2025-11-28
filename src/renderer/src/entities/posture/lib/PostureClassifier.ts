@@ -1,8 +1,23 @@
 import { getScoreLevel } from '@shared/lib/get-score-level';
 import { EmaSmoother } from './calculations';
+<<<<<<< HEAD
 import { ScoreProcessor } from './ScoreProcessor';
 import { FrontalityResult, PIResult, PostureClassification } from './types';
 
+=======
+import { PostureStabilizer } from './PostureStabilizer';
+import { ScoreProcessor } from './ScoreProcessor';
+import { FrontalityResult, PIResult, PostureClassification } from './types';
+
+// 안정화 검사 및 점수 업데이트 주기
+// 거북이/기린 경계 전환: 매우 빠르게 반영 (100ms)
+// 일반 레벨 변경: 빠르게 반영 (150ms)
+// 레벨 유지 시: 더 빠르게 반영 (200ms)
+const SCORE_UPDATE_INTERVAL_MS_NORMAL = 200; // 일반 업데이트 주기
+const SCORE_UPDATE_INTERVAL_MS_LEVEL_CHANGE = 150; // 레벨 변경 시 주기
+const SCORE_UPDATE_INTERVAL_MS_BOUNDARY = 50; // 거북이/기린 경계 전환 시 주기
+
+>>>>>>> 537aea96ca49b035db4247a028ef3e282cfa21f9
 // 자세 판정 엔진
 export class PostureClassifier {
   private prevState = {
@@ -12,9 +27,19 @@ export class PostureClassifier {
 
   private emaSmoother = new EmaSmoother(0.25);
   private scoreProcessor = new ScoreProcessor();
+<<<<<<< HEAD
 
   // 마지막으로 반환된 상태
   private lastState: PostureClassification | null = null;
+=======
+  // windowMs=300ms, threshold=0.6, minBufferSize=3으로 조정하여 더 빠른 반응
+  private stabilizer = new PostureStabilizer(300, 0.6, 3);
+
+  // 마지막으로 반환된 안정화된 상태
+  private lastStableState: PostureClassification | null = null;
+  // 마지막 스코어 업데이트 시간
+  private lastScoreUpdateTime: number = 0;
+>>>>>>> 537aea96ca49b035db4247a028ef3e282cfa21f9
 
   classify(
     piData: PIResult,
@@ -22,6 +47,7 @@ export class PostureClassifier {
     sigma: number,
     _frontality: FrontalityResult,
   ): PostureClassification {
+<<<<<<< HEAD
     console.log('[PostureClassifier] classify called, sigma:', sigma);
 
     // 캘리브레이션 데이터가 유효하지 않으면 초기 상태 반환
@@ -29,6 +55,14 @@ export class PostureClassifier {
       console.log('[PostureClassifier] sigma is 0, returning early');
       return (
         this.lastState ?? {
+=======
+    const currentTime = Date.now();
+
+    // 캘리브레이션 데이터가 유효하지 않으면 초기 상태 반환
+    if (sigma === 0) {
+      return (
+        this.lastStableState ?? {
+>>>>>>> 537aea96ca49b035db4247a028ef3e282cfa21f9
           text: '측정중',
           cls: 0,
           zScore: 0,
@@ -48,8 +82,11 @@ export class PostureClassifier {
     const rawScore = gamma * z_PI;
     const finalScore = this.scoreProcessor.next(rawScore);
 
+<<<<<<< HEAD
     console.log('[PostureClassifier] Score:', finalScore);
 
+=======
+>>>>>>> 537aea96ca49b035db4247a028ef3e282cfa21f9
     // 현재 프레임의 분류 결과 생성
     const currentClassification = this.createClassification(finalScore, {
       PI_EMA,
@@ -57,10 +94,72 @@ export class PostureClassifier {
       gamma,
     });
 
+<<<<<<< HEAD
     // 상태 업데이트
     this.lastState = currentClassification;
 
     return currentClassification;
+=======
+    // 안정화 버퍼에 현재 점수 추가
+    this.stabilizer.addScore(currentClassification.Score, currentTime);
+
+    // 레벨 변경 여부 확인
+    const levelChanged = this.lastStableState
+      ? this.lastStableState.cls !== currentClassification.cls
+      : false;
+
+    // 거북이/기린 경계 전환 여부 확인 (레벨 3↔4 전환)
+    const isBoundaryCrossing =
+      levelChanged &&
+      this.lastStableState &&
+      ((this.lastStableState.cls === 3 && currentClassification.cls === 4) ||
+        (this.lastStableState.cls === 4 && currentClassification.cls === 3));
+
+    // 업데이트 주기 결정: 경계 전환 > 레벨 변경 > 일반 업데이트
+    const requiredInterval = isBoundaryCrossing
+      ? SCORE_UPDATE_INTERVAL_MS_BOUNDARY
+      : levelChanged
+        ? SCORE_UPDATE_INTERVAL_MS_LEVEL_CHANGE
+        : SCORE_UPDATE_INTERVAL_MS_NORMAL;
+
+    // 업데이트 주기가 되지 않았으면 이전 상태 반환
+    const timeSinceLastUpdate = currentTime - this.lastScoreUpdateTime;
+    if (timeSinceLastUpdate < requiredInterval && this.lastStableState) {
+      return this.lastStableState;
+    }
+
+    // 안정화 검사
+    // 거북이/기린 경계 전환 시에는 threshold를 완화하여 더 빠르게 반영
+    const relaxedThreshold = isBoundaryCrossing ? 0.6 * 2 : undefined; // 경계 전환 시 2배 완화
+    const shouldUpdate = this.stabilizer.shouldUpdate(
+      currentClassification.Score,
+      relaxedThreshold,
+    );
+
+    if (shouldUpdate) {
+      // 안정화 통과: 새로운 상태를 안정된 상태로 업데이트
+      this.lastStableState = currentClassification;
+    }
+    // 안정화 실패 시, lastStableState는 변경되지 않고 유지됨
+
+    // 업데이트 시간 갱신
+    this.lastScoreUpdateTime = currentTime;
+
+    // 항상 마지막으로 안정화된 상태를 반환 (실패 시 이전 상태가 반환됨)
+    return (
+      this.lastStableState ?? {
+        // 초기 상태 (null일 경우 대비)
+        text: '측정중',
+        cls: 0,
+        zScore: 0,
+        PI_EMA: 0,
+        z_PI: 0,
+        gamma: 0,
+        Score: 0,
+        events: [],
+      }
+    );
+>>>>>>> 537aea96ca49b035db4247a028ef3e282cfa21f9
   }
 
   /**
@@ -103,6 +202,12 @@ export class PostureClassifier {
     this.prevState = { PI_EMA: null, state: 'normal' };
     this.emaSmoother.reset();
     this.scoreProcessor.reset();
+<<<<<<< HEAD
     this.lastState = null;
+=======
+    this.stabilizer.reset();
+    this.lastStableState = null;
+    this.lastScoreUpdateTime = 0;
+>>>>>>> 537aea96ca49b035db4247a028ef3e282cfa21f9
   }
 }

@@ -1,6 +1,5 @@
 /* 위젯 창에 표시될 페이지 - 반응형 */
 
-<<<<<<< HEAD
 import {
   PoseLandmark as AnalyzerPoseLandmark,
   calculatePI,
@@ -12,10 +11,6 @@ import {
 import { WebcamView } from '@features/calibration/ui';
 import { useCameraStore } from '@widgets/camera';
 import { useEffect, useRef, useState } from 'react';
-=======
-import { usePostureStore } from '@entities/posture';
-import { useEffect, useState } from 'react';
->>>>>>> 537aea96ca49b035db4247a028ef3e282cfa21f9
 import { MediumWidgetContent } from './components/MediumWidgetContent';
 import { MiniWidgetContent } from './components/MiniWidgetContent';
 import { usePostureSyncWithLocalStorage } from './hooks/usePostureSyncWithLocalStorage';
@@ -29,7 +24,6 @@ const BREAKPOINT = {
   height: 62,
 } as const;
 
-<<<<<<< HEAD
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 const MAIN_WINDOW_ACTIVE_KEY = 'main-window-active';
 const MAIN_WINDOW_TIMEOUT_MS = 2000; // 2초 이내 업데이트가 없으면 메인 창이 비활성화된 것으로 간주
@@ -143,15 +137,6 @@ const WidgetPage = () => {
   /* usePostureStore에서 실시간 자세 상태 가져오기 */
 
   /* 실시간 자세 상태 동기화 (메인 창과의 동기화는 유지하되, 위젯 자체 판정도 수행) */
-=======
-const WidgetPage = () => {
-  const [widgetSize, setWidgetSize] = useState<WidgetSize>('medium');
-  const currentPostureClass = usePostureStore((state) => state.postureClass);
-
-  /* usePostureStore에서 실시간 자세 상태 가져오기 */
-
-  /* 실시간 자세 상태 동기화 */
->>>>>>> 537aea96ca49b035db4247a028ef3e282cfa21f9
   usePostureSyncWithLocalStorage();
 
   /* 위젯 라이트/다크 모드 */
@@ -215,7 +200,6 @@ const WidgetPage = () => {
         ) : (
           <MediumWidgetContent posture={currentPostureClass} />
         )}
-<<<<<<< HEAD
 
         {/* 숨겨진 WebcamView - 메인 창이 없을 때만 위젯에서 독립적으로 포즈 감지 및 판정 수행 */}
         {!isMainWindowActive && (
@@ -223,8 +207,6 @@ const WidgetPage = () => {
             <WebcamView onPoseDetected={handlePoseDetected} showPoseOverlay={false} />
           </div>
         )}
-=======
->>>>>>> 537aea96ca49b035db4247a028ef3e282cfa21f9
       </div>
     </div>
   );

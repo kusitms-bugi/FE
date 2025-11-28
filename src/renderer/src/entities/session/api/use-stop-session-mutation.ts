@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@shared/api';
-import { SessionActionResponse } from '../../types/main/session';
+import { SessionActionResponse } from '../types';
 
 /**
  * 세션 중단 API
@@ -59,3 +59,4 @@ export const useStopSessionMutation = () => {
     },
   });
 };
+

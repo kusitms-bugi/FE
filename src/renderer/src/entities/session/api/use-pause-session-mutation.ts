@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import api from '@shared/api';
-import { SessionActionResponse } from '../../types/main/session';
+import { SessionActionResponse } from '../types';
 
 /**
  * 세션 일시정지 API
@@ -39,3 +39,4 @@ export const usePauseSessionMutation = () => {
     },
   });
 };
+

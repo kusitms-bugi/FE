@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import api from '@shared/api';
-import { CreateSessionResponse } from '../../types/main/session';
+import { CreateSessionResponse } from '../types';
 
 /**
  * 세션 생성 API
@@ -40,3 +40,4 @@ export const useCreateSessionMutation = () => {
     },
   });
 };
+

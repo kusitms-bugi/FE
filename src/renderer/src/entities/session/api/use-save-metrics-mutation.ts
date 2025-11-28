@@ -3,7 +3,7 @@ import api from '@shared/api';
 import {
   SaveMetricsRequest,
   SaveMetricsResponse,
-} from '../../types/main/session';
+} from '../types';
 
 /**
  * 세션 메트릭 저장 API
@@ -50,3 +50,4 @@ export const useSaveMetricsMutation = () => {
     },
   });
 };
+

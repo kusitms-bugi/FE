@@ -1,6 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
 import api from '@shared/api';
-import { SessionActionResponse } from '../../types/main/session';
+import { useMutation } from '@tanstack/react-query';
+import { SessionActionResponse } from '../types';
 
 /**
  * 세션 재개 API

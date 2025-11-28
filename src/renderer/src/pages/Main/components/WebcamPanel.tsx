@@ -1,10 +1,12 @@
 import HideIcon from '@assets/hide.svg?react';
 import ShowIcon from '@assets/show.svg?react';
 import WidgetIcon from '@assets/widget.svg?react';
-import { useCreateSessionMutation } from '../../../api/session/useCreateSessionMutation';
-import { usePauseSessionMutation } from '../../../api/session/usePauseSessionMutation';
-import { useResumeSessionMutation } from '../../../api/session/useResumeSessionMutation';
-import { useStopSessionMutation } from '../../../api/session/useStopSessionMutation';
+import {
+  useCreateSessionMutation,
+  usePauseSessionMutation,
+  useResumeSessionMutation,
+  useStopSessionMutation,
+} from '@entities/session';
 import { Button } from '../../../components';
 import {
   PoseLandmark,

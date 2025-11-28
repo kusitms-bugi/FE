@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
-import { useSessionReportQuery } from '@api/session/useSessionReportQuery';
+import { useSessionReportQuery } from '@entities/session';
 import { useLevelQuery } from '@api/dashboard/useLevelQuery';
 
 const ExitPanel = () => {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { MetricData } from '../types/main/session';
+import type { MetricData } from '@entities/session';
 
 /**
  * 5분마다 자동으로 메트릭 데이터를 전송하는 훅

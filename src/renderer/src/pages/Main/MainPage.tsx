@@ -6,16 +6,16 @@ import {
   usePostureStore,
   WorldLandmark,
 } from '@entities/posture';
+import type { MetricData } from '@entities/session';
+import { useSaveMetricsMutation } from '@entities/session';
 import { useModal } from '@shared/hooks/use-modal';
 import { ModalPortal } from '@shared/ui/modal';
 import { useEffect, useRef } from 'react';
-import { useSaveMetricsMutation } from '../../api/session/useSaveMetricsMutation';
 import NotificationModal from '../../components/Modal/NotificationModal';
 import { useAutoMetricsSender } from '../../hooks/useAutoMetricsSender';
 import { useNotificationScheduler } from '../../hooks/useNotificationScheduler';
 import { useSessionCleanup } from '../../hooks/useSessionCleanup';
 import { useCameraStore } from '../../store/useCameraStore';
-import { MetricData } from '../../types/main/session';
 import AttendacePanel from './components/AttendacePanel';
 import AverageGraphPannel from './components/AverageGraph/AverageGraphPannel';
 import AveragePosturePanel from './components/AveragePosture/AveragePosturePanel';

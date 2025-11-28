@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@shared/api';
-import { SessionReportResponse } from '../../types/main/session';
+import { SessionReportResponse } from '../types';
 
 /**
  * 세션 리포트 조회 API
@@ -43,3 +43,4 @@ export const useSessionReportQuery = (
     retry: 1, // 실패 시 1번만 재시도
   });
 };
+

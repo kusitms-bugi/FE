@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
-import { useSaveMetricsMutation } from '../api/session/useSaveMetricsMutation';
-import { useStopSessionMutation } from '../api/session/useStopSessionMutation';
-import { MetricData } from '../types/main/session';
+import {
+  useSaveMetricsMutation,
+  useStopSessionMutation,
+} from '@entities/session';
+import type { MetricData } from '@entities/session';
 
 /**
  * 창 닫기 시 세션 정리 훅

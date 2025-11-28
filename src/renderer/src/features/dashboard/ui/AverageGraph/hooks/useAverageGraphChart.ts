@@ -1,4 +1,5 @@
 import { usePostureGraphQuery } from '@entities/dashboard';
+import { useThemeApplied } from '@shared/hooks/use-theme-applied';
 import { getColor } from '@shared/lib/get-color';
 import { useMemo } from 'react';
 
@@ -20,6 +21,7 @@ type ChartConfig = {
 
 export function useAverageGraphChart(activePeriod: AverageGraphPeriod) {
   const { data: apiData } = usePostureGraphQuery();
+  const isDarkApplied = useThemeApplied();
 
   /* 그래프 색상 */
   const chartConfig = useMemo<ChartConfig>(() => {
@@ -72,7 +74,7 @@ export function useAverageGraphChart(activePeriod: AverageGraphPeriod) {
       gridColor: gridColorValue,
       yAxisTicks: ticks,
     };
-  }, [activePeriod, apiData]);
+  }, [activePeriod, apiData, isDarkApplied]);
 
   return chartConfig;
 }

@@ -138,6 +138,9 @@ const MainPage = () => {
     // 안정화된 결과로 상태 업데이트
     setStatus(result.cls, result.Score);
 
+    // 메인 창이 활성화되어 있음을 표시 (위젯이 판정을 하지 않도록)
+    localStorage.setItem('main-window-active', Date.now().toString());
+
     // 메트릭 데이터 수집 (1초마다 한 번씩만 저장)
     const currentTime = Date.now();
     const timeSinceLastSave = currentTime - lastSaveTimeRef.current;

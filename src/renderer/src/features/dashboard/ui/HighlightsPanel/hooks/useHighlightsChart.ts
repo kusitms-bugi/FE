@@ -1,4 +1,5 @@
 import { useHighlightQuery } from '@entities/dashboard';
+import { useThemeApplied } from '@shared/hooks/use-theme-applied';
 import { getColor } from '@shared/lib/get-color';
 import { useMemo } from 'react';
 import type { HighlightDatum } from '../data';
@@ -33,6 +34,8 @@ type ChartConfig = {
 };
 
 export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
+  const isDarkApplied = useThemeApplied();
+
   // 현재 날짜 기준으로 year, month 계산
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -92,7 +95,7 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
       previous: getColor('--color-grey-100', '#e3e1df'), // 저번 주/달 바 색
       current: getColor('--color-sementic-brand-primary', '#ffbf00'), // 이번 주/달 바 색
     }),
-    [],
+    [isDarkApplied],
   );
 
   const chartConfig = useMemo<ChartConfig>(() => {
@@ -141,7 +144,7 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
       maxDomain: maxValue,
       yAxisTicks: ticks,
     };
-  }, [chartColors, chartData]);
+  }, [chartColors, chartData, isDarkApplied]);
 
   return chartConfig;
 }

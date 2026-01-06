@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import ResendEmailHerosection from '../signup-page/components/ResendEmailHeroSection';
-import ResendSection from '../signup-page/components/ResendSection';
-import VerifyAction from '../signup-page/components/VerifyAction';
+import ResendEmailHerosection from '@features/auth/ui/signup/components/ResendEmailHeroSection';
+import ResendSection from '@features/auth/ui/signup/components/ResendSection';
+import VerifyAction from '@features/auth/ui/signup/components/VerifyAction';
 import { useSearchParams } from 'react-router-dom';
 import {
   useResendVerifyEmailMuation,

@@ -13,8 +13,8 @@ import { useCameraStore } from '@widgets/camera';
 import { useEffect, useRef, useState } from 'react';
 import { MediumWidgetContent } from './components/MediumWidgetContent';
 import { MiniWidgetContent } from './components/MiniWidgetContent';
-import { usePostureSyncWithLocalStorage } from './hooks/usePostureSyncWithLocalStorage';
-import { useThemeSync } from './hooks/useThemeSync';
+import { usePostureSyncWithLocalStorage } from '@widgets/widget/ui/hooks/usePostureSyncWithLocalStorage';
+import { useThemeSync } from '@widgets/widget/ui/hooks/useThemeSync';
 import { WidgetTitleBar } from './WidgetTitleBar/WidgetTitleBar';
 
 type WidgetSize = 'mini' | 'medium';

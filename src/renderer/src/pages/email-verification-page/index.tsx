@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@shared/ui/button';
 import { useResendVerifyEmailMuation, useEmailStore } from '@entities/user';
-import EmailHeroSection from '../signup-page/components/EmailHeroSection';
-import ResendSection from '../signup-page/components/ResendSection';
+import EmailHeroSection from '@features/auth/ui/signup/components/EmailHeroSection';
+import ResendSection from '@features/auth/ui/signup/components/ResendSection';
 
 const EmailVerificationPage = () => {
   const resendverifyEmailMutation = useResendVerifyEmailMuation();

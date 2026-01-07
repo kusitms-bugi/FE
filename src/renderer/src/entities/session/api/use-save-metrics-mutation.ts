@@ -1,26 +1,18 @@
 import { useMutation } from '@tanstack/react-query';
-import api from '@shared/api';
 import { SaveMetricsRequest, SaveMetricsResponse } from '../types';
 
 /**
- * 세션 메트릭 저장 API
- * POST /sessions/{sessionId}/metrics
+ * 세션 메트릭 저장 API (목 데이터)
  */
 const saveMetrics = async (
   data: SaveMetricsRequest,
 ): Promise<SaveMetricsResponse> => {
-  const { sessionId, metrics } = data;
-  const response = await api.post<SaveMetricsResponse>(
-    `/sessions/${sessionId}/metrics`,
-    metrics, // API 스펙에 따라 배열만 전송
-  );
-  const result = response.data;
-
-  if (!result.success) {
-    throw new Error(result.message || '세션 메트릭 저장 실패');
-  }
-
-  return result;
+  return {
+    timestamp: new Date().toISOString(),
+    success: true,
+    code: 'SUCCESS',
+    message: '세션 메트릭 저장 성공',
+  };
 };
 
 /**

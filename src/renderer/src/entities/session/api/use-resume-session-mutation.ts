@@ -1,24 +1,18 @@
-import api from '@shared/api';
 import { useMutation } from '@tanstack/react-query';
 import { SessionActionResponse } from '../types';
 
 /**
- * 세션 재개 API
- * PATCH /sessions/{sessionId}/resume
+ * 세션 재개 API (목 데이터)
  */
 const resumeSession = async (
   sessionId: string,
 ): Promise<SessionActionResponse> => {
-  const response = await api.patch<SessionActionResponse>(
-    `/sessions/${sessionId}/resume`,
-  );
-  const result = response.data;
-
-  if (!result.success) {
-    throw new Error(result.message || '세션 재개 실패');
-  }
-
-  return result;
+  return {
+    timestamp: new Date().toISOString(),
+    success: true,
+    code: 'SUCCESS',
+    message: '세션 재개 성공',
+  };
 };
 
 /**

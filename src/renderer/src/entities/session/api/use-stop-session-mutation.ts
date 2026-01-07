@@ -1,24 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '@shared/api';
 import { SessionActionResponse } from '../types';
 
 /**
- * 세션 중단 API
- * PATCH /sessions/{sessionId}/stop
+ * 세션 중단 API (목 데이터)
  */
 const stopSession = async (
   sessionId: string,
 ): Promise<SessionActionResponse> => {
-  const response = await api.patch<SessionActionResponse>(
-    `/sessions/${sessionId}/stop`,
-  );
-  const result = response.data;
-
-  if (!result.success) {
-    throw new Error(result.message || '세션 중단 실패');
-  }
-
-  return result;
+  return {
+    timestamp: new Date().toISOString(),
+    success: true,
+    code: 'SUCCESS',
+    message: '세션 중단 성공',
+  };
 };
 
 /**

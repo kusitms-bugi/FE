@@ -1,4 +1,4 @@
-import api from '@shared/api';
+// import api from '@shared/api';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import Layout from '../../app/layouts/Layout';
 import {
@@ -22,13 +22,16 @@ const requireAuthLoader = async () => {
     return redirect('/');
   }
 
-  try {
-    await api.get('/users/me');
-    return null;
-  } catch {
-    localStorage.clear();
-    return redirect('/');
-  }
+  // 목 데이터 환경에서는 API 호출 생략
+  // try {
+  //   await api.get('/users/me');
+  //   return null;
+  // } catch {
+  //   localStorage.clear();
+  //   return redirect('/');
+  // }
+
+  return null;
 };
 
 // 로그인 페이지용 loader (토큰이 있으면 메인으로 리다이렉트)
@@ -38,13 +41,16 @@ const loginPageLoader = async () => {
     return null;
   }
 
-  try {
-    await api.get('/users/me');
-    return redirect('/main');
-  } catch {
-    localStorage.clear();
-    return null;
-  }
+  // 목 데이터 환경에서는 API 호출 생략, 토큰만 있으면 메인으로 리다이렉트
+  // try {
+  //   await api.get('/users/me');
+  //   return redirect('/main');
+  // } catch {
+  //   localStorage.clear();
+  //   return null;
+  // }
+
+  return redirect('/main');
 };
 
 export const router = createBrowserRouter([

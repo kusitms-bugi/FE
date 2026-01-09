@@ -20,7 +20,6 @@ import {
   useSessionCleanup,
   WebcamPanel,
 } from '@features/dashboard';
-import { NotificationModal } from '@features/notification';
 import { useModal } from '@shared/hooks/use-modal';
 import { LoadingSpinner } from '@shared/ui/loading';
 import { ModalPortal } from '@shared/ui/modal';
@@ -33,6 +32,11 @@ const AverageGraphPannel = lazy(
 );
 const HighlightsPanel = lazy(
   () => import('@features/dashboard/ui/HighlightsPanel'),
+);
+
+// 모달 컴포넌트들을 lazy import
+const NotificationModal = lazy(
+  () => import('@features/notification/ui/NotificationModal'),
 );
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
@@ -272,7 +276,15 @@ const MainPage = () => {
           </div>
           {isOpen && (
             <ModalPortal>
-              <NotificationModal onClose={handleCloseModal} />
+              <Suspense
+                fallback={
+                  <div className="fixed inset-0 z-999999 flex h-full w-full items-center justify-center bg-black/40 dark:bg-black/70">
+                    <LoadingSpinner size="md" />
+                  </div>
+                }
+              >
+                <NotificationModal onClose={handleCloseModal} />
+              </Suspense>
             </ModalPortal>
           )}
         </div>

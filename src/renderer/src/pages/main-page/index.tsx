@@ -8,25 +8,32 @@ import {
 } from '@entities/posture';
 import type { MetricData } from '@entities/session';
 import { useSaveMetricsMutation } from '@entities/session';
-import { useModal } from '@shared/hooks/use-modal';
-import { ModalPortal } from '@shared/ui/modal';
-import { useEffect, useRef } from 'react';
-import { NotificationModal } from '@features/notification';
+import { useNotificationScheduler } from '@features/calibration';
 import {
-  useAutoMetricsSender,
-  useSessionCleanup,
   AttendacePanel,
-  AverageGraphPannel,
   AveragePosturePanel,
-  HighlightsPanel,
   MainHeader,
   MiniRunningPanel,
   PosePatternPanel,
   TotalDistancePanel,
+  useAutoMetricsSender,
+  useSessionCleanup,
   WebcamPanel,
 } from '@features/dashboard';
-import { useNotificationScheduler } from '@features/calibration';
+import { NotificationModal } from '@features/notification';
+import { useModal } from '@shared/hooks/use-modal';
+import { LoadingSpinner } from '@shared/ui/loading';
+import { ModalPortal } from '@shared/ui/modal';
 import { useCameraStore } from '@widgets/camera';
+import { lazy, Suspense, useEffect, useRef } from 'react';
+
+// Recharts를 사용하는 컴포넌트들을 lazy import
+const AverageGraphPannel = lazy(
+  () => import('@features/dashboard/ui/AverageGraph/AverageGraphPannel'),
+);
+const HighlightsPanel = lazy(
+  () => import('@features/dashboard/ui/HighlightsPanel'),
+);
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 
@@ -215,12 +222,28 @@ const MainPage = () => {
                         {/* 시계열 그래프 */}
                         <div className="grid min-h-0 w-full flex-1 grid-cols-1 gap-4 @[562px]:grid-cols-2">
                           <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
-                            <AverageGraphPannel />
+                            <Suspense
+                              fallback={
+                                <div className="flex h-full items-center justify-center">
+                                  <LoadingSpinner size="md" />
+                                </div>
+                              }
+                            >
+                              <AverageGraphPannel />
+                            </Suspense>
                           </div>
 
                           {/*하이라이트 */}
                           <div className="bg-grey-0 h-full min-h-[224px] w-full min-w-[270px] rounded-3xl @[552px]:min-h-[210px]">
-                            <HighlightsPanel />
+                            <Suspense
+                              fallback={
+                                <div className="flex h-full items-center justify-center">
+                                  <LoadingSpinner size="md" />
+                                </div>
+                              }
+                            >
+                              <HighlightsPanel />
+                            </Suspense>
                           </div>
                         </div>
                       </div>

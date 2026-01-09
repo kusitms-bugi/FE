@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
+import { visualizer } from 'rollup-plugin-visualizer';
 import svgr from 'vite-plugin-svgr';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -12,7 +13,17 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   base: '/',
   root: 'src/renderer',
-  plugins: [svgr(), react(), tailwindcss()],
+  plugins: [
+    svgr(),
+    react(),
+    tailwindcss(),
+    visualizer({
+      open: true,
+      filename: 'dist/renderer/stats.html',
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
   resolve: {
     alias: {
       '@ui/': path.resolve(__dirname, 'src/renderer/src/components') + '/',

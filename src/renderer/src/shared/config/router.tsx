@@ -1,19 +1,30 @@
 // import api from '@shared/api';
+import { lazy } from 'react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import Layout from '../../app/layouts/Layout';
-import {
-  CalibrationPage,
-  EmailVerificationCallbackPage,
-  EmailVerificationPage,
-  LoginPage,
-  MainPage,
-  OnboardingCompletionPage,
-  OnboardingInitPage,
-  OnboardingPage,
-  ResendVerificationPage,
-  SignUpPage,
-  WidgetPage,
-} from '../../pages';
+
+// 라우트 레벨 코드 스플리팅: 각 페이지를 lazy import
+const CalibrationPage = lazy(() => import('../../pages/calibration-page'));
+const EmailVerificationCallbackPage = lazy(
+  () => import('../../pages/email-verification-callback-page'),
+);
+const EmailVerificationPage = lazy(
+  () => import('../../pages/email-verification-page'),
+);
+const LoginPage = lazy(() => import('../../pages/login-page'));
+const MainPage = lazy(() => import('../../pages/main-page'));
+const OnboardingCompletionPage = lazy(
+  () => import('../../pages/onboarding-completion-page'),
+);
+const OnboardingInitPage = lazy(
+  () => import('../../pages/onboarding-init-page'),
+);
+const OnboardingPage = lazy(() => import('../../pages/onboarding-page'));
+const ResendVerificationPage = lazy(
+  () => import('../../pages/resend-verification-page'),
+);
+const SignUpPage = lazy(() => import('../../pages/signup-page'));
+const WidgetPage = lazy(() => import('../../pages/widget-page'));
 
 // 인증이 필요한 페이지용 loader
 const requireAuthLoader = async () => {

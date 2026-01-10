@@ -1,8 +1,12 @@
-import { PannelHeader } from '@shared/ui/panel-header';
-import { useLevelQuery } from '@entities/dashboard';
 import AchivementMedal from '@assets/main/achivement_meadl.svg?react';
+import { useLevelQuery } from '@entities/dashboard';
 import { useModal } from '@shared/hooks/use-modal';
-import TotalDistanceModal from './TotalDistanceModal';
+import { LoadingSpinner } from '@shared/ui/loading';
+import { PannelHeader } from '@shared/ui/panel-header';
+import { lazy, Suspense } from 'react';
+
+// TotalDistanceModal을 lazy import
+const TotalDistanceModal = lazy(() => import('./TotalDistanceModal'));
 
 const TotalDistance = () => {
   const { data, isLoading } = useLevelQuery();
@@ -56,7 +60,17 @@ const TotalDistance = () => {
           )}
         </div>
       </div>
-      {isOpen && <TotalDistanceModal onClose={close} />}
+      {isOpen && (
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 z-999999 flex h-full w-full items-center justify-center bg-black/40 dark:bg-black/70">
+              <LoadingSpinner size="md" />
+            </div>
+          }
+        >
+          <TotalDistanceModal onClose={close} />
+        </Suspense>
+      )}
     </>
   );
 };

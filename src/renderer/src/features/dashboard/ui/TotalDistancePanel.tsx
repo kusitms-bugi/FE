@@ -1,8 +1,8 @@
-import { PannelHeader } from '@shared/ui/panel-header';
-import { useLevelQuery } from '@entities/dashboard';
 import AchivementMedal from '@assets/main/achivement_meadl.svg?react';
+import { useLevelQuery } from '@entities/dashboard';
 import { useModal } from '@shared/hooks/use-modal';
 import { LoadingSpinner } from '@shared/ui/loading';
+import { PannelHeader } from '@shared/ui/panel-header';
 import { lazy, Suspense } from 'react';
 
 // TotalDistanceModal을 lazy import

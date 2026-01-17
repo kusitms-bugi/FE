@@ -1,23 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
+import api from '@shared/api';
 import { SessionReportResponse } from '../types';
 
 /**
- * 세션 리포트 조회 API (목 데이터)
+ * 세션 리포트 조회 API
  */
 const fetchSessionReport = async (
   sessionId: string,
 ): Promise<SessionReportResponse> => {
-  return {
-    timestamp: new Date().toISOString(),
-    success: true,
-    data: {
-      totalSeconds: 3600, // 1시간
-      goodSeconds: 2400, // 40분
-      score: 85, // 점수
-    },
-    code: 'SUCCESS',
-    message: '세션 리포트 조회 성공',
-  };
+  const response = await api.get<SessionReportResponse>(
+    `/sessions/${sessionId}/report`,
+  );
+  const result = response.data;
+
+  if (!result.success) {
+    throw new Error(result.message || '세션 리포트 조회 실패');
+  }
+
+  return result;
 };
 
 /**

@@ -31,7 +31,7 @@ async function createWindow() {
   const pageUrl =
     import.meta.env.DEV && process.env.VITE_DEV_SERVER_URL
       ? process.env.VITE_DEV_SERVER_URL
-      : 'https://www.bugi.co.kr/';
+      : 'https://app.bugi.co.kr/';
 
   await win.loadURL(pageUrl);
   return win;

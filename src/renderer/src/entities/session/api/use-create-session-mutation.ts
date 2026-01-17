@@ -1,21 +1,19 @@
 import { useMutation } from '@tanstack/react-query';
+import api from '@shared/api';
 import { CreateSessionResponse } from '../types';
 
 /**
- * 세션 생성 API (목 데이터)
+ * 세션 생성 API
  */
 const createSession = async (): Promise<CreateSessionResponse> => {
-  const mockSessionId = `session-${Date.now()}`;
-  
-  return {
-    timestamp: new Date().toISOString(),
-    success: true,
-    data: {
-      sessionId: mockSessionId,
-    },
-    code: 'SUCCESS',
-    message: '세션 생성 성공',
-  };
+  const response = await api.post<CreateSessionResponse>('/sessions', {});
+  const result = response.data;
+
+  if (!result.success) {
+    throw new Error(result.message || '세션 생성 실패');
+  }
+
+  return result;
 };
 
 /**

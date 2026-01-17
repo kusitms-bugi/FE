@@ -22,8 +22,7 @@ const ALLOWED_ORIGINS_AND_PERMISSIONS = new Map<string, Set<string>>(
         ['http://localhost:3000', new Set(['media'])],
         ['http://localhost:5173', new Set(['media'])],
         // 프로덕션 배포 URL에 media 권한 추가 (모든 가능한 variant 포함)
-        ['https://www.bugi.co.kr', new Set(['media'])],
-        ['https://bugi.co.kr', new Set(['media'])],
+        ['https://app.bugi.co.kr', new Set(['media'])],
       ],
 );
 

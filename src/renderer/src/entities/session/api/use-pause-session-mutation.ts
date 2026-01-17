@@ -1,18 +1,23 @@
 import { useMutation } from '@tanstack/react-query';
+import api from '@shared/api';
 import { SessionActionResponse } from '../types';
 
 /**
- * 세션 일시정지 API (목 데이터)
+ * 세션 일시정지 API
  */
 const pauseSession = async (
   sessionId: string,
 ): Promise<SessionActionResponse> => {
-  return {
-    timestamp: new Date().toISOString(),
-    success: true,
-    code: 'SUCCESS',
-    message: '세션 일시정지 성공',
-  };
+  const response = await api.patch<SessionActionResponse>(
+    `/sessions/${sessionId}/pause`,
+  );
+  const result = response.data;
+
+  if (!result.success) {
+    throw new Error(result.message || '세션 일시정지 실패');
+  }
+
+  return result;
 };
 
 /**

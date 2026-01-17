@@ -1,6 +1,5 @@
-// import api from '@shared/api';
 import { lazy } from 'react';
-import { createBrowserRouter, redirect } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../../app/layouts/Layout';
 
 // 라우트 레벨 코드 스플리팅: 각 페이지를 lazy import
@@ -26,42 +25,16 @@ const ResendVerificationPage = lazy(
 const SignUpPage = lazy(() => import('../../pages/signup-page'));
 const WidgetPage = lazy(() => import('../../pages/widget-page'));
 
-// 인증이 필요한 페이지용 loader
+// 인증이 필요한 페이지용 loader (인증 체크 제거 - 개발 편의)
 const requireAuthLoader = async () => {
-  const accessToken = localStorage.getItem('accessToken');
-  if (!accessToken) {
-    return redirect('/');
-  }
-
-  // 목 데이터 환경에서는 API 호출 생략
-  // try {
-  //   await api.get('/users/me');
-  //   return null;
-  // } catch {
-  //   localStorage.clear();
-  //   return redirect('/');
-  // }
-
+  // 로그인 인증 체크를 우회하여 항상 통과
   return null;
 };
 
-// 로그인 페이지용 loader (토큰이 있으면 메인으로 리다이렉트)
+// 로그인 페이지용 loader (항상 로그인 화면 표시)
 const loginPageLoader = async () => {
-  const accessToken = localStorage.getItem('accessToken');
-  if (!accessToken) {
-    return null;
-  }
-
-  // 목 데이터 환경에서는 API 호출 생략, 토큰만 있으면 메인으로 리다이렉트
-  // try {
-  //   await api.get('/users/me');
-  //   return redirect('/main');
-  // } catch {
-  //   localStorage.clear();
-  //   return null;
-  // }
-
-  return redirect('/main');
+  // 토큰 체크 없이 항상 로그인 화면 표시
+  return null;
 };
 
 export const router = createBrowserRouter([

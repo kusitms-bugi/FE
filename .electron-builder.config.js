@@ -114,6 +114,14 @@ const config = {
     createDesktopShortcut: true,
     createStartMenuShortcut: true,
   },
+  // DMG 설정: 루트 레벨에 설정 (mac 객체 안이 아님)
+  dmg: {
+    title: '${productName}-${version}-${arch}',
+    contents: [
+      { x: 130, y: 220 },
+      { x: 410, y: 220, type: 'link', path: '/Applications' },
+    ],
+  },
   afterPack: async (context) => {
     const fs = require('fs');
 

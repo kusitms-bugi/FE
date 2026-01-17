@@ -58,7 +58,7 @@ async function createWidgetWindow() {
   const baseUrl =
     import.meta.env.DEV && process.env.VITE_DEV_SERVER_URL !== undefined
       ? `${process.env.VITE_DEV_SERVER_URL}widget`
-      : 'https://www.bugi.co.kr/widget';
+      : 'https://app.bugi.co.kr/widget';
 
   await widgetWindow.loadURL(baseUrl);
 }

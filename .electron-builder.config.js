@@ -127,7 +127,7 @@ const config = {
   },
   // DMG 설정: 루트 레벨에 설정 (mac 객체 안이 아님)
   dmg: {
-    title: '${productName}-${version}-${arch}',
+    title: '${productName} ${version}',
     contents: [
       { x: 130, y: 220 },
       { x: 410, y: 220, type: 'link', path: '/Applications' },

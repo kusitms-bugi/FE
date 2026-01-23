@@ -56,6 +56,14 @@ const config = {
     version: process.env.VITE_APP_VERSION,
     main: 'dist/main/index.cjs',
   },
+  // 업데이트 서버 설정
+  // GitHub Releases 사용
+  // GH_TOKEN 또는 GITHUB_TOKEN 환경변수가 필요합니다
+  publish: {
+    provider: 'github',
+    owner: 'kusitms-bugi', // GitHub 조직명
+    repo: 'FE', // 저장소 이름
+  },
   mac: {
     category: 'public.app-category.productivity',
     target: [
@@ -83,16 +91,19 @@ const config = {
         '거부기린은 사용자의 자세를 실시간으로 분석하기 위해 마이크에 접근합니다.',
     },
     // 공증(Notarization) 설정
-    // 환경변수가 설정되어 있으면 자동으로 공증 활성화
+    // CI 환경에서만 공증 활성화 (로컬 빌드에서는 비활성화)
     // 필요한 환경변수:
     // - APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID
     // 또는
     // - APPLE_API_KEY, APPLE_API_KEY_ID, APPLE_API_ISSUER
-    notarize: !!(
-      process.env.APPLE_ID &&
-      process.env.APPLE_APP_SPECIFIC_PASSWORD &&
-      process.env.APPLE_TEAM_ID
-    ),
+    // 로컬 빌드에서 공증을 비활성화하려면: CI=false 또는 환경변수 미설정
+    notarize:
+      process.env.CI === 'true' &&
+      !!(
+        process.env.APPLE_ID &&
+        process.env.APPLE_APP_SPECIFIC_PASSWORD &&
+        process.env.APPLE_TEAM_ID
+      ),
   },
   win: {
     target: [

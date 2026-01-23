@@ -1,0 +1,71 @@
+name: Electron Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # v1.0.0, v1.0.1 등 태그가 푸시되면 릴리즈
+  workflow_dispatch:  # 수동 실행도 가능
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write  # Releases 생성 및 업로드를 위해 필수
+
+jobs:
+  build-and-release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            os_short: mac
+          - os: windows-latest
+            os_short: win
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            # 수동 실행 시 입력값 사용
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            # 태그에서 버전 추출 (v1.0.0 -> 1.0.0)
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Version: $VERSION"
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      
+      - name: Build and publish to GitHub Releases
+        env:
+          # 버전 환경변수 설정 (.electron-builder.config.js에서 사용)
+          VITE_APP_VERSION: ${{ steps.get_version.outputs.version }}
+          # macOS notarization / codesign secrets
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_IDENTITY: ${{ secrets.APPLE_IDENTITY }}
+          # GitHub Token (자동 제공)
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm run build:${{ matrix.os_short }} --publish always

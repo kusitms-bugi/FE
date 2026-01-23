@@ -9,6 +9,10 @@ import {
   isWidgetWindowOpen,
 } from '/@/widgetWindow';
 import { setupNotificationHandlers } from '/@/notificationHandlers';
+import {
+  setupUpdaterHandlers,
+  initializeUpdater,
+} from '/@/updaterHandlers';
 
 /**
  * Setup IPC handlers for Electron-specific features
@@ -74,6 +78,9 @@ function setupAPIHandlers() {
   });
   /* Notification 핸들러 설정 */
   setupNotificationHandlers();
+
+  /* Updater 핸들러 설정 */
+  setupUpdaterHandlers();
 }
 /* 위젯 상태 확인 요청 핸들러 */
 ipcMain.handle('widget:isOpen', () => {
@@ -166,12 +173,13 @@ app
   .catch((e) => console.error('Failed during app startup:', e));
 
 /**
- * Check new app version in production mode only
+ * Initialize auto updater in production mode only
  */
 if (import.meta.env.PROD) {
-  app
-    .whenReady()
-    .then(() => import('electron-updater'))
-    .then(({ autoUpdater }) => autoUpdater.checkForUpdatesAndNotify())
-    .catch((e) => console.error('Failed check updates:', e));
+  app.whenReady().then(() => {
+    initializeUpdater();
+    // 앱 시작 시 자동으로 업데이트 체크 (선택사항)
+    // 필요시 주석 해제
+    // autoUpdater.checkForUpdatesAndNotify();
+  });
 }

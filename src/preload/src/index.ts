@@ -36,6 +36,22 @@ type WriteLogResult = {
 // 시스템 테마 타입 (예시)
 type SystemTheme = 'light' | 'dark' | 'system';
 
+// 업데이트 정보 타입
+type UpdateInfo = {
+  version: string;
+  releaseDate?: string;
+  releaseNotes?: string;
+};
+
+// 업데이터 이벤트 채널 타입
+type UpdaterEventChannel =
+  | 'updater:checking-for-update'
+  | 'updater:update-available'
+  | 'updater:update-not-available'
+  | 'updater:error'
+  | 'updater:download-progress'
+  | 'updater:update-downloaded';
+
 // window.bugi 타입
 type BugiAPI = {
   version: number;
@@ -82,6 +98,26 @@ interface ElectronAPI {
       body: string,
     ) => Promise<{ success: boolean; error?: string }>;
     requestPermission: () => Promise<{ success: boolean; supported: boolean }>;
+  };
+
+  // 업데이터 API
+  updater: {
+    checkForUpdates: () => Promise<{
+      success: boolean;
+      updateInfo?: UpdateInfo;
+      error?: string;
+    }>;
+    downloadUpdate: () => Promise<{ success: boolean; error?: string }>;
+    quitAndInstall: () => Promise<{ success: boolean; error?: string }>;
+    getVersion: () => Promise<{ version: string; currentVersion: string }>;
+    on: (
+      channel: UpdaterEventChannel,
+      callback: (data?: unknown) => void,
+    ) => void;
+    removeListener: (
+      channel: UpdaterEventChannel,
+      callback: (data?: unknown) => void,
+    ) => void;
   };
 }
 
@@ -191,6 +227,35 @@ const electronAPI: ElectronAPI = {
       ipcRenderer.invoke('notification:requestPermission') as ReturnType<
         ElectronAPI['notification']['requestPermission']
       >,
+  },
+
+  // 업데이터 API
+  updater: {
+    checkForUpdates: () =>
+      ipcRenderer.invoke('updater:checkForUpdates') as ReturnType<
+        ElectronAPI['updater']['checkForUpdates']
+      >,
+    downloadUpdate: () =>
+      ipcRenderer.invoke('updater:downloadUpdate') as ReturnType<
+        ElectronAPI['updater']['downloadUpdate']
+      >,
+    quitAndInstall: () =>
+      ipcRenderer.invoke('updater:quitAndInstall') as ReturnType<
+        ElectronAPI['updater']['quitAndInstall']
+      >,
+    getVersion: () =>
+      ipcRenderer.invoke('updater:getVersion') as ReturnType<
+        ElectronAPI['updater']['getVersion']
+      >,
+    on: (channel: UpdaterEventChannel, callback: (data?: unknown) => void) => {
+      ipcRenderer.on(channel, (_event, data) => callback(data));
+    },
+    removeListener: (
+      channel: UpdaterEventChannel,
+      callback: (data?: unknown) => void,
+    ) => {
+      ipcRenderer.removeListener(channel, (_event, data) => callback(data));
+    },
   },
 };
 contextBridge.exposeInMainWorld('electronAPI', electronAPI);

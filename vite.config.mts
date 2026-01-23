@@ -56,6 +56,16 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
+          // React, React-DOM, Scheduler는 분리하지 않음 (메인 번들에 포함)
+          // React 19에서 scheduler가 React와 강하게 결합되어 있어 분리 시 에러 발생
+          if (
+            id.includes('node_modules/react') ||
+            id.includes('node_modules/react-dom') ||
+            id.includes('node_modules/scheduler')
+          ) {
+            // undefined를 반환하면 메인 번들에 포함됨
+            return undefined;
+          }
           // 페이지 레벨 코드 스플리팅
           if (id.includes('/pages/main-page')) {
             return 'main-page';
@@ -84,17 +94,6 @@ export default defineConfig({
           // Recharts 라이브러리 분리
           if (id.includes('node_modules/recharts')) {
             return 'recharts';
-          }
-          // react-dom 분리
-          if (id.includes('node_modules/react-dom')) {
-            return 'react-dom';
-          }
-          // react 및 관련 라이브러리 분리
-          if (
-            id.includes('node_modules/react') ||
-            id.includes('node_modules/scheduler')
-          ) {
-            return 'react-vendor';
           }
         },
       },

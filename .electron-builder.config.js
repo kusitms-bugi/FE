@@ -8,6 +8,44 @@ if (process.env.VITE_APP_VERSION === undefined) {
   }.${now.getUTCDate()}-${now.getUTCHours() * 60 + now.getUTCMinutes()}`;
 }
 
+const hasNotarizeCredentials = () => {
+  // electron-builder(app-builder-lib) supports 3 auth strategies for notarytool:
+  // 1) APPLE_ID + APPLE_APP_SPECIFIC_PASSWORD + APPLE_TEAM_ID
+  // 2) APPLE_API_KEY + APPLE_API_KEY_ID + APPLE_API_ISSUER
+  // 3) APPLE_KEYCHAIN_PROFILE (+ optional APPLE_KEYCHAIN)
+  if (
+    process.env.APPLE_ID &&
+    process.env.APPLE_APP_SPECIFIC_PASSWORD &&
+    process.env.APPLE_TEAM_ID
+  ) {
+    return true;
+  }
+
+  if (
+    process.env.APPLE_API_KEY &&
+    process.env.APPLE_API_KEY_ID &&
+    process.env.APPLE_API_ISSUER
+  ) {
+    return true;
+  }
+
+  if (process.env.APPLE_KEYCHAIN_PROFILE) {
+    return true;
+  }
+
+  return false;
+};
+
+const resolveNotarizeEnabled = () => {
+  // Optional override:
+  // - NOTARIZE=true  => force enable
+  // - NOTARIZE=false => force disable
+  if (process.env.NOTARIZE === 'true') return true;
+  if (process.env.NOTARIZE === 'false') return false;
+
+  return hasNotarizeCredentials();
+};
+
 /**
  * @type {import('electron-builder').Configuration}
  * @see https://www.electron.build/configuration/configuration
@@ -91,19 +129,9 @@ const config = {
         '거부기린은 사용자의 자세를 실시간으로 분석하기 위해 마이크에 접근합니다.',
     },
     // 공증(Notarization) 설정
-    // CI 환경에서만 공증 활성화 (로컬 빌드에서는 비활성화)
-    // 필요한 환경변수:
-    // - APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID
-    // 또는
-    // - APPLE_API_KEY, APPLE_API_KEY_ID, APPLE_API_ISSUER
-    // 로컬 빌드에서 공증을 비활성화하려면: CI=false 또는 환경변수 미설정
-    notarize:
-      process.env.CI === 'true' &&
-      !!(
-        process.env.APPLE_ID &&
-        process.env.APPLE_APP_SPECIFIC_PASSWORD &&
-        process.env.APPLE_TEAM_ID
-      ),
+    // 인증정보가 있으면(로컬/CI 무관) 공증을 수행합니다.
+    // 강제 제어가 필요하면: NOTARIZE=true|false
+    notarize: resolveNotarizeEnabled(),
   },
   win: {
     target: [

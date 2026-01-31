@@ -1,4 +1,5 @@
 import { app, ipcMain, nativeTheme } from 'electron';
+import { autoUpdater } from 'electron-updater';
 import { appendFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import './security-restrictions';
@@ -180,6 +181,6 @@ if (import.meta.env.PROD) {
     initializeUpdater();
     // 앱 시작 시 자동으로 업데이트 체크 (선택사항)
     // 필요시 주석 해제
-    // autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdates();
   });
 }

@@ -1,6 +1,5 @@
 import DashboardIcon from '@assets/common/icons/dashboard.svg?react';
 import SettingIcon from '@assets/common/icons/setting.svg?react';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@assets/common/icons/logo.svg?react';
 import NotificationIcon from '@assets/main/bell_icon.svg?react';
@@ -9,9 +8,11 @@ import { Button } from '@shared/ui/button';
 
 import { ThemeToggleSwitch } from '@shared/ui/theme-toggle-switch';
 import { useThemePreference } from '@shared/hooks/use-theme-preference';
+import { useModal } from '@shared/hooks/use-modal';
 import { cn } from '@shared/lib/cn';
+import SettingsModal from './SettingsModal';
 
-type TabType = 'dashboard' | 'plan' | 'settings';
+type TabType = 'dashboard' | 'settings';
 
 interface MainHeaderProps {
   onClickNotification?: () => void;
@@ -20,14 +21,12 @@ interface MainHeaderProps {
 const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
   const [isDark, setIsDark] = useThemePreference();
   const navigate = useNavigate();
-
-  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
-
-  /* 임시 로그아웃 기능 */
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate('/');
-  };
+  const {
+    isOpen: isSettingsOpen,
+    open: openSettings,
+    close: closeSettings,
+  } = useModal();
+  const activeTab: TabType = isSettingsOpen ? 'settings' : 'dashboard';
 
   const tabs = [
     {
@@ -35,17 +34,21 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
       label: '대시보드',
       icon: DashboardIcon,
       disabled: false,
+      path: '/main',
     },
     {
       id: 'settings' as TabType,
       label: '설정',
       icon: SettingIcon,
-      disabled: true,
-    }, // 임시 비활성화
+      disabled: false,
+      path: '/main',
+    },
   ];
 
   return (
-    <div className="bg-grey-0 mr-4 flex justify-between rounded-[999px] p-2">
+    <>
+      {isSettingsOpen && <SettingsModal onClose={closeSettings} />}
+      <div className="bg-grey-0 mr-4 flex justify-between rounded-[999px] p-2">
       {/* 타이틀 영역 */}
       <div className="flex items-center gap-10">
         <div className="ml-3 flex items-center gap-[10px]">
@@ -64,10 +67,10 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
                 key={tab.id}
                 onClick={() => {
                   if (tab.id === 'settings') {
-                    handleLogout();
-                  } else {
-                    setActiveTab(tab.id);
+                    openSettings();
+                    return;
                   }
+                  navigate(tab.path);
                 }}
                 disabled={tab.disabled}
                 variant={isActive ? 'primary' : 'grey'}
@@ -109,6 +112,7 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
         />
       </div>
     </div>
+    </>
   );
 };
 

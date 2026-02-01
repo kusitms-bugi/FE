@@ -161,10 +161,6 @@ const config = {
         target: 'nsis',
         arch: ['x64', 'ia32'],
       },
-      {
-        target: 'portable',
-        arch: ['x64', 'ia32'],
-      },
     ],
     icon: 'buildResources/icon.png',
     artifactName: '거부기린.${ext}',

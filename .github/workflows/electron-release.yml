@@ -70,3 +70,35 @@ jobs:
           # GitHub Token (자동 제공)
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm run build:${{ matrix.os_short }} --publish always
+
+      # 간헐적으로 publish 단계가 중간에 실패/타임아웃 나면 updater 메타 파일이 누락될 수 있어
+      # 마지막에 한번 더 업로드를 보장합니다. (이미 있으면 --clobber로 덮어쓰기)
+      - name: Ensure mac updater metadata uploaded
+        if: matrix.os_short == 'mac'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="v${{ steps.get_version.outputs.version }}"
+          FILE="electron-dist/latest-mac.yml"
+          if [ -f "$FILE" ]; then
+            gh release upload "$TAG" "$FILE" --clobber
+          else
+            echo "No $FILE found; skip."
+          fi
+
+      - name: Ensure windows updater metadata uploaded
+        if: matrix.os_short == 'win'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="v${{ steps.get_version.outputs.version }}"
+          FILE="electron-dist/latest.yml"
+          if [ -f "$FILE" ]; then
+            gh release upload "$TAG" "$FILE" --clobber
+          else
+            echo "No $FILE found; skip."
+          fi

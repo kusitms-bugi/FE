@@ -170,17 +170,16 @@ app
 
     // Setup IPC handlers for Electron-specific features
     setupAPIHandlers();
+
+    /**
+     * Initialize auto updater in production mode only
+     * (setupUpdaterHandlers로 리스너가 먼저 등록된 뒤에 체크해야 이벤트를 놓치지 않음)
+     */
+    if (import.meta.env.PROD) {
+      initializeUpdater();
+      // 앱 시작 시 자동으로 업데이트 체크 (선택사항)
+      // 필요시 주석 해제
+      autoUpdater.checkForUpdates();
+    }
   })
   .catch((e) => console.error('Failed during app startup:', e));
-
-/**
- * Initialize auto updater in production mode only
- */
-if (import.meta.env.PROD) {
-  app.whenReady().then(() => {
-    initializeUpdater();
-    // 앱 시작 시 자동으로 업데이트 체크 (선택사항)
-    // 필요시 주석 해제
-    autoUpdater.checkForUpdates();
-  });
-}

@@ -2,10 +2,22 @@
 require('dotenv').config();
 
 if (process.env.VITE_APP_VERSION === undefined) {
-  const now = new Date();
-  process.env.VITE_APP_VERSION = `${now.getUTCFullYear() - 2000}.${
-    now.getUTCMonth() + 1
-  }.${now.getUTCDate()}-${now.getUTCHours() * 60 + now.getUTCMinutes()}`;
+  try {
+    // 기본은 package.json 버전을 사용 (autoUpdater/electron-updater의 semver 비교와 일치)
+    // 필요하면 빌드 시점에 VITE_APP_VERSION으로 오버라이드 가능
+    // 예) VITE_APP_VERSION=0.9.0 pnpm build:mac
+    const pkg = require('./package.json');
+    if (typeof pkg?.version === 'string' && pkg.version.trim().length > 0) {
+      process.env.VITE_APP_VERSION = pkg.version.trim();
+    } else {
+      throw new Error('package.json version is missing');
+    }
+  } catch {
+    const now = new Date();
+    process.env.VITE_APP_VERSION = `${now.getUTCFullYear() - 2000}.${
+      now.getUTCMonth() + 1
+    }.${now.getUTCDate()}-${now.getUTCHours() * 60 + now.getUTCMinutes()}`;
+  }
 }
 
 const hasNotarizeCredentials = () => {
@@ -104,16 +116,24 @@ const config = {
   },
   mac: {
     category: 'public.app-category.productivity',
-    target: [
-      {
-        target: 'dmg',
-        arch: ['x64', 'arm64'],
-      },
-      {
-        target: 'zip',
-        arch: ['x64', 'arm64'],
-      },
-    ],
+    target:
+      process.env.BUGI_SKIP_DMG === 'true'
+        ? [
+            {
+              target: 'zip',
+              arch: ['x64', 'arm64'],
+            },
+          ]
+        : [
+            {
+              target: 'dmg',
+              arch: ['x64', 'arm64'],
+            },
+            {
+              target: 'zip',
+              arch: ['x64', 'arm64'],
+            },
+          ],
     icon: 'buildResources/icon.icns',
     artifactName: '${productName}-${version}-${arch}.${ext}',
     // 코드 서명 설정

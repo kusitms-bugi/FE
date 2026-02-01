@@ -34,6 +34,7 @@ jobs:
       
       - name: Extract version from tag
         id: get_version
+        shell: bash
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             # 수동 실행 시 입력값 사용

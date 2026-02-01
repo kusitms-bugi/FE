@@ -113,6 +113,8 @@ const config = {
     provider: 'github',
     owner: 'kusitms-bugi', // GitHub 조직명
     repo: 'FE', // 저장소 이름
+    // GitHub Releases 업로드가 큰 파일/느린 네트워크에서 60s 기본 타임아웃에 걸릴 수 있어 여유 있게 설정 (ms)
+    timeout: 15 * 60 * 1000,
   },
   mac: {
     category: 'public.app-category.productivity',

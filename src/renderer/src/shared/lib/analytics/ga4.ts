@@ -32,11 +32,16 @@ let initialized = false;
 function ensureGtagStub() {
   if (typeof window === 'undefined') return;
   window.dataLayer = window.dataLayer ?? [];
-  window.gtag =
-    window.gtag ??
-    ((...args: unknown[]) => {
-      window.dataLayer?.push(args);
-    });
+  if (window.gtag) return;
+
+  // Use the canonical gtag stub shape so gtag.js can seamlessly take over.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const gtag = function (..._args: any[]) {
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer?.push(arguments);
+  };
+
+  window.gtag = gtag as unknown as GtagFn;
 }
 
 function injectGtagScript(measurementId: string) {

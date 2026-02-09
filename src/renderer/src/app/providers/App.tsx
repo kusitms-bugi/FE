@@ -1,5 +1,5 @@
 import { router } from '@shared/config/router';
-import { initGA4, trackPageView } from '@shared/lib/analytics/ga4';
+import { initGA4, setGAUserId, trackPageView } from '@shared/lib/analytics/ga4';
 import { LoadingSpinner } from '@shared/ui/loading';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Suspense, useEffect, useRef } from 'react';
@@ -18,6 +18,8 @@ function App() {
     if (!enabled) return;
 
     initGA4(measurementId, { debug_mode: !import.meta.env.PROD });
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) setGAUserId(storedUserId);
 
     const toPath = (loc: { pathname?: string; search?: string; hash?: string }) =>
       `${loc.pathname ?? ''}${loc.search ?? ''}${loc.hash ?? ''}` || '/';

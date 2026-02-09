@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ImageDescriptionPannel from '../onboarding-page/components/ImageDescriptionPanel';
 import InfoPanel from '../onboarding-page/components/InfoPanel';
+import { AnalyticsEvents } from '@shared/lib/analytics/events';
 
 const OnboardinInitPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
+
+  useEffect(() => {
+    AnalyticsEvents.onboardingEnter({ step: 'posture_calibration' });
+  }, []);
 
   const handlePrev = () => {
     if (currentStep > 1) {

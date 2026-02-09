@@ -1,6 +1,7 @@
 type Ga4Config = {
   send_page_view?: boolean;
   debug_mode?: boolean;
+  user_id?: string;
   [key: string]: unknown;
 };
 
@@ -14,6 +15,7 @@ type Ga4PageViewParams = {
 type GtagFn = {
   (command: 'js', date: Date): void;
   (command: 'config', measurementId: string, config?: Ga4Config): void;
+  (command: 'set', params: Record<string, unknown>): void;
   (command: 'event', eventName: string, params?: Record<string, unknown>): void;
 };
 
@@ -71,6 +73,16 @@ export function initGA4(measurementId: string, config?: Ga4Config) {
   });
 }
 
+export function setGAUserId(userId: string) {
+  if (!activeMeasurementId) return;
+  if (!userId) return;
+  ensureGtagStub();
+
+  // Apply to subsequent events/config
+  window.gtag?.('set', { user_id: userId });
+  window.gtag?.('config', activeMeasurementId, { user_id: userId });
+}
+
 export function trackPageView(params?: Ga4PageViewParams) {
   if (!activeMeasurementId) return;
   ensureGtagStub();
@@ -85,3 +97,13 @@ export function trackPageView(params?: Ga4PageViewParams) {
   });
 }
 
+export function trackEvent(
+  eventName: string,
+  params?: Record<string, unknown>,
+) {
+  if (!activeMeasurementId) return;
+  if (!eventName) return;
+  ensureGtagStub();
+
+  window.gtag?.('event', eventName, params);
+}

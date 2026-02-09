@@ -2,6 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import api from '@shared/api';
 import { LoginInput, LoginResponse } from '../types';
+import axios from 'axios';
+import { setGAUserId } from '@shared/lib/analytics/ga4';
 
 /*로그인 api */
 const login = async (data: LoginInput): Promise<LoginResponse> => {
@@ -14,18 +16,12 @@ const login = async (data: LoginInput): Promise<LoginResponse> => {
     }
 
     return result;
-  } catch (error: any) {
-    if (error.response?.data?.message) {
-      throw new Error(error.response.data.message);
-    }
-    if (error.response?.data) {
-      const errorData = error.response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response?.data) {
+      const errorData = error.response.data as { message?: string; code?: string };
       throw new Error(errorData.message || errorData.code || '로그인 실패');
     }
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error('로그인 실패');
+    throw error instanceof Error ? error : new Error('로그인 실패');
   }
 };
 
@@ -44,8 +40,19 @@ export const useLoginMutation = () => {
       /* 사용자 정보 조회 후 이름 저장 */
       try {
         const userResponse = await api.get('/users/me');
-        if (userResponse.data.success && userResponse.data.data.name) {
-          localStorage.setItem('userName', userResponse.data.data.name);
+        const payload = userResponse.data as {
+          success?: boolean;
+          data?: { id?: string; userId?: string; name?: string };
+        };
+
+        if (payload.success && payload.data?.name) {
+          localStorage.setItem('userName', payload.data.name);
+        }
+
+        const userId = payload.data?.userId ?? payload.data?.id;
+        if (userId) {
+          localStorage.setItem('userId', userId);
+          setGAUserId(userId);
         }
       } catch (error) {
         console.error('사용자 정보 조회 실패:', error);

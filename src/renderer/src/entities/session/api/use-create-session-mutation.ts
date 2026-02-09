@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import api from '@shared/api';
 import { CreateSessionResponse } from '../types';
+import { AnalyticsEvents } from '@shared/lib/analytics/events';
 
 /**
  * 세션 생성 API
@@ -30,9 +31,26 @@ export const useCreateSessionMutation = () => {
 
       // sessionId를 localStorage에 저장
       localStorage.setItem('sessionId', res.data.sessionId);
+      localStorage.setItem('sessionStartAt', Date.now().toString());
 
       // 이전 세션의 lastSessionId 삭제 (중복 방지)
       localStorage.removeItem('lastSessionId');
+
+      AnalyticsEvents.measureStart({ session_id: res.data.sessionId });
+
+      const signupCompletedAtRaw = localStorage.getItem('signupCompletedAt');
+      const firstMeasureSent = localStorage.getItem('ga_first_measure_start_sent');
+      if (signupCompletedAtRaw && firstMeasureSent !== 'true') {
+        const signupCompletedAt = Number(signupCompletedAtRaw);
+        if (Number.isFinite(signupCompletedAt) && signupCompletedAt > 0) {
+          const seconds_from_signup = Math.max(
+            0,
+            Math.round((Date.now() - signupCompletedAt) / 1000),
+          );
+          AnalyticsEvents.firstMeasureStart({ seconds_from_signup });
+          localStorage.setItem('ga_first_measure_start_sent', 'true');
+        }
+      }
     },
     onError: (error) => {
       console.error('세션 생성 오류:', error);

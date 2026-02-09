@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@shared/api';
 import { SessionActionResponse } from '../types';
+import { AnalyticsEvents } from '@shared/lib/analytics/events';
 
 /**
  * 세션 중단 API
@@ -38,11 +39,22 @@ export const useStopSessionMutation = () => {
       // sessionId를 lastSessionId로 백업 (ExitPanel에서 리포트 조회용)
       const sessionId = localStorage.getItem('sessionId');
       if (sessionId) {
+        const startAtRaw = localStorage.getItem('sessionStartAt');
+        const startAt = startAtRaw ? Number(startAtRaw) : NaN;
+        if (Number.isFinite(startAt) && startAt > 0) {
+          const duration_sec = Math.max(
+            0,
+            Math.round((Date.now() - startAt) / 1000),
+          );
+          AnalyticsEvents.measureEnd({ session_id: sessionId, duration_sec });
+        }
+
         localStorage.setItem('lastSessionId', sessionId);
       }
 
       // sessionId를 localStorage에서 제거
       localStorage.removeItem('sessionId');
+      localStorage.removeItem('sessionStartAt');
 
       // 평균 자세 점수 쿼리 갱신
       queryClient.invalidateQueries({ queryKey: ['averageScore'] });

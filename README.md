@@ -88,6 +88,25 @@
 
 ---
 
+## 📈 Google Analytics (GA4)
+
+Renderer(웹)에서 GA4를 사용하려면 `.env`에 아래 값을 추가하세요.
+
+```bash
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+- 기본적으로 프로덕션 빌드(`import.meta.env.PROD`)에서만 초기화됩니다.
+- 로컬에서 확인이 필요하면 개발 환경에서만 아래 값을 추가해 활성화할 수 있습니다.
+
+```bash
+VITE_GA_ENABLE_IN_DEV=true
+```
+
+- React Router 경로 변경마다 `page_view` 이벤트를 전송합니다.
+
+---
+
 ## 📁 프로젝트 구조
 
 Electron 프로젝트는 일반적으로 **Main Process**, **Preload Scripts**, **Renderer Process** 세 가지 프로세스로 구성됩니다. 이 프로젝트는 Vite를 사용하여 각 프로세스를 독립적으로 빌드하고, TypeScript와 React를 활용한 구조로 설계되었습니다.

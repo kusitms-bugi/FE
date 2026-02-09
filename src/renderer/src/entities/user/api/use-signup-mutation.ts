@@ -2,6 +2,7 @@ import api from '@shared/api';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { SignupRequest } from '../types';
+import axios from 'axios';
 
 /* 이메일 중복 확인 api */
 const duplicatedEmail = async (email: string) => {
@@ -24,20 +25,12 @@ const signupUser = async (data: SignupRequest) => {
     }
 
     return response.data;
-  } catch (error: any) {
-    // axios 에러인 경우 response.data에서 메시지 추출
-    if (error.response?.data?.message) {
-      throw new Error(error.response.data.message);
-    }
-    if (error.response?.data) {
-      const errorData = error.response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response?.data) {
+      const errorData = error.response.data as { message?: string; code?: string };
       throw new Error(errorData.message || errorData.code || '회원가입 실패');
     }
-    // 일반 에러인 경우
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error('회원가입 실패');
+    throw error instanceof Error ? error : new Error('회원가입 실패');
   }
 };
 

@@ -4,6 +4,7 @@ import { useTimeEditor } from './hooks/useTimeEditor';
 import { TimeControlSection } from './components/TimeControlSection';
 import { Button } from '@shared/ui/button';
 import { useNotificationStore } from '../model/use-notification-store';
+import { AnalyticsEvents } from '@shared/lib/analytics/events';
 
 interface NotificationModalProps {
   onClose: () => void;
@@ -35,6 +36,10 @@ const NotificationModal = ({ onClose }: NotificationModalProps) => {
 
   /* 저장하기 핸들러 - 알림 허용, 스트레칭, 거북목 시간 간격 전역 저장 */
   const handleSave = async () => {
+    if (store.isAllow !== isAllow) {
+      AnalyticsEvents.notificationToggle({ enabled: isAllow });
+    }
+
     store.setSettings({
       isAllow,
       stretching: {

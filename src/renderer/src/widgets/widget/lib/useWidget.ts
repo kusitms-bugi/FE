@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AnalyticsEvents } from '@shared/lib/analytics/events';
 
 /**
  * 위젯 창 상태를 관리하는 훅
@@ -51,11 +52,31 @@ export const useWidget = () => {
     try {
       if (window.electronAPI?.widget) {
         if (isWidgetOpen) {
+          AnalyticsEvents.widgetToggle({ enabled: false });
+
+          const startAtRaw = localStorage.getItem('widgetVisibleStartAt');
+          const startAt = startAtRaw ? Number(startAtRaw) : NaN;
+          if (Number.isFinite(startAt) && startAt > 0) {
+            const duration_sec = Math.max(
+              0,
+              Math.round((Date.now() - startAt) / 1000),
+            );
+            const sessionId = localStorage.getItem('sessionId') ?? undefined;
+            AnalyticsEvents.widgetVisibilityEnd({
+              duration_sec,
+              session_id: sessionId,
+            });
+          }
+          localStorage.removeItem('widgetVisibleStartAt');
+
           await window.electronAPI.widget.close();
           setIsWidgetOpen(false);
           console.log('위젯 창이 닫혔습니다');
           await logWidgetEvent('widget_closed');
         } else {
+          AnalyticsEvents.widgetToggle({ enabled: true });
+          localStorage.setItem('widgetVisibleStartAt', Date.now().toString());
+
           await window.electronAPI.widget.open();
           setIsWidgetOpen(true);
           console.log('위젯 창이 열렸습니다');

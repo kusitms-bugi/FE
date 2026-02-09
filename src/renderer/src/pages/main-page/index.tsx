@@ -25,6 +25,7 @@ import { LoadingSpinner } from '@shared/ui/loading';
 import { ModalPortal } from '@shared/ui/modal';
 import { useCameraStore } from '@widgets/camera';
 import { lazy, Suspense, useEffect, useRef } from 'react';
+import { AnalyticsEvents } from '@shared/lib/analytics/events';
 
 // Recharts를 사용하는 컴포넌트들을 lazy import
 const AverageGraphPannel = lazy(
@@ -44,6 +45,8 @@ const LOCAL_STORAGE_KEY = 'calibration_result_v1';
 const MainPage = () => {
   const setStatus = usePostureStore((state) => state.setStatus);
   const { cameraState, setHide, setShow, setExit } = useCameraStore();
+  const badPostureStartAtRef = useRef<number | null>(null);
+  const badPostureLevelRef = useRef<number | null>(null);
 
   // 메트릭 저장 mutation
   const { mutate: saveMetrics } = useSaveMetricsMutation();
@@ -119,6 +122,13 @@ const MainPage = () => {
     }
   }, [calib]);
 
+  useEffect(() => {
+    const sessionId = localStorage.getItem('sessionId');
+    if (sessionId) {
+      AnalyticsEvents.measurePageEnter({ session_id: sessionId });
+    }
+  }, []);
+
   const handleUserMediaError = () => {
     setHide();
   };
@@ -148,6 +158,36 @@ const MainPage = () => {
 
     // 안정화된 결과로 상태 업데이트
     setStatus(result.cls, result.Score);
+
+    const sessionId = localStorage.getItem('sessionId');
+    if (sessionId) {
+      if (result.events.includes('enter_bad')) {
+        badPostureStartAtRef.current = Date.now();
+        badPostureLevelRef.current = result.cls;
+        AnalyticsEvents.badPostureEnter({
+          session_id: sessionId,
+          posture_level: result.cls,
+        });
+      }
+
+      if (result.events.includes('exit_bad')) {
+        const startedAt = badPostureStartAtRef.current;
+        const postureLevel = badPostureLevelRef.current ?? result.cls;
+        if (startedAt) {
+          const recovery_time_sec = Math.max(
+            0,
+            Math.round((Date.now() - startedAt) / 1000),
+          );
+          AnalyticsEvents.postureRecovered({
+            session_id: sessionId,
+            posture_level: postureLevel,
+            recovery_time_sec,
+          });
+        }
+        badPostureStartAtRef.current = null;
+        badPostureLevelRef.current = null;
+      }
+    }
 
     // 메인 창이 활성화되어 있음을 표시 (위젯이 판정을 하지 않도록)
     localStorage.setItem('main-window-active', Date.now().toString());

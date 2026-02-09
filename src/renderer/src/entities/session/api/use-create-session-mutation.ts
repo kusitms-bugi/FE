@@ -40,6 +40,7 @@ export const useCreateSessionMutation = () => {
 
       const signupCompletedAtRaw = localStorage.getItem('signupCompletedAt');
       const firstMeasureSent = localStorage.getItem('ga_first_measure_start_sent');
+      const meaningfulUseSent = localStorage.getItem('ga_meaningful_use_sent');
       if (signupCompletedAtRaw && firstMeasureSent !== 'true') {
         const signupCompletedAt = Number(signupCompletedAtRaw);
         if (Number.isFinite(signupCompletedAt) && signupCompletedAt > 0) {
@@ -49,6 +50,17 @@ export const useCreateSessionMutation = () => {
           );
           AnalyticsEvents.firstMeasureStart({ seconds_from_signup });
           localStorage.setItem('ga_first_measure_start_sent', 'true');
+        }
+      }
+
+      if (signupCompletedAtRaw && meaningfulUseSent !== 'true') {
+        const signupCompletedAt = Number(signupCompletedAtRaw);
+        if (Number.isFinite(signupCompletedAt) && signupCompletedAt > 0) {
+          const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+          if (Date.now() - signupCompletedAt >= sevenDaysMs) {
+            AnalyticsEvents.meaningfulUse({ type: 'measure_start' });
+            localStorage.setItem('ga_meaningful_use_sent', 'true');
+          }
         }
       }
     },

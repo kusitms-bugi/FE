@@ -105,5 +105,17 @@ export function trackEvent(
   if (!eventName) return;
   ensureGtagStub();
 
-  window.gtag?.('event', eventName, params);
+  const sanitizedParams = params
+    ? Object.fromEntries(
+        Object.entries(params).filter(([, value]) => value !== undefined),
+      )
+    : undefined;
+
+  window.gtag?.(
+    'event',
+    eventName,
+    sanitizedParams && Object.keys(sanitizedParams).length > 0
+      ? sanitizedParams
+      : undefined,
+  );
 }

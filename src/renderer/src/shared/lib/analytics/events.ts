@@ -5,7 +5,7 @@ export const AnalyticsEvents = {
     trackEvent('download_click', params),
 
   signUpComplete: (params: { user_id?: string }) =>
-    trackEvent('sign_up_complete', params),
+    trackEvent('sign_up_complete', params.user_id ? params : undefined),
 
   onboardingEnter: (params: { step: string }) =>
     trackEvent('onboarding_enter', params),
@@ -43,4 +43,3 @@ export const AnalyticsEvents = {
   meaningfulUse: (params: { type: string }) =>
     trackEvent('meaningful_use', params),
 } as const;
-

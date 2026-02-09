@@ -6,6 +6,7 @@ import { AnalyticsEvents } from '@shared/lib/analytics/events';
 import axios from 'axios';
 
 type VerifyEmailResponse = {
+  timestamp?: string;
   success: boolean;
   code?: string;
   message?: string | null;
@@ -71,10 +72,26 @@ export const useVerifyEmailMutation = () => {
         (data as VerifyEmailResponse | undefined)?.data?.userId ??
         (data as VerifyEmailResponse | undefined)?.data?.id;
 
+      const tsRaw = (data as VerifyEmailResponse | undefined)?.timestamp;
+      const signupCompletedAt = tsRaw ? Date.parse(tsRaw) : NaN;
+      const signupCompletedAtMs = Number.isFinite(signupCompletedAt)
+        ? signupCompletedAt
+        : Date.now();
+
+      // Keep retention anchor across localStorage.clear()
+      const preserved: Record<string, string> = {
+        signupCompletedAt: signupCompletedAtMs.toString(),
+      };
+      const gaFirstMeasure = localStorage.getItem('ga_first_measure_start_sent');
+      const gaMeaningful = localStorage.getItem('ga_meaningful_use_sent');
+      if (gaFirstMeasure) preserved.ga_first_measure_start_sent = gaFirstMeasure;
+      if (gaMeaningful) preserved.ga_meaningful_use_sent = gaMeaningful;
+
       AnalyticsEvents.signUpComplete({ user_id: userId });
 
       alert('인증 성공!');
       localStorage.clear();
+      Object.entries(preserved).forEach(([k, v]) => localStorage.setItem(k, v));
     },
     onError: (error: unknown) => {
       console.error('인증 실패:', error);

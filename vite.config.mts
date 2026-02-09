@@ -12,6 +12,8 @@ const __dirname = path.dirname(__filename);
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/',
+  // Keep env files at repo root (/.env) even though Vite root is src/renderer
+  envDir: __dirname,
   root: 'src/renderer',
   plugins: [
     svgr(),

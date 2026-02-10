@@ -90,20 +90,26 @@
 
 ## 📈 Google Analytics (GA4)
 
-Renderer(웹)에서 GA4를 사용하려면 `.env`에 아래 값을 추가하세요.
+현재 앱의 분석 이벤트는 **Renderer에서 GA SDK를 직접 호출하지 않고**, 아래 경로로 전송됩니다.
+
+`renderer logEvent -> preload contextBridge -> ipc -> main -> GA4 Measurement Protocol`
+
+### 필수 환경변수 (루트 `.env`)
 
 ```bash
-VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+GA4_MEASUREMENT_ID=G-XXXXXXXXXX
+GA4_API_SECRET=YOUR_API_SECRET
+GA4_DEBUG_MP=true
 ```
 
-- 기본적으로 프로덕션 빌드(`import.meta.env.PROD`)에서만 초기화됩니다.
-- 로컬에서 확인이 필요하면 개발 환경에서만 아래 값을 추가해 활성화할 수 있습니다.
+- `GA4_API_SECRET`은 Main 프로세스에서만 사용되며 Renderer 번들에 포함되지 않습니다.
+- 자동 `page_view`/URL 기반 추적은 사용하지 않고, 퍼널/핵심 행동 이벤트만 전송합니다.
 
-```bash
-VITE_GA_ENABLE_IN_DEV=true
-```
+### DebugView 확인
 
-- React Router 경로 변경마다 `page_view` 이벤트를 전송합니다.
+- `GA4_DEBUG_MP=true`일 때:
+  - `mp/collect` 전송 시 `debug_mode`가 포함되어 DebugView 확인 가능
+  - `debug/mp/collect` 검증 응답이 메인 터미널에 출력됨
 
 ---
 

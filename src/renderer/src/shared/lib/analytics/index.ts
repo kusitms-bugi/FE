@@ -1,3 +1,3 @@
-export * from './ga4';
+export * from './client';
 export * from './events';
-
+export * from './schema';

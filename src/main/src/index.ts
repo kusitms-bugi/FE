@@ -1,5 +1,6 @@
 import { app, ipcMain, nativeTheme } from 'electron';
 import { autoUpdater } from 'electron-updater';
+import { config as loadDotenv } from 'dotenv';
 import { appendFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import './security-restrictions';
@@ -14,6 +15,9 @@ import {
   setupUpdaterHandlers,
   initializeUpdater,
 } from '/@/updaterHandlers';
+import { setupAnalyticsHandlers } from '/@/analytics';
+
+loadDotenv({ path: join(process.cwd(), '.env') });
 
 /**
  * Setup IPC handlers for Electron-specific features
@@ -36,10 +40,6 @@ function setupAPIHandlers() {
         const logLine = `[${timestamp}] ${data}\n`;
 
         await appendFile(logPath, logLine, 'utf-8');
-
-        if (import.meta.env.DEV) {
-          console.log(`📝 Log written to: ${logPath}`);
-        }
 
         return { success: true, path: logPath };
       } catch (error) {
@@ -82,6 +82,9 @@ function setupAPIHandlers() {
 
   /* Updater 핸들러 설정 */
   setupUpdaterHandlers();
+
+  /* Analytics 핸들러 설정 */
+  setupAnalyticsHandlers();
 }
 /* 위젯 상태 확인 요청 핸들러 */
 ipcMain.handle('widget:isOpen', () => {

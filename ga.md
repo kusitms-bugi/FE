@@ -1,3 +1,10 @@
+## Analytics Runtime Notes
+
+- Renderer에서는 `logEvent(name, params)`만 호출합니다.
+- 실제 전송은 `preload -> ipc -> main` 경유로 GA4 Measurement Protocol(`mp/collect`)에서 처리합니다.
+- `GA4_API_SECRET`은 루트 `.env` + Main 프로세스에서만 읽습니다.
+- 자동 `page_view`는 사용하지 않습니다.
+
 name affectsfunnel affectretention category description ga등록여부 metricpurpose notes parameters qachecked requiredparams screen sessionidrequried status trigger useridrequired userscope
 
 download_click Yes No 퍼널 설치 페이지에서 사용자가 다운로드 버튼을 클릭한 행동을 추적하는 이벤트 No 유입 채널 및 OS별 다운로드 전환율을 분석하여 마케팅 효율과 초기 서비스 관심도를 측정 platform: string (mac | windows),

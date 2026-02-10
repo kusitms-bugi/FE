@@ -5,6 +5,29 @@ import { WIDGET_CONFIG } from './widgetConfig';
 /*위젯 관리 변수*/
 let widgetWindow: BrowserWindow | null = null;
 
+const PROD_WIDGET_URL = 'https://app.bugi.co.kr/widget';
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const loadUrlWithRetry = async (
+  win: BrowserWindow,
+  url: string,
+  options: { retries: number; delayMs: number },
+) => {
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= options.retries; attempt += 1) {
+    try {
+      await win.loadURL(url);
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt === options.retries) break;
+      await sleep(options.delayMs);
+    }
+  }
+  throw lastError;
+};
+
 /* Create a widget window (위젯 창 생성)*/
 async function createWidgetWindow() {
   // 이미 위젯 창이 있으면 포커스만 주고 반환(중복 방지)
@@ -55,12 +78,28 @@ async function createWidgetWindow() {
   });
 
   // 위젯 전용 URL
-  const baseUrl =
-    import.meta.env.DEV && process.env.VITE_DEV_SERVER_URL !== undefined
-      ? `${process.env.VITE_DEV_SERVER_URL}widget`
-      : 'https://app.bugi.co.kr/widget';
+  const devServerUrl = process.env.VITE_DEV_SERVER_URL;
+  const widgetUrl =
+    import.meta.env.DEV && devServerUrl
+      ? new URL('widget', devServerUrl).toString()
+      : PROD_WIDGET_URL;
 
-  await widgetWindow.loadURL(baseUrl);
+  try {
+    await loadUrlWithRetry(widgetWindow, widgetUrl, {
+      retries: import.meta.env.DEV ? 5 : 1,
+      delayMs: 400,
+    });
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn(
+        `[widget] Failed to load dev widget URL (${widgetUrl}). Fallback to production URL.`,
+        error,
+      );
+      await widgetWindow.loadURL(PROD_WIDGET_URL);
+      return;
+    }
+    throw error;
+  }
 }
 
 export async function openWidgetWindow() {

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '@shared/api';
 import { LoginInput, LoginResponse } from '../types';
 import axios from 'axios';
-import { setGAUserId } from '@shared/lib/analytics/ga4';
+import { setAnalyticsUserId } from '@shared/lib/analytics';
 
 /*로그인 api */
 const login = async (data: LoginInput): Promise<LoginResponse> => {
@@ -52,7 +52,7 @@ export const useLoginMutation = () => {
         const userId = payload.data?.userId ?? payload.data?.id;
         if (userId) {
           localStorage.setItem('userId', userId);
-          setGAUserId(userId);
+          setAnalyticsUserId(userId);
         }
       } catch (error) {
         console.error('사용자 정보 조회 실패:', error);

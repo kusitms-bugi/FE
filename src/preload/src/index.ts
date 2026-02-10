@@ -52,6 +52,23 @@ type UpdaterEventChannel =
   | 'updater:download-progress'
   | 'updater:update-downloaded';
 
+type AnalyticsEventName =
+  | 'download_click'
+  | 'sign_up_complete'
+  | 'onboarding_enter'
+  | 'measure_page_enter'
+  | 'first_measure_start'
+  | 'measure_start'
+  | 'measure_end'
+  | 'bad_posture_enter'
+  | 'posture_recovered'
+  | 'widget_toggle'
+  | 'widget_visibility_end'
+  | 'notification_toggle'
+  | 'meaningful_use';
+
+type AnalyticsParams = Record<string, string | number | boolean>;
+
 // window.bugi 타입
 type BugiAPI = {
   version: number;
@@ -118,6 +135,14 @@ interface ElectronAPI {
       channel: UpdaterEventChannel,
       callback: (data?: unknown) => void,
     ) => void;
+  };
+
+  analytics: {
+    logEvent: (
+      name: AnalyticsEventName,
+      params?: AnalyticsParams,
+    ) => Promise<{ success: boolean }>;
+    setUserId: (userId: string) => Promise<{ success: boolean }>;
   };
 }
 
@@ -256,6 +281,17 @@ const electronAPI: ElectronAPI = {
     ) => {
       ipcRenderer.removeListener(channel, (_event, data) => callback(data));
     },
+  },
+
+  analytics: {
+    logEvent: (name: AnalyticsEventName, params?: AnalyticsParams) =>
+      ipcRenderer.invoke('analytics:logEvent', name, params) as ReturnType<
+        ElectronAPI['analytics']['logEvent']
+      >,
+    setUserId: (userId: string) =>
+      ipcRenderer.invoke('analytics:setUserId', userId) as ReturnType<
+        ElectronAPI['analytics']['setUserId']
+      >,
   },
 };
 contextBridge.exposeInMainWorld('electronAPI', electronAPI);

@@ -57,6 +57,17 @@ jobs:
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Create runtime env for packaged app
+        shell: bash
+        run: |
+          mkdir -p .secrets
+          cat > .secrets/runtime.env << EOF
+          GA4_MEASUREMENT_ID=${{ secrets.GA4_MEASUREMENT_ID }}
+          GA4_API_SECRET=${{ secrets.GA4_API_SECRET }}
+          GA4_DEBUG_MP=false
+          EOF
+          echo "runtime.env generated"
       
       - name: Build and publish to GitHub Releases
         env:

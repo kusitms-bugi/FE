@@ -1,5 +1,6 @@
 // .env 파일 로드
 require('dotenv').config();
+const fs = require('fs');
 
 if (process.env.VITE_APP_VERSION === undefined) {
   try {
@@ -75,12 +76,20 @@ const config = {
     'dist/renderer/**',
     'package.json',
   ],
-  /* 알림에 추가한 이미지 빌드 시 */
+  /* 알림 이미지 + 런타임 환경변수 파일(존재 시) */
   extraResources: [
     {
       from: 'src/main/assets/Symbol_Logo.png',
       to: 'Symbol_Logo.png',
     },
+    ...(fs.existsSync('.secrets/runtime.env')
+      ? [
+          {
+            from: '.secrets/runtime.env',
+            to: 'config/runtime.env',
+          },
+        ]
+      : []),
   ],
   asar: true,
   // 빌드 전에 필요한 파일들이 존재하는지 확인

@@ -17,7 +17,9 @@ import {
 } from '/@/updaterHandlers';
 import { setupAnalyticsHandlers } from '/@/analytics';
 
+// 개발 환경: 루트 .env, 패키징 환경: resources/config/runtime.env
 loadDotenv({ path: join(process.cwd(), '.env') });
+loadDotenv({ path: join(process.resourcesPath, 'config', 'runtime.env') });
 
 /**
  * Setup IPC handlers for Electron-specific features

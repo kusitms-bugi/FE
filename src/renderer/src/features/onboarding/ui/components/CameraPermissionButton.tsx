@@ -8,42 +8,52 @@ const CameraPermissionButton = () => {
 
   const requestCameraPermission = async () => {
     try {
-      const isWindows = navigator.platform.includes('Win');
-
       let stream: MediaStream | null = null;
       let selectedDeviceId: string | null = null;
+      const preferredDeviceId = localStorage.getItem('preferred-camera-device');
 
-      // Windows 환경이면 Device 1 (두 번째 카메라) 사용
-      if (isWindows) {
-        const devices = await navigator.mediaDevices.enumerateDevices(); // 연결된 모든 미디어 장치 탐색
-        const videoDevices = devices.filter((d) => d.kind === 'videoinput'); // 카메라 목록만 구함
-
-        const targetDevice = videoDevices[1]; // 카메라 목록중 두 번째 카메라 선택
-        if (targetDevice) {
-          stream = await navigator.mediaDevices.getUserMedia({
-            video: { deviceId: { exact: targetDevice.deviceId } }, //지정한 카메라에 스트림 요청
-            audio: false,
-          });
-          selectedDeviceId = targetDevice.deviceId; //사용하는 카메라id 저장 변수
-        } else {
-          stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: false,
-          }); // 카메라 1대이면 기존 방식 사용
-        }
-      } else {
-        // macOS 등 다른 환경: 기존 로직
-
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+      // 1) 기본 카메라를 먼저 시도하고, 2) 저장된 카메라, 3) 연결된 카메라 순으로 fallback
+      const constraintsToTry: Array<{
+        video: true | { deviceId: { exact: string } };
+        audio: false;
+      }> = [
+        { video: true, audio: false },
+      ];
+      if (preferredDeviceId) {
+        constraintsToTry.push({
+          video: { deviceId: { exact: preferredDeviceId } },
           audio: false,
         });
-        const track = stream.getVideoTracks()[0];
-        selectedDeviceId = track.getSettings().deviceId || null;
+      }
+
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter((d) => d.kind === 'videoinput');
+      for (const device of videoDevices) {
+        if (!device.deviceId || device.deviceId === preferredDeviceId) continue;
+        constraintsToTry.push({
+          video: { deviceId: { exact: device.deviceId } },
+          audio: false,
+        });
+      }
+
+      let lastError: unknown;
+      for (const constraints of constraintsToTry) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia(constraints);
+          break;
+        } catch (error) {
+          lastError = error;
+        }
       }
 
       if (!stream) {
+        if (lastError) throw lastError;
         throw new Error('사용 가능한 카메라를 찾을 수 없습니다.');
+      }
+
+      const track = stream.getVideoTracks()[0];
+      if (track) {
+        selectedDeviceId = track.getSettings().deviceId || null;
       }
 
       stream.getTracks().forEach((track) => {
@@ -51,7 +61,7 @@ const CameraPermissionButton = () => {
       });
 
       // 스트림이 완전히 해제될 때까지 약간의 딜레이
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       // 성공한 카메라 저장
       if (selectedDeviceId) {

@@ -19,6 +19,11 @@ const api: AxiosInstance = axios.create({
   },
 });
 
+const clearAuthTokens = () => {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+};
+
 /**
  * 리프레시 토큰으로 액세스 토큰 재발급
  */
@@ -90,8 +95,8 @@ api.interceptors.response.use(
 
     // AUTH-102 코드인 경우 유효하지 않은 리프레시 토큰 → 로그아웃 처리
     if (errorCode === 'AUTH-102') {
-      localStorage.clear();
-      window.location.href = '/';
+      clearAuthTokens();
+      window.location.href = '/auth/login';
       throw new Error(responseData.message || 'Invalid refresh token');
     }
 
@@ -110,8 +115,8 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch {
         // 리프레시 토큰도 만료되거나 유효하지 않은 경우 로그아웃 처리
-        localStorage.clear();
-        window.location.href = '/';
+        clearAuthTokens();
+        window.location.href = '/auth/login';
         throw new Error(responseData.message || 'Session expired');
       }
     }
@@ -145,7 +150,7 @@ api.interceptors.response.use(
 
         return api(originalRequest);
       } catch (_err) {
-        localStorage.clear();
+        clearAuthTokens();
         window.location.href = '/auth/login';
         return Promise.reject(_err);
       }

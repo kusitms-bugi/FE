@@ -60,6 +60,7 @@ async function createWidgetWindow() {
       nodeIntegration: false, // Node.js API 직접 접근 차단
       contextIsolation: true, // Renderer와 Main 프로세스 격리
       allowRunningInsecureContent: false,
+      backgroundThrottling: false,
     },
   });
 

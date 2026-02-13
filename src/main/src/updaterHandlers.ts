@@ -20,13 +20,41 @@ function setDockBadge(text: string) {
 }
 
 function formatReleaseNotes(releaseNotes: unknown): string | undefined {
-  if (typeof releaseNotes === 'string') return releaseNotes;
+  const sanitize = (input: string) =>
+    input
+      .replace(/<[^>]*>/g, ' ') // strip HTML tags
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1') // markdown links -> text
+      .replace(/[`*_>#-]+/g, ' ') // markdown symbols
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  const summarize = (input: string) => {
+    const lines = input
+      .split(/\r?\n/)
+      .map((line) => sanitize(line))
+      .filter((line) => line.length > 0);
+
+    if (lines.length === 0) return undefined;
+
+    const maxLines = 4;
+    const maxCharsPerLine = 90;
+    const summarized = lines.slice(0, maxLines).map((line) =>
+      line.length > maxCharsPerLine
+        ? `${line.slice(0, maxCharsPerLine - 1)}…`
+        : line,
+    );
+
+    if (lines.length > maxLines) summarized.push('...');
+    return summarized.map((line) => `• ${line}`).join('\n');
+  };
+
+  if (typeof releaseNotes === 'string') return summarize(releaseNotes);
   if (Array.isArray(releaseNotes)) {
     const strings = releaseNotes
       .map((n) => (typeof n === 'string' ? n : n?.note))
       .filter((n): n is string => typeof n === 'string' && n.trim().length > 0);
     if (strings.length === 0) return undefined;
-    return strings.join('\n\n');
+    return summarize(strings.join('\n'));
   }
   return undefined;
 }
@@ -234,4 +262,3 @@ export function initializeUpdater() {
 
   console.log('🚀 Auto updater initialized');
 }
-

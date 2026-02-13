@@ -24,10 +24,17 @@ const clearAuthTokens = () => {
   localStorage.removeItem('refreshToken');
 };
 
+type RetriableRequestConfig = AxiosRequestConfig & {
+  _retry?: boolean;
+  _authCodeRetried?: boolean;
+};
+
+let refreshPromise: Promise<void> | null = null;
+
 /**
  * 리프레시 토큰으로 액세스 토큰 재발급
  */
-const refreshAccessToken = async (): Promise<void> => {
+const doRefreshAccessToken = async (): Promise<void> => {
   const refreshToken = localStorage.getItem('refreshToken');
   if (!refreshToken) {
     throw new Error('Refresh token not found');
@@ -69,6 +76,15 @@ const refreshAccessToken = async (): Promise<void> => {
   }
 };
 
+const refreshAccessToken = async (): Promise<void> => {
+  if (!refreshPromise) {
+    refreshPromise = doRefreshAccessToken().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+};
+
 api.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem('accessToken');
@@ -102,12 +118,19 @@ api.interceptors.response.use(
 
     // AUTH-101 코드인 경우 토큰 만료로 처리 (대소문자 구분 없음)
     if (errorCode === 'AUTH-101') {
+      const originalRequest = response.config as RetriableRequestConfig;
+      if (originalRequest._authCodeRetried) {
+        clearAuthTokens();
+        window.location.href = '/auth/login';
+        throw new Error(responseData.message || 'Session expired');
+      }
+      originalRequest._authCodeRetried = true;
+
       try {
         // 리프레시 토큰으로 재발급 시도
         await refreshAccessToken();
 
         // 재발급 성공 시 원래 요청을 새 토큰으로 재시도
-        const originalRequest = response.config;
         const newAccessToken = localStorage.getItem('accessToken');
         if (newAccessToken && originalRequest.headers) {
           originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
@@ -124,9 +147,10 @@ api.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    const originalRequest = error.config as AxiosRequestConfig & {
-      _retry?: boolean;
-    }; // 무한 요청 방지
+    const originalRequest = error.config as RetriableRequestConfig | undefined; // 무한 요청 방지
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
 
     /* 에러가 401,403일 때  토큰 갱신 */
     if (

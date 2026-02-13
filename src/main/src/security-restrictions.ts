@@ -38,6 +38,7 @@ const ALLOWED_ORIGINS_AND_PERMISSIONS = new Map<string, Set<string>>(
  */
 const ALLOWED_EXTERNAL_ORIGINS = new Set<`https://${string}`>([
   'https://github.com',
+  'https://clean-rail-ebf.notion.site',
 ]);
 
 app.on('web-contents-created', (_, contents) => {

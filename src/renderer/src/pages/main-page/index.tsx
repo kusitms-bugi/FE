@@ -314,7 +314,7 @@ const MainPage = () => {
           </div>
 
           {/* 우측영역 */}
-          <div className="bg-grey-0 flex h-full w-full flex-col gap-[clamp(16px,calc(16px+(100vh-810px)*16/270),32px)] rounded-4xl p-6">
+          <div className="bg-grey-0 custom-scrollbar flex h-full min-h-0 w-full flex-col gap-[clamp(16px,calc(16px+(100vh-810px)*16/270),32px)] overflow-y-auto overscroll-y-contain rounded-4xl p-6">
             <WebcamPanel
               onUserMediaError={handleUserMediaError}
               onPoseDetected={handlePoseDetected}

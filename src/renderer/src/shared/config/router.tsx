@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import Layout from '../../app/layouts/Layout';
+import { canAccessCalibrationFlow } from '@shared/lib/calibration-gate';
 
 // 라우트 레벨 코드 스플리팅: 각 페이지를 lazy import
 const CalibrationPage = lazy(() => import('../../pages/calibration-page'));
@@ -47,6 +48,19 @@ const loginPageLoader = async () => {
   return null;
 };
 
+const calibrationFlowLoader = async () => {
+  if (!hasAuthTokens()) {
+    throw redirect('/auth/login');
+  }
+
+  const userId = localStorage.getItem('userId');
+  if (!canAccessCalibrationFlow(userId)) {
+    throw redirect('/main');
+  }
+
+  return null;
+};
+
 export const router = createBrowserRouter([
   {
     path: '/main',
@@ -82,7 +96,7 @@ export const router = createBrowserRouter([
   {
     element: <Layout />,
     path: '/onboarding',
-    loader: requireAuthLoader,
+    loader: calibrationFlowLoader,
     children: [
       { path: '', element: <OnboardingPage /> },
       { path: 'calibration', element: <CalibrationPage /> },

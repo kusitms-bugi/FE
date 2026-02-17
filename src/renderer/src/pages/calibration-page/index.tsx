@@ -18,6 +18,7 @@ import {
   type RefObject,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { lockCalibrationGate } from '@shared/lib/calibration-gate';
 import Webcam from 'react-webcam';
 import MeasuringPanel from './components/MeasuringPanel';
 import WebcamView from './components/WebcamView';
@@ -183,6 +184,7 @@ const CalibrationPage = () => {
               timestamp: Date.now(),
             };
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload));
+            lockCalibrationGate(localStorage.getItem('userId'));
           } catch {
             // 저장 실패 시 무시 (사일런트)
           }

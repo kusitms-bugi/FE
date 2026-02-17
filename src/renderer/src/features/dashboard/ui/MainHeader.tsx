@@ -30,7 +30,7 @@ interface MainHeaderProps {
 }
 
 const ERROR_REPORT_URL =
-  'https://clean-rail-ebf.notion.site/304ae7940a36807186e9e4397c39bfec?pvs=105';
+  'https://adhesive-wrench-b12.notion.site/3067d0b568e281fd97b4f2954d09a2f6?pvs=105';
 
 const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
   const [isDark, setIsDark] = useThemePreference();

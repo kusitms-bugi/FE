@@ -72,7 +72,12 @@
         }
 
         console.log({ electronPath });
-        spawnProcess = spawn(String(electronPath), ['.']);
+        // Force Electron app mode even if the shell exports ELECTRON_RUN_AS_NODE.
+        const electronEnv = { ...process.env };
+        delete electronEnv.ELECTRON_RUN_AS_NODE;
+        spawnProcess = spawn(String(electronPath), ['.'], {
+          env: electronEnv,
+        });
         spawnProcess.stdout.on(
           'data',
           (d) =>

@@ -1,9 +1,9 @@
-import { useNavigate } from 'react-router-dom';
 import CompletionCharacter from '@assets/common/icons/completion.svg?react';
-import { Button } from '@shared/ui/button';
-import { useCreateSessionMutation } from '@entities/session';
-import { useCameraStore } from '@widgets/camera';
 import { useLevelQuery } from '@entities/dashboard';
+import { useCreateSessionMutation } from '@entities/session';
+import { Button } from '@shared/ui/button';
+import { useCameraStore } from '@widgets/camera';
+import { useNavigate } from 'react-router-dom';
 
 const OnboardingCompletionPage = () => {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const OnboardingCompletionPage = () => {
         <div className="mb-12 flex flex-col items-center gap-4">
           <h1 className="text-title-4xl-bold text-grey-700">자세 등록 완료</h1>
           <p className="text-headline-2xl-regular text-grey-500 text-center">
-            이제부터 거부기린과 함께 거북목을 고쳐볼까요?
+            이제부터 거부기린과 함께 거북목을 개선해볼까요?
           </p>
         </div>
 

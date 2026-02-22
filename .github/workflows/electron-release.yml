@@ -36,6 +36,7 @@ jobs:
         id: get_version
         shell: bash
         run: |
+          set -euo pipefail
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             # 수동 실행 시 입력값 사용
             VERSION="${{ github.event.inputs.version }}"
@@ -43,6 +44,16 @@ jobs:
             # 태그에서 버전 추출 (v1.0.0 -> 1.0.0)
             VERSION="${GITHUB_REF#refs/tags/v}"
           fi
+
+          # 입력에 v 접두사가 들어온 경우 제거
+          VERSION="${VERSION#v}"
+
+          # semver 기본 형식 검증
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "❌ Invalid version: $VERSION"
+            exit 1
+          fi
+
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "📦 Version: $VERSION"
       
@@ -109,6 +120,8 @@ jobs:
         env:
           # 버전 환경변수 설정 (.electron-builder.config.js에서 사용)
           VITE_APP_VERSION: ${{ steps.get_version.outputs.version }}
+          # macOS DMG 생성(hdiutil) 이슈 회피: CI에서는 zip만 배포
+          BUGI_SKIP_DMG: ${{ matrix.os_short == 'mac' && 'true' || 'false' }}
           # macOS notarization / codesign secrets
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
@@ -116,7 +129,11 @@ jobs:
           APPLE_IDENTITY: ${{ secrets.APPLE_IDENTITY }}
           # GitHub Token (자동 제공)
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm run build:${{ matrix.os_short }} --publish always
+        run: |
+          echo "Build target: ${{ matrix.os_short }}"
+          echo "VITE_APP_VERSION=$VITE_APP_VERSION"
+          echo "BUGI_SKIP_DMG=$BUGI_SKIP_DMG"
+          pnpm run build:${{ matrix.os_short }} --publish always
 
       # 간헐적으로 publish 단계가 중간에 실패/타임아웃 나면 updater 메타 파일이 누락될 수 있어
       # 마지막에 한번 더 업로드를 보장합니다. (이미 있으면 --clobber로 덮어쓰기)

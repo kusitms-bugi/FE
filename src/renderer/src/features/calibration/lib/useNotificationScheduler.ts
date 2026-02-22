@@ -56,10 +56,6 @@ export const useNotificationScheduler = () => {
       stretchingTimerRef.current = setInterval(() => {
         showStretchingNotification();
       }, intervalMs);
-
-      console.log(`✅ 스트레칭 알림 활성화: ${stretching.interval}분마다 알림`);
-    } else {
-      console.log('⏸️ 스트레칭 알림 비활성화');
     }
 
     /* 클린업: 컴포넌트 언마운트 시 타이머 정리 */
@@ -69,7 +65,12 @@ export const useNotificationScheduler = () => {
         stretchingTimerRef.current = null;
       }
     };
-  }, [isAllow, stretching.isEnabled, stretching.interval, showStretchingNotification]);
+  }, [
+    isAllow,
+    stretching.isEnabled,
+    stretching.interval,
+    showStretchingNotification,
+  ]);
 
   /* 거북목 상태 추적 - postureClass가 4, 5, 6 (bugi 계열)일 때 시작 시간 기록 */
   useEffect(() => {
@@ -78,12 +79,8 @@ export const useNotificationScheduler = () => {
     if (isBadPosture) {
       if (!badPostureStartTime.current) {
         badPostureStartTime.current = Date.now();
-        console.log('🐢 거북목 상태 시작');
       }
     } else {
-      if (badPostureStartTime.current) {
-        console.log('✅ 정상 자세로 복귀');
-      }
       badPostureStartTime.current = null;
     }
   }, [postureClass]);
@@ -106,25 +103,22 @@ export const useNotificationScheduler = () => {
             showTurtleNeckNotification();
             /* 알림 후 타이머 리셋 (다음 알림을 위해) */
             badPostureStartTime.current = Date.now();
-            console.log(`🔔 거북목 알림 발송 (${turtleNeck.interval}분 지속)`);
           }
         }
       }, 10000); /* 30초마다 체크 */
-
-      console.log(
-        `✅ 거북목 알림 활성화: ${turtleNeck.interval}분 지속 시 알림`,
-      );
-    } else {
-      console.log('⏸️ 거북목 알림 비활성화');
     }
-
     return () => {
       if (turtleNeckCheckRef.current) {
         clearInterval(turtleNeckCheckRef.current);
         turtleNeckCheckRef.current = null;
       }
     };
-  }, [isAllow, turtleNeck.isEnabled, turtleNeck.interval, showTurtleNeckNotification]);
+  }, [
+    isAllow,
+    turtleNeck.isEnabled,
+    turtleNeck.interval,
+    showTurtleNeckNotification,
+  ]);
 
   /* 수동으로 알림을 트리거하는 함수들 (테스트용) */
   return {

@@ -21,11 +21,8 @@ export class PostureClassifier {
     sigma: number,
     _frontality: FrontalityResult,
   ): PostureClassification {
-    console.log('[PostureClassifier] classify called, sigma:', sigma);
-
     // 캘리브레이션 데이터가 유효하지 않으면 초기 상태 반환
     if (sigma === 0) {
-      console.log('[PostureClassifier] sigma is 0, returning early');
       return (
         this.lastState ?? {
           text: '측정중',
@@ -46,8 +43,6 @@ export class PostureClassifier {
     const gamma = 1.0;
     const rawScore = gamma * z_PI;
     const finalScore = this.scoreProcessor.next(rawScore);
-
-    console.log('[PostureClassifier] Score:', finalScore);
 
     // 현재 프레임의 분류 결과 생성
     const currentClassification = this.createClassification(finalScore, {

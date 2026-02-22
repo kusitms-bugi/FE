@@ -1,5 +1,5 @@
 // main/src/mainWindow.ts
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { join } from 'path';
 
 const MIN_W = 1280;
@@ -19,6 +19,7 @@ async function createWindow() {
       preload: join(__dirname, '../preload/index.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
+      devTools: !app.isPackaged,
       allowRunningInsecureContent: false,
       backgroundThrottling: false,
     },

@@ -37,13 +37,20 @@ const requireAuthLoader = async () => {
   if (!hasAuthTokens()) {
     throw redirect('/auth/login');
   }
+
+  const userId = localStorage.getItem('userId');
+  if (canAccessCalibrationFlow(userId)) {
+    throw redirect('/onboarding/init');
+  }
+
   return null;
 };
 
 // 로그인 페이지용 loader
 const loginPageLoader = async () => {
   if (hasAuthTokens()) {
-    throw redirect('/main');
+    const userId = localStorage.getItem('userId');
+    throw redirect(canAccessCalibrationFlow(userId) ? '/onboarding/init' : '/main');
   }
   return null;
 };

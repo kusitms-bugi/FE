@@ -3,8 +3,15 @@ import { join } from 'path';
 import { WIDGET_CONFIG } from './widgetConfig';
 import * as windowStateKeeperModule from 'electron-window-state';
 
-const windowStateKeeper =
-  windowStateKeeperModule as unknown as typeof import('electron-window-state');
+const windowStateKeeper = (
+  windowStateKeeperModule as unknown as {
+    default?: typeof import('electron-window-state');
+  }
+).default
+  ? (windowStateKeeperModule as unknown as {
+      default: typeof import('electron-window-state');
+    }).default
+  : (windowStateKeeperModule as unknown as typeof import('electron-window-state'));
 
 /*위젯 관리 변수*/
 let widgetWindow: BrowserWindow | null = null;

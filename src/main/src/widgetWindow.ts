@@ -1,8 +1,10 @@
 import { BrowserWindow } from 'electron';
 import { join } from 'path';
 import { WIDGET_CONFIG } from './widgetConfig';
+import * as windowStateKeeperModule from 'electron-window-state';
 
-const windowStateKeeper = require('electron-window-state') as typeof import('electron-window-state');
+const windowStateKeeper =
+  windowStateKeeperModule as unknown as typeof import('electron-window-state');
 
 /*위젯 관리 변수*/
 let widgetWindow: BrowserWindow | null = null;

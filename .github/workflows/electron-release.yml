@@ -120,8 +120,6 @@ jobs:
         env:
           # 버전 환경변수 설정 (.electron-builder.config.js에서 사용)
           VITE_APP_VERSION: ${{ steps.get_version.outputs.version }}
-          # macOS DMG 생성(hdiutil) 이슈 회피: CI에서는 zip만 배포
-          BUGI_SKIP_DMG: ${{ matrix.os_short == 'mac' && 'true' || 'false' }}
           # macOS notarization / codesign secrets
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
@@ -132,7 +130,6 @@ jobs:
         run: |
           echo "Build target: ${{ matrix.os_short }}"
           echo "VITE_APP_VERSION=$VITE_APP_VERSION"
-          echo "BUGI_SKIP_DMG=$BUGI_SKIP_DMG"
           pnpm run build:${{ matrix.os_short }} --publish always
 
       # 간헐적으로 publish 단계가 중간에 실패/타임아웃 나면 updater 메타 파일이 누락될 수 있어

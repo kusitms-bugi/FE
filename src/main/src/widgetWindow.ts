@@ -1,17 +1,7 @@
 import { BrowserWindow } from 'electron';
 import { join } from 'path';
+import { StatefullBrowserWindow } from 'stateful-electron-window';
 import { WIDGET_CONFIG } from './widgetConfig';
-import * as windowStateKeeperModule from 'electron-window-state';
-
-const windowStateKeeper = (
-  windowStateKeeperModule as unknown as {
-    default?: typeof import('electron-window-state');
-  }
-).default
-  ? (windowStateKeeperModule as unknown as {
-      default: typeof import('electron-window-state');
-    }).default
-  : (windowStateKeeperModule as unknown as typeof import('electron-window-state'));
 
 /*위젯 관리 변수*/
 let widgetWindow: BrowserWindow | null = null;
@@ -48,17 +38,11 @@ async function createWidgetWindow() {
   }
 
   /* 위젯 속성 - 반응형 크기 조절 가능 */
-  const widgetWindowState = windowStateKeeper({
-    defaultWidth: WIDGET_CONFIG.defaultWidth,
-    defaultHeight: WIDGET_CONFIG.defaultHeight,
-    file: 'widget-window-state.json',
-  });
-
-  widgetWindow = new BrowserWindow({
-    x: widgetWindowState.x,
-    y: widgetWindowState.y,
-    width: widgetWindowState.width,
-    height: widgetWindowState.height,
+  widgetWindow = new StatefullBrowserWindow({
+    width: WIDGET_CONFIG.defaultWidth,
+    height: WIDGET_CONFIG.defaultHeight,
+    configFileName: 'widget-window-state.json',
+    supportMaximize: false,
     minWidth: WIDGET_CONFIG.minWidth,
     minHeight: WIDGET_CONFIG.minHeight,
     maxWidth: WIDGET_CONFIG.maxWidth,
@@ -82,8 +66,6 @@ async function createWidgetWindow() {
       backgroundThrottling: false,
     },
   });
-
-  widgetWindowState.manage(widgetWindow);
 
   /* 창이 완전히 로드되면 표시 */
   widgetWindow.on('ready-to-show', () => {

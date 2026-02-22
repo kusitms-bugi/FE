@@ -1,14 +1,74 @@
-import { BrowserWindow } from 'electron';
-import { join } from 'path';
-import { StatefullBrowserWindow } from 'stateful-electron-window';
+import { app, BrowserWindow } from 'electron';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { dirname, join } from 'path';
 import { WIDGET_CONFIG } from './widgetConfig';
 
 /*위젯 관리 변수*/
 let widgetWindow: BrowserWindow | null = null;
 
 const PROD_WIDGET_URL = 'https://app.bugi.co.kr/widget';
+const WIDGET_STATE_FILE_NAME = 'widget-window-state.json';
+const WIDGET_STATE_SAVE_DELAY_MS = 120;
+
+type WidgetWindowState = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const getWidgetStateFilePath = () =>
+  join(app.getPath('userData'), WIDGET_STATE_FILE_NAME);
+
+const loadWidgetWindowState = (): WidgetWindowState | null => {
+  try {
+    const filePath = getWidgetStateFilePath();
+    if (!existsSync(filePath)) return null;
+
+    const raw = readFileSync(filePath, 'utf8');
+    const parsed = JSON.parse(raw) as Partial<WidgetWindowState>;
+    if (
+      typeof parsed.x !== 'number' ||
+      typeof parsed.y !== 'number' ||
+      typeof parsed.width !== 'number' ||
+      typeof parsed.height !== 'number'
+    ) {
+      return null;
+    }
+
+    return {
+      x: parsed.x,
+      y: parsed.y,
+      width: parsed.width,
+      height: parsed.height,
+    };
+  } catch (error) {
+    console.warn('[widget] Failed to load widget window state:', error);
+    return null;
+  }
+};
+
+const persistWidgetWindowState = (win: BrowserWindow) => {
+  if (win.isDestroyed()) return;
+
+  try {
+    const bounds = win.getBounds();
+    const state: WidgetWindowState = {
+      x: bounds.x,
+      y: bounds.y,
+      width: bounds.width,
+      height: bounds.height,
+    };
+
+    const filePath = getWidgetStateFilePath();
+    mkdirSync(dirname(filePath), { recursive: true });
+    writeFileSync(filePath, JSON.stringify(state));
+  } catch (error) {
+    console.warn('[widget] Failed to persist widget window state:', error);
+  }
+};
 
 const loadUrlWithRetry = async (
   win: BrowserWindow,
@@ -37,12 +97,14 @@ async function createWidgetWindow() {
     return widgetWindow;
   }
 
+  const savedState = loadWidgetWindowState();
+
   /* 위젯 속성 - 반응형 크기 조절 가능 */
-  widgetWindow = new StatefullBrowserWindow({
-    width: WIDGET_CONFIG.defaultWidth,
-    height: WIDGET_CONFIG.defaultHeight,
-    configFileName: 'widget-window-state.json',
-    supportMaximize: false,
+  widgetWindow = new BrowserWindow({
+    x: savedState?.x,
+    y: savedState?.y,
+    width: savedState?.width ?? WIDGET_CONFIG.defaultWidth,
+    height: savedState?.height ?? WIDGET_CONFIG.defaultHeight,
     minWidth: WIDGET_CONFIG.minWidth,
     minHeight: WIDGET_CONFIG.minHeight,
     maxWidth: WIDGET_CONFIG.maxWidth,
@@ -77,7 +139,28 @@ async function createWidgetWindow() {
   });
 
   // 위젯 창이 닫힐 때 참조 제거
+  let persistStateTimer: ReturnType<typeof setTimeout> | null = null;
+  const schedulePersistWidgetState = () => {
+    if (!widgetWindow) return;
+    if (persistStateTimer) {
+      clearTimeout(persistStateTimer);
+    }
+    persistStateTimer = setTimeout(() => {
+      if (widgetWindow) persistWidgetWindowState(widgetWindow);
+    }, WIDGET_STATE_SAVE_DELAY_MS);
+  };
+
+  widgetWindow.on('move', schedulePersistWidgetState);
+  widgetWindow.on('resize', schedulePersistWidgetState);
+  widgetWindow.on('close', () => {
+    if (widgetWindow) persistWidgetWindowState(widgetWindow);
+  });
+
   widgetWindow.on('closed', () => {
+    if (persistStateTimer) {
+      clearTimeout(persistStateTimer);
+      persistStateTimer = null;
+    }
     widgetWindow = null;
   });
 

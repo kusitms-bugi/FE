@@ -55,7 +55,6 @@
     "react-router-dom": "7.9.5",
     "react-webcam": "7.2.0",
     "recharts": "^3.3.0",
-    "stateful-electron-window": "^1.0.0",
     "zustand": "5.0.8"
   },
   "devDependencies": {

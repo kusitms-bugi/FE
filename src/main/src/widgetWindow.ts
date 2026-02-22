@@ -124,6 +124,7 @@ async function createWidgetWindow() {
       preload: join(__dirname, '../preload/index.cjs'), //preload 스크립트
       nodeIntegration: false, // Node.js API 직접 접근 차단
       contextIsolation: true, // Renderer와 Main 프로세스 격리
+      devTools: !app.isPackaged,
       allowRunningInsecureContent: false,
       backgroundThrottling: false,
     },

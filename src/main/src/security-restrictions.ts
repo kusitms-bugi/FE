@@ -171,10 +171,20 @@ app.on('web-contents-created', (_, contents) => {
       return;
     }
 
+    const key = input.key.toLowerCase();
+    const withCtrlOrCmd = input.control || input.meta;
+    const withCtrlOrCmdShift = withCtrlOrCmd && input.shift;
+
     // F5 또는 새로고침 단축키 (Ctrl+R, Cmd+R) 막기
+    const isReloadShortcut = input.key === 'F5' || (key === 'r' && withCtrlOrCmd);
+    // DevTools 단축키 (F12, Ctrl/Cmd+Shift+I/J) 막기
+    const isDevToolsShortcut =
+      input.key === 'F12' ||
+      (withCtrlOrCmdShift && (key === 'i' || key === 'j'));
+
     if (
-      input.key === 'F5' ||
-      (input.key === 'r' && (input.control || input.meta))
+      isReloadShortcut ||
+      isDevToolsShortcut
     ) {
       event.preventDefault();
     }
@@ -203,6 +213,13 @@ app.on('web-contents-created', (_, contents) => {
    * 개발 모드에서는 허용하고 프로덕션에서만 막기
    */
   if (import.meta.env.PROD) {
+    contents.openDevTools = () => {
+      console.warn('DevTools is disabled in production mode');
+    };
+    contents.toggleDevTools = () => {
+      console.warn('DevTools is disabled in production mode');
+    };
+
     contents.reload = () => {
       console.warn('Page reload is disabled in production mode');
       // 새로고침 실행하지 않음

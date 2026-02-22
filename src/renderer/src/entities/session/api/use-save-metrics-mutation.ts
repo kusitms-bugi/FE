@@ -37,9 +37,7 @@ const saveMetrics = async (
 export const useSaveMetricsMutation = () => {
   return useMutation({
     mutationFn: saveMetrics,
-    onSuccess: (res) => {
-      console.log('세션 메트릭 저장 성공:', res);
-    },
+    onSuccess: (res) => {},
     onError: (error) => {
       console.error('세션 메트릭 저장 오류:', error);
     },

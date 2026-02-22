@@ -162,11 +162,11 @@ app.on('web-contents-created', (_, contents) => {
   });
 
   /**
-   * Prevent page reload (F5, Ctrl+R, Cmd+R)
+   * Prevent page reload (F5, Ctrl+R, Cmd+R) and DevTools (F12, Ctrl+Shift+I)
    * 개발 모드에서는 허용하고 프로덕션에서만 막기
    */
   contents.on('before-input-event', (event, input) => {
-    // 개발 모드에서는 새로고침 허용
+    // 개발 모드에서는 새로고침 및 DevTools 허용
     if (import.meta.env.DEV) {
       return;
     }
@@ -178,7 +178,25 @@ app.on('web-contents-created', (_, contents) => {
     ) {
       event.preventDefault();
     }
+
+    // F12 또는 DevTools 단축키 (Ctrl+Shift+I, Cmd+Option+I) 막기
+    if (
+      input.key === 'F12' ||
+      (input.key === 'I' && input.shift && (input.control || input.meta))
+    ) {
+      event.preventDefault();
+    }
   });
+
+  /**
+   * Prevent DevTools from opening even if triggered by other means
+   * 프로덕션에서 DevTools가 열리면 즉시 닫기
+   */
+  if (import.meta.env.PROD) {
+    contents.on('devtools-opened', () => {
+      contents.closeDevTools();
+    });
+  }
 
   /**
    * Prevent programmatic reload

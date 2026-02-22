@@ -34,8 +34,6 @@ export const useStopSessionMutation = () => {
   return useMutation({
     mutationFn: stopSession,
     onSuccess: () => {
-      console.log('세션 중단 성공');
-
       // sessionId를 lastSessionId로 백업 (ExitPanel에서 리포트 조회용)
       const sessionId = localStorage.getItem('sessionId');
       if (sessionId) {

@@ -30,9 +30,6 @@ export const useAutoMetricsSender = (
     const checkSessionId = () => {
       const currentSessionId = localStorage.getItem('sessionId');
       if (currentSessionId !== sessionId) {
-        console.log(
-          `[세션 변경 감지] 타이머 초기화 - 이전: ${sessionId}, 현재: ${currentSessionId}`,
-        );
         setSessionId(currentSessionId);
       }
     };
@@ -48,11 +45,9 @@ export const useAutoMetricsSender = (
   useEffect(() => {
     // 세션이 없으면 interval을 시작하지 않음
     if (!sessionId) {
-      console.log('[자동 전송] 세션이 없어 타이머를 시작하지 않습니다.');
       return;
     }
 
-    console.log('[자동 전송] 5분 타이머 시작');
     const FIVE_MINUTES = 5 * 60 * 1000; // 5분 = 300,000ms
 
     const intervalId = setInterval(() => {
@@ -64,16 +59,12 @@ export const useAutoMetricsSender = (
         metricsRef.current &&
         metricsRef.current.length > 0
       ) {
-        console.log(
-          `[자동 전송] ${metricsRef.current.length}개 메트릭 데이터 전송`,
-        );
         sendMetricsRef.current(); // ref를 통해 최신 함수 호출
       }
     }, FIVE_MINUTES);
 
     // 클린업: 컴포넌트 언마운트 시 또는 세션 변경 시 interval 정리
     return () => {
-      console.log('[자동 전송] 타이머 정리');
       clearInterval(intervalId);
     };
   }, [sessionId, metricsRef]); // sendMetrics 제거!

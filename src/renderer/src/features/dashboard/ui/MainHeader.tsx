@@ -31,6 +31,8 @@ interface MainHeaderProps {
 
 const ERROR_REPORT_URL =
   'https://adhesive-wrench-b12.notion.site/3067d0b568e281fd97b4f2954d09a2f6?pvs=105';
+const REVIEW_FORM_URL =
+  'https://adhesive-wrench-b12.notion.site/30f7d0b568e28033b440c1352d8a1a43?pvs=105';
 
 const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
   const [isDark, setIsDark] = useThemePreference();
@@ -99,6 +101,10 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
                     }
                     if (tab.id === 'report') {
                       window.open(ERROR_REPORT_URL, '_blank', 'noopener,noreferrer');
+                      return;
+                    }
+                    if (tab.id === 'review') {
+                      window.open(REVIEW_FORM_URL, '_blank', 'noopener,noreferrer');
                       return;
                     }
                     navigate(tab.path);

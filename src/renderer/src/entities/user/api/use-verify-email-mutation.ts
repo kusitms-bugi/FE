@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '@shared/api';
 import { ResendVerifyEmailRequest } from '../types';
 import { AnalyticsEvents } from '@shared/lib/analytics/events';
+import { markCalibrationInitialRequired } from '@shared/lib/calibration-gate';
 import axios from 'axios';
 
 type VerifyEmailResponse = {
@@ -92,6 +93,7 @@ export const useVerifyEmailMutation = () => {
       alert('인증 성공!');
       localStorage.clear();
       Object.entries(preserved).forEach(([k, v]) => localStorage.setItem(k, v));
+      markCalibrationInitialRequired(userId);
     },
     onError: (error: unknown) => {
       console.error('인증 실패:', error);

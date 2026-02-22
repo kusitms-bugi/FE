@@ -2,6 +2,8 @@ import { BrowserWindow } from 'electron';
 import { join } from 'path';
 import { WIDGET_CONFIG } from './widgetConfig';
 
+const windowStateKeeper = require('electron-window-state') as typeof import('electron-window-state');
+
 /*위젯 관리 변수*/
 let widgetWindow: BrowserWindow | null = null;
 
@@ -37,9 +39,17 @@ async function createWidgetWindow() {
   }
 
   /* 위젯 속성 - 반응형 크기 조절 가능 */
+  const widgetWindowState = windowStateKeeper({
+    defaultWidth: WIDGET_CONFIG.defaultWidth,
+    defaultHeight: WIDGET_CONFIG.defaultHeight,
+    file: 'widget-window-state.json',
+  });
+
   widgetWindow = new BrowserWindow({
-    width: WIDGET_CONFIG.defaultWidth,
-    height: WIDGET_CONFIG.defaultHeight,
+    x: widgetWindowState.x,
+    y: widgetWindowState.y,
+    width: widgetWindowState.width,
+    height: widgetWindowState.height,
     minWidth: WIDGET_CONFIG.minWidth,
     minHeight: WIDGET_CONFIG.minHeight,
     maxWidth: WIDGET_CONFIG.maxWidth,
@@ -60,8 +70,11 @@ async function createWidgetWindow() {
       nodeIntegration: false, // Node.js API 직접 접근 차단
       contextIsolation: true, // Renderer와 Main 프로세스 격리
       allowRunningInsecureContent: false,
+      backgroundThrottling: false,
     },
   });
+
+  widgetWindowState.manage(widgetWindow);
 
   /* 창이 완전히 로드되면 표시 */
   widgetWindow.on('ready-to-show', () => {

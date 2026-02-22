@@ -1,6 +1,7 @@
 import { lazy } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, redirect } from 'react-router-dom';
 import Layout from '../../app/layouts/Layout';
+import { canAccessCalibrationFlow } from '@shared/lib/calibration-gate';
 
 // 라우트 레벨 코드 스플리팅: 각 페이지를 lazy import
 const CalibrationPage = lazy(() => import('../../pages/calibration-page'));
@@ -25,15 +26,38 @@ const ResendVerificationPage = lazy(
 const SignUpPage = lazy(() => import('../../pages/signup-page'));
 const WidgetPage = lazy(() => import('../../pages/widget-page'));
 
-// 인증이 필요한 페이지용 loader (인증 체크 제거 - 개발 편의)
+const hasAuthTokens = () => {
+  const accessToken = localStorage.getItem('accessToken');
+  const refreshToken = localStorage.getItem('refreshToken');
+  return Boolean(accessToken && refreshToken);
+};
+
+// 인증이 필요한 페이지용 loader
 const requireAuthLoader = async () => {
-  // 로그인 인증 체크를 우회하여 항상 통과
+  if (!hasAuthTokens()) {
+    throw redirect('/auth/login');
+  }
   return null;
 };
 
-// 로그인 페이지용 loader (항상 로그인 화면 표시)
+// 로그인 페이지용 loader
 const loginPageLoader = async () => {
-  // 토큰 체크 없이 항상 로그인 화면 표시
+  if (hasAuthTokens()) {
+    throw redirect('/main');
+  }
+  return null;
+};
+
+const calibrationFlowLoader = async () => {
+  if (!hasAuthTokens()) {
+    throw redirect('/auth/login');
+  }
+
+  const userId = localStorage.getItem('userId');
+  if (!canAccessCalibrationFlow(userId)) {
+    throw redirect('/main');
+  }
+
   return null;
 };
 
@@ -72,6 +96,7 @@ export const router = createBrowserRouter([
   {
     element: <Layout />,
     path: '/onboarding',
+    loader: calibrationFlowLoader,
     children: [
       { path: '', element: <OnboardingPage /> },
       { path: 'calibration', element: <CalibrationPage /> },

@@ -4,6 +4,7 @@ import api from '@shared/api';
 import { LoginInput, LoginResponse } from '../types';
 import axios from 'axios';
 import { setAnalyticsUserId } from '@shared/lib/analytics';
+import { canAccessCalibrationFlow } from '@shared/lib/calibration-gate';
 
 /*로그인 api */
 const login = async (data: LoginInput): Promise<LoginResponse> => {
@@ -58,7 +59,8 @@ export const useLoginMutation = () => {
         console.error('사용자 정보 조회 실패:', error);
       }
 
-      navigate('/onboarding/init');
+      const userId = localStorage.getItem('userId');
+      navigate(canAccessCalibrationFlow(userId) ? '/onboarding/init' : '/main');
     },
     onError: (error: unknown) => {
       console.error('로그인 오류:', error);

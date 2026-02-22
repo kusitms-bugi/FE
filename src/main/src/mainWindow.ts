@@ -20,6 +20,7 @@ async function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       allowRunningInsecureContent: false,
+      backgroundThrottling: false,
     },
   });
 

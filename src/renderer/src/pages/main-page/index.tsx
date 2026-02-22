@@ -41,6 +41,7 @@ const NotificationModal = lazy(
 );
 
 const LOCAL_STORAGE_KEY = 'calibration_result_v1';
+const MAIN_WINDOW_ACTIVE_KEY = 'main-window-active';
 
 const MainPage = () => {
   const setStatus = usePostureStore((state) => state.setStatus);
@@ -129,6 +130,20 @@ const MainPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const heartbeat = () => {
+      localStorage.setItem(MAIN_WINDOW_ACTIVE_KEY, Date.now().toString());
+    };
+
+    heartbeat();
+    const interval = window.setInterval(heartbeat, 500);
+
+    return () => {
+      window.clearInterval(interval);
+      localStorage.removeItem(MAIN_WINDOW_ACTIVE_KEY);
+    };
+  }, []);
+
   const handleUserMediaError = () => {
     setHide();
   };
@@ -188,9 +203,6 @@ const MainPage = () => {
         badPostureLevelRef.current = null;
       }
     }
-
-    // 메인 창이 활성화되어 있음을 표시 (위젯이 판정을 하지 않도록)
-    localStorage.setItem('main-window-active', Date.now().toString());
 
     // 메트릭 데이터 수집 (1초마다 한 번씩만 저장)
     const currentTime = Date.now();
@@ -302,7 +314,7 @@ const MainPage = () => {
           </div>
 
           {/* 우측영역 */}
-          <div className="bg-grey-0 flex h-full w-full flex-col gap-[clamp(16px,calc(16px+(100vh-810px)*16/270),32px)] rounded-4xl p-6">
+          <div className="bg-grey-0 custom-scrollbar flex h-full min-h-0 w-full flex-col gap-[clamp(16px,calc(16px+(100vh-810px)*16/270),32px)] overflow-y-auto overscroll-y-contain rounded-4xl p-6">
             <WebcamPanel
               onUserMediaError={handleUserMediaError}
               onPoseDetected={handlePoseDetected}

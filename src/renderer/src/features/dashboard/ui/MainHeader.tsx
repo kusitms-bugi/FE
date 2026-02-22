@@ -14,7 +14,7 @@ import { cn } from '@shared/lib/cn';
 import { ThemeToggleSwitch } from '@shared/ui/theme-toggle-switch';
 import SettingsModal from './SettingsModal';
 
-type TabType = 'dashboard' | 'settings' | 'report';
+type TabType = 'dashboard' | 'settings' | 'report' | 'review';
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 
 interface TabItem {
@@ -61,6 +61,12 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
       id: 'report',
       label: '오류 제보',
       icon: TipOff,
+      disabled: false,
+      path: '/main',
+    },
+    {
+      id: 'review',
+      label: '후기 등록',
       disabled: false,
       path: '/main',
     },

@@ -4,7 +4,10 @@ import api from '@shared/api';
 import { LoginInput, LoginResponse } from '../types';
 import axios from 'axios';
 import { setAnalyticsUserId } from '@shared/lib/analytics';
-import { canAccessCalibrationFlow } from '@shared/lib/calibration-gate';
+import {
+  canAccessCalibrationFlow,
+  markCalibrationInitialRequired,
+} from '@shared/lib/calibration-gate';
 
 /*로그인 api */
 const login = async (data: LoginInput): Promise<LoginResponse> => {
@@ -60,6 +63,10 @@ export const useLoginMutation = () => {
       }
 
       const userId = localStorage.getItem('userId');
+      const calibrationResult = localStorage.getItem('calibration_result_v1');
+      if (!calibrationResult) {
+        markCalibrationInitialRequired(userId);
+      }
       navigate(canAccessCalibrationFlow(userId) ? '/onboarding/init' : '/main');
     },
     onError: (error: unknown) => {

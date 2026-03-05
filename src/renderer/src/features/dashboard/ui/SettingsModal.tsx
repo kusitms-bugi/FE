@@ -1,6 +1,7 @@
 import CalibrationResetIcon from '@assets/option/CalibrationResetIcon.svg?react';
 import LogoutIcon from '@assets/option/LogoutIcon.svg?react';
 import WithdrawIcon from '@assets/option/WithdrawIcon.svg?react';
+import { useWithdrawMutation } from '@entities/user';
 import {
   clearCalibrationGate,
   requestCalibrationReset,
@@ -15,6 +16,7 @@ interface SettingsModalProps {
 
 const SettingsModal = ({ onClose }: SettingsModalProps) => {
   const navigate = useNavigate();
+  const withdrawMutation = useWithdrawMutation();
 
   const clearLocalAuthData = (userId: string | null, clearCalibration: boolean) => {
     localStorage.removeItem('accessToken');
@@ -41,16 +43,28 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
     navigate('/auth/login', { replace: true });
   };
 
-  const handleWithdraw = () => {
-    const shouldProceed = window.confirm(
-      '회원탈퇴 API가 아직 없어 로컬 데이터만 삭제합니다. 계속할까요?',
-    );
+  const handleWithdraw = async () => {
+    if (withdrawMutation.isPending) return;
+
+    const shouldProceed = window.confirm('정말 회원탈퇴 하시겠어요?');
     if (!shouldProceed) return;
 
-    const userId = localStorage.getItem('userId');
-    clearLocalAuthData(userId, true);
-    onClose();
-    navigate('/auth/signup', { replace: true });
+    try {
+      await withdrawMutation.mutateAsync();
+
+      const userId = localStorage.getItem('userId');
+      clearLocalAuthData(userId, true);
+      onClose();
+      navigate('/auth/signup', { replace: true });
+      alert('회원탈퇴가 완료되었습니다.');
+    } catch (error: unknown) {
+      console.error('회원탈퇴 실패:', error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : '회원탈퇴에 실패했습니다. 다시 시도해주세요.';
+      alert(errorMessage);
+    }
   };
 
   const handleCalibrationReset = () => {
@@ -62,7 +76,12 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
 
   const actionItems = [
     { label: '로그아웃', icon: <LogoutIcon />, onClick: handleLogout },
-    { label: '회원탈퇴', icon: <WithdrawIcon />, onClick: handleWithdraw },
+    {
+      label: '회원탈퇴',
+      icon: <WithdrawIcon />,
+      onClick: handleWithdraw,
+      disabled: withdrawMutation.isPending,
+    },
     {
       label: '캘리브레이션 재설정',
       icon: <CalibrationResetIcon />,
@@ -90,7 +109,10 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
                 key={item.label}
                 type="button"
                 onClick={item.onClick}
+                disabled={item.disabled}
                 className={`font-['Pretendard'] text-[12px] leading-[150%] font-medium text-grey-700 hover:bg-grey-25 flex cursor-pointer items-center gap-2 px-3 py-[10px] text-left ${
+                  item.disabled ? 'cursor-not-allowed opacity-60' : ''
+                } ${
                   index === actionItems.length - 1
                     ? ''
                     : 'border-grey-50 border-b'

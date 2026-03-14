@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import ResendEmailHerosection from '@features/auth/ui/signup/components/ResendEmailHeroSection';
 import ResendSection from '@features/auth/ui/signup/components/ResendSection';
 import VerifyAction from '@features/auth/ui/signup/components/VerifyAction';
@@ -11,17 +11,21 @@ import { useEmailStore } from '@entities/user';
 
 const ResendVerificationPage = () => {
   const [searchParams] = useSearchParams();
-  const verifyEmailMutation = useVerifyEmailMutation();
+  const token = searchParams.get('token');
+  const processedTokenRef = useRef<string | null>(null);
+  const { mutate } = useVerifyEmailMutation({ redirectTo: '/auth/resend' });
   const resendverifyEmailMutation = useResendVerifyEmailMuation();
   const email = useEmailStore((state) => state.email);
 
   /* 토큰 여부에 따른 이메일 인증 */
   useEffect(() => {
-    const token = searchParams.get('token');
-    if (token) {
-      verifyEmailMutation.mutate(token);
+    if (!token || processedTokenRef.current === token) {
+      return;
     }
-  }, [searchParams, verifyEmailMutation]);
+
+    processedTokenRef.current = token;
+    mutate(token);
+  }, [mutate, token]);
 
   /* 이메일 다시 보내기 */
   const onResendClick = () => {

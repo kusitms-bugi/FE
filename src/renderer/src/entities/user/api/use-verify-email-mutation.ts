@@ -17,6 +17,10 @@ type VerifyEmailResponse = {
   };
 };
 
+type UseVerifyEmailMutationOptions = {
+  redirectTo?: string;
+};
+
 /*이메일 인증 api*/
 const verifyEmail = async (token: string) => {
   try {
@@ -63,7 +67,11 @@ const resendVerifyEmail = async (data: ResendVerifyEmailRequest) => {
   }
 };
 
-export const useVerifyEmailMutation = () => {
+export const useVerifyEmailMutation = (
+  options?: UseVerifyEmailMutationOptions,
+) => {
+  const navigate = useNavigate();
+
   return useMutation({
     mutationFn: verifyEmail,
 
@@ -94,6 +102,9 @@ export const useVerifyEmailMutation = () => {
       localStorage.clear();
       Object.entries(preserved).forEach(([k, v]) => localStorage.setItem(k, v));
       markCalibrationInitialRequired(userId);
+      if (options?.redirectTo) {
+        navigate(options.redirectTo, { replace: true });
+      }
     },
     onError: (error: unknown) => {
       console.error('인증 실패:', error);

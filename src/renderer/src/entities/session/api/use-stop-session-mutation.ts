@@ -45,6 +45,8 @@ export const useStopSessionMutation = () => {
             Math.round((Date.now() - startAt) / 1000),
           );
           AnalyticsEvents.measureEnd({ session_id: sessionId, duration_sec });
+        } else {
+          console.warn('[GA] measure_end: Invalid or missing sessionStartAt', { startAtRaw });
         }
 
         localStorage.setItem('lastSessionId', sessionId);

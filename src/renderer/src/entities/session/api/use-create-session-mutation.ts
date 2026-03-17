@@ -36,7 +36,11 @@ export const useCreateSessionMutation = () => {
       // 이전 세션의 lastSessionId 삭제 (중복 방지)
       localStorage.removeItem('lastSessionId');
 
-      AnalyticsEvents.measureStart({ session_id: res.data.sessionId });
+      if (!res.data.sessionId) {
+        console.warn('[GA] measure_start: Missing sessionId in response');
+      } else {
+        AnalyticsEvents.measureStart({ session_id: res.data.sessionId });
+      }
 
       const signupCompletedAtRaw = localStorage.getItem('signupCompletedAt');
       const firstMeasureSent = localStorage.getItem('ga_first_measure_start_sent');

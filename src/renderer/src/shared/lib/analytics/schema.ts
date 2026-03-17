@@ -1,6 +1,8 @@
 export type AnalyticsEventParamsMap = {
   sign_up_complete: { user_id?: string };
+  login_complete: { user_id?: string };
   onboarding_enter: { step: string };
+  calibration_complete: { user_id?: string };
   measure_page_enter: { session_id: string };
   first_measure_start: { seconds_from_signup: number };
   measure_start: { session_id: string };

@@ -4,8 +4,14 @@ export const AnalyticsEvents = {
   signUpComplete: (params: { user_id?: string }) =>
     logEvent('sign_up_complete', params.user_id ? params : undefined),
 
+  loginComplete: (params: { user_id?: string }) =>
+    logEvent('login_complete', params.user_id ? params : undefined),
+
   onboardingEnter: (params: { step: string }) =>
     logEvent('onboarding_enter', params),
+
+  calibrationComplete: (params: { user_id?: string }) =>
+    logEvent('calibration_complete', params.user_id ? params : undefined),
 
   measurePageEnter: (params: { session_id: string }) =>
     logEvent('measure_page_enter', params),

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '@shared/api';
 import { LoginInput, LoginResponse } from '../types';
 import axios from 'axios';
-import { setAnalyticsUserId } from '@shared/lib/analytics';
+import { setAnalyticsUserId, AnalyticsEvents } from '@shared/lib/analytics';
 import {
   canAccessCalibrationFlow,
   markCalibrationInitialRequired,
@@ -42,6 +42,7 @@ export const useLoginMutation = () => {
       localStorage.setItem('refreshToken', res.data.refreshToken);
 
       /* 사용자 정보 조회 후 이름 저장 */
+      let userId: string | undefined = undefined;
       try {
         const userResponse = await api.get('/users/me');
         const payload = userResponse.data as {
@@ -53,13 +54,20 @@ export const useLoginMutation = () => {
           localStorage.setItem('userName', payload.data.name);
         }
 
-        const userId = payload.data?.userId ?? payload.data?.id;
+        userId = payload.data?.userId ?? payload.data?.id;
         if (userId) {
           localStorage.setItem('userId', userId);
           setAnalyticsUserId(userId);
         }
       } catch (error) {
         console.error('사용자 정보 조회 실패:', error);
+      }
+
+      // GA login_complete 이벤트 전송
+      if (!userId) {
+        console.warn('[GA] login_complete: user_id is missing from response');
+      } else {
+        AnalyticsEvents.loginComplete({ user_id: userId });
       }
 
       const userId = localStorage.getItem('userId');

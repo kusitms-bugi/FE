@@ -41,7 +41,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Run ESLint
+      - name: Run Biome check
         run: pnpm lint:check
         continue-on-error: true
 

@@ -82,6 +82,7 @@
 - **Version Control**: `Git`, GitHub
 - **CI**: `GitHub Actions`
 - **Package Manager**: `pnpm`
+- **Linting & Formatting**: `Biome`
 - **Form Validation**: `react-hook-form`, `zod`
 - **Animation**: `framer-motion`
 - **Routing**: `react-router-dom`

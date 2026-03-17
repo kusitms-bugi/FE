@@ -31,10 +31,11 @@
     "build:win": "cross-env MODE=production pnpm run build && electron-builder build --config .electron-builder.config.js --win",
     "build:all": "cross-env MODE=production pnpm run build && electron-builder build --config .electron-builder.config.js --mac --win",
     "watch": "node scripts/watch.js",
-    "lint": "eslint . --ext js,ts,tsx --fix",
-    "lint:check": "eslint . --ext js,ts,tsx",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "lint": "biome check --write --organize-imports .",
+    "lint:check": "biome check .",
+    "format": "biome format --write .",
+    "format:check": "biome format --check .",
+    "check": "biome check --write --organize-imports .",
     "typecheck:main": "tsc --noEmit -p src/main/tsconfig.json",
     "typecheck:preload": "tsc --noEmit -p src/preload/tsconfig.json",
     "typecheck:renderer": "tsc --noEmit -p src/renderer/tsconfig.json",
@@ -63,9 +64,8 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@types/react-router-dom": "5.3.3",
-    "@typescript-eslint/eslint-plugin": "8.46.2",
-    "@typescript-eslint/parser": "8.46.2",
     "@vitejs/plugin-react": "5.1.0",
+    "@biomejs/biome": "1.9.4",
     "cross-env": "10.1.0",
     "dotenv": "^17.2.3",
     "dts-for-context-bridge": "0.7.1",
@@ -73,17 +73,9 @@
     "electron-builder": "26.0.12",
     "electron-devtools-installer": "4.0.0",
     "esbuild": "^0.25.12",
-    "eslint": "9.39.0",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-prettier": "5.5.4",
-    "eslint-plugin-react": "7.37.5",
-    "eslint-plugin-react-hooks": "7.0.1",
-    "eslint-plugin-react-refresh": "0.4.24",
     "globals": "^16.5.0",
     "husky": "9.1.7",
     "lint-staged": "16.2.6",
-    "prettier": "3.6.2",
-    "prettier-plugin-tailwindcss": "0.7.1",
     "rollup-plugin-visualizer": "^6.0.5",
     "tailwind-merge": "3.3.1",
     "tailwindcss": "4.1.16",
@@ -93,11 +85,9 @@
     "zod": "4.1.12"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,css,md}": "prettier --write"
+    "*.{js,jsx,ts,tsx,json,css,md}": [
+      "biome check --write --organize-imports --no-errors-on-unmatched"
+    ]
   },
   "electronLanguagesInfoPlistStrings": {
     "ko": {

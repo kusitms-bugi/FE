@@ -49,7 +49,7 @@ jobs:
             pnpm install --ignore-scripts
           }
 
-      - name: Run ESLint
+      - name: Run Biome check
         run: pnpm lint:check
         continue-on-error: true
 

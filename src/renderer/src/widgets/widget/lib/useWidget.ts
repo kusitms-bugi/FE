@@ -66,6 +66,8 @@ export const useWidget = () => {
               duration_sec,
               session_id: sessionId,
             });
+          } else {
+            console.warn('[GA] widget_visibility_end: Invalid or missing widgetVisibleStartAt', { startAtRaw });
           }
           localStorage.removeItem('widgetVisibleStartAt');
 

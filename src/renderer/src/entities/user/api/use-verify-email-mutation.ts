@@ -77,12 +77,23 @@ export const useVerifyEmailMutation = (
 
     onSuccess: (data) => {
       console.log('이메일 인증 성공:', data);
-      const userId =
+      let userId: string | undefined =
         (data as VerifyEmailResponse | undefined)?.data?.userId ??
         (data as VerifyEmailResponse | undefined)?.data?.id;
 
+      if (!userId) {
+        console.warn('[GA] sign_up_complete: user_id is missing from response');
+      }
+
       const tsRaw = (data as VerifyEmailResponse | undefined)?.timestamp;
       const signupCompletedAt = tsRaw ? Date.parse(tsRaw) : NaN;
+
+      if (!tsRaw) {
+        console.warn('[GA] sign_up_complete: server timestamp missing, using client time');
+      } else if (!Number.isFinite(signupCompletedAt)) {
+        console.warn('[GA] sign_up_complete: server timestamp parsing failed, using client time', { tsRaw });
+      }
+
       const signupCompletedAtMs = Number.isFinite(signupCompletedAt)
         ? signupCompletedAt
         : Date.now();
@@ -93,8 +104,11 @@ export const useVerifyEmailMutation = (
       };
       const gaFirstMeasure = localStorage.getItem('ga_first_measure_start_sent');
       const gaMeaningful = localStorage.getItem('ga_meaningful_use_sent');
+      const gaOnboardingEnter = localStorage.getItem('ga_onboarding_enter_sent');
+
       if (gaFirstMeasure) preserved.ga_first_measure_start_sent = gaFirstMeasure;
       if (gaMeaningful) preserved.ga_meaningful_use_sent = gaMeaningful;
+      if (gaOnboardingEnter) preserved.ga_onboarding_enter_sent = gaOnboardingEnter;
 
       AnalyticsEvents.signUpComplete({ user_id: userId });
 

@@ -10,7 +10,11 @@ const OnboardinInitPage = () => {
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
 
   useEffect(() => {
-    AnalyticsEvents.onboardingEnter({ step: 'posture_calibration' });
+    const onboardingEnterSent = localStorage.getItem('ga_onboarding_enter_sent');
+    if (onboardingEnterSent !== 'true') {
+      AnalyticsEvents.onboardingEnter({ step: 'posture_calibration' });
+      localStorage.setItem('ga_onboarding_enter_sent', 'true');
+    }
   }, []);
 
   const handlePrev = () => {

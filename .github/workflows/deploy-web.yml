@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   # ============================================
-  # 품질 체크 Job
+  # Lint & Type Check (병렬 실행)
   # ============================================
   quality-check:
     runs-on: ubuntu-latest
@@ -53,9 +53,12 @@ jobs:
         run: pnpm lint:check
         continue-on-error: true
 
-      - name: Run TypeScript check
-        run: pnpm typecheck:renderer
-        continue-on-error: true
+  # ============================================
+  # 빌드 및 배포 Job
+  # ============================================
+  build-and-deploy:
+    needs: quality-check
+    runs-on: ubuntu-latest
 
   # ============================================
   # 빌드 및 배포 Job

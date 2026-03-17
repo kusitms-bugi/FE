@@ -14,9 +14,9 @@ concurrency:
 
 jobs:
   # ============================================
-  # 코드 품질 체크
+  # 코드 품질 체크 - Lint
   # ============================================
-  quality:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,31 +36,37 @@ jobs:
 
       - name: Run Biome check
         run: pnpm lint:check
-        continue-on-error: false
-
-      - name: Run TypeScript check
-        run: pnpm typecheck
 
   # ============================================
-  # 의존성 취약점 스캔
+  # 타입 체크 - 병렬 실행
   # ============================================
-  security:
+  typecheck:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run npm audit
-        run: |
-          pnpm audit --audit-level moderate
-        continue-on-error: true
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Run TypeScript check
+        run: pnpm typecheck
 
   # ============================================
-  # 빌드 테스트
+  # 빌드 테스트 - Lint & Typecheck 성공 시
   # ============================================
   build:
     runs-on: ubuntu-latest
-    needs: [quality]
+    needs: [lint, typecheck]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -106,7 +112,21 @@ jobs:
           retention-days: 7
 
   # ============================================
-  # 코드 복잡도 분석 (선택사항)
+  # 의존성 취약점 스캔 - 독립 실행
+  # ============================================
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run npm audit
+        run: |
+          pnpm audit --audit-level moderate
+        continue-on-error: true
+
+  # ============================================
+  # 코드 복잡도 분석 (PR 시만)
   # ============================================
   complexity:
     runs-on: ubuntu-latest
@@ -117,19 +137,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
-
-      # 변경된 파일만 분석
       - name: Analyze code complexity
         run: |
           echo "📊 Analyzing code complexity for changed files..."

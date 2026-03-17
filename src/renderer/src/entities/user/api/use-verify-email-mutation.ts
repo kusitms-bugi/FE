@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import api from '@shared/api';
 import { ResendVerifyEmailRequest } from '../types';
-import { AnalyticsEvents } from '@shared/lib/analytics/events';
+import { AnalyticsEvents, GA_STORAGE_KEYS, validateAndLogUserId } from '@shared/lib/analytics';
 import { markCalibrationInitialRequired } from '@shared/lib/calibration-gate';
 import axios from 'axios';
 
@@ -81,8 +81,8 @@ export const useVerifyEmailMutation = (
         (data as VerifyEmailResponse | undefined)?.data?.userId ??
         (data as VerifyEmailResponse | undefined)?.data?.id;
 
-      if (!userId) {
-        console.warn('[GA] sign_up_complete: user_id is missing from response');
+      if (!validateAndLogUserId(userId, 'sign_up_complete')) {
+        // userId가 없는 경우에도 진행 (userId는 GA 이벤트용 선택적 파라미터)
       }
 
       const tsRaw = (data as VerifyEmailResponse | undefined)?.timestamp;
@@ -100,17 +100,17 @@ export const useVerifyEmailMutation = (
 
       // Keep retention anchor across localStorage.clear()
       const preserved: Record<string, string> = {
-        signupCompletedAt: signupCompletedAtMs.toString(),
+        [GA_STORAGE_KEYS.SIGNUP_COMPLETED_AT]: signupCompletedAtMs.toString(),
       };
-      const gaFirstMeasure = localStorage.getItem('ga_first_measure_start_sent');
-      const gaMeaningful = localStorage.getItem('ga_meaningful_use_sent');
-      const gaOnboardingEnter = localStorage.getItem('ga_onboarding_enter_sent');
-      const gaMeasurePageEnter = localStorage.getItem('ga_measure_page_enter_sent');
+      const gaFirstMeasure = localStorage.getItem(GA_STORAGE_KEYS.FIRST_MEASURE_START_SENT);
+      const gaMeaningful = localStorage.getItem(GA_STORAGE_KEYS.MEANINGFUL_USE_SENT);
+      const gaOnboardingEnter = localStorage.getItem(GA_STORAGE_KEYS.ONBOARDING_ENTER_SENT);
+      const gaMeasurePageEnter = localStorage.getItem(GA_STORAGE_KEYS.MEASURE_PAGE_ENTER_SENT);
 
-      if (gaFirstMeasure) preserved.ga_first_measure_start_sent = gaFirstMeasure;
-      if (gaMeaningful) preserved.ga_meaningful_use_sent = gaMeaningful;
-      if (gaOnboardingEnter) preserved.ga_onboarding_enter_sent = gaOnboardingEnter;
-      if (gaMeasurePageEnter) preserved.ga_measure_page_enter_sent = gaMeasurePageEnter;
+      if (gaFirstMeasure) preserved[GA_STORAGE_KEYS.FIRST_MEASURE_START_SENT] = gaFirstMeasure;
+      if (gaMeaningful) preserved[GA_STORAGE_KEYS.MEANINGFUL_USE_SENT] = gaMeaningful;
+      if (gaOnboardingEnter) preserved[GA_STORAGE_KEYS.ONBOARDING_ENTER_SENT] = gaOnboardingEnter;
+      if (gaMeasurePageEnter) preserved[GA_STORAGE_KEYS.MEASURE_PAGE_ENTER_SENT] = gaMeasurePageEnter;
 
       AnalyticsEvents.signUpComplete({ user_id: userId });
 

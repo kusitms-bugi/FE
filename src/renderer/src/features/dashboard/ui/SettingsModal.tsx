@@ -6,6 +6,7 @@ import {
   clearCalibrationGate,
   requestCalibrationReset,
 } from '@shared/lib/calibration-gate';
+import { clearAnalyticsFlags } from '@shared/lib/analytics';
 import { Button } from '@shared/ui/button';
 import { ModalPortal } from '@shared/ui/modal';
 import { useNavigate } from 'react-router-dom';
@@ -29,6 +30,9 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
     localStorage.removeItem('lastSessionId');
     localStorage.removeItem('widgetVisibleStartAt');
     localStorage.removeItem('mainWindowActiveAt');
+
+    // GA 플래그 클린업
+    clearAnalyticsFlags();
 
     if (clearCalibration) {
       localStorage.removeItem('calibration_result_v1');

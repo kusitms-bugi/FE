@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+import { clearAnalyticsFlags } from '@shared/lib/analytics';
 
 interface RefreshResponse {
   timestamp: string;
@@ -22,6 +23,8 @@ const api: AxiosInstance = axios.create({
 const clearAuthTokens = () => {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
+  // GA 플래그 클린업 (자동 로그아웃 시나리오)
+  clearAnalyticsFlags();
 };
 
 type RetriableRequestConfig = AxiosRequestConfig & {

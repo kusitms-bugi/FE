@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '@shared/api';
 import { LoginInput, LoginResponse } from '../types';
 import axios from 'axios';
-import { setAnalyticsUserId, AnalyticsEvents } from '@shared/lib/analytics';
+import { setAnalyticsUserId, AnalyticsEvents, validateAndLogUserId } from '@shared/lib/analytics';
 import {
   canAccessCalibrationFlow,
   markCalibrationInitialRequired,
@@ -64,18 +64,16 @@ export const useLoginMutation = () => {
       }
 
       // GA login_complete 이벤트 전송
-      if (!userId) {
-        console.warn('[GA] login_complete: user_id is missing from response');
-      } else {
+      if (validateAndLogUserId(userId, 'login_complete')) {
         AnalyticsEvents.loginComplete({ user_id: userId });
       }
 
-      const userId = localStorage.getItem('userId');
+      const storedUserId = localStorage.getItem('userId');
       const calibrationResult = localStorage.getItem('calibration_result_v1');
       if (!calibrationResult) {
-        markCalibrationInitialRequired(userId);
+        markCalibrationInitialRequired(storedUserId);
       }
-      navigate(canAccessCalibrationFlow(userId) ? '/onboarding/init' : '/main');
+      navigate(canAccessCalibrationFlow(storedUserId) ? '/onboarding/init' : '/main');
     },
     onError: (error: unknown) => {
       console.error('로그인 오류:', error);

@@ -25,7 +25,7 @@ import { LoadingSpinner } from '@shared/ui/loading';
 import { ModalPortal } from '@shared/ui/modal';
 import { useCameraStore } from '@widgets/camera';
 import { lazy, Suspense, useEffect, useRef } from 'react';
-import { AnalyticsEvents } from '@shared/lib/analytics/events';
+import { AnalyticsEvents, GA_STORAGE_KEYS } from '@shared/lib/analytics';
 
 // Recharts를 사용하는 컴포넌트들을 lazy import
 const AverageGraphPannel = lazy(
@@ -125,11 +125,11 @@ const MainPage = () => {
 
   useEffect(() => {
     const sessionId = localStorage.getItem('sessionId');
-    const measurePageEnterSent = localStorage.getItem('ga_measure_page_enter_sent');
+    const measurePageEnterSent = localStorage.getItem(GA_STORAGE_KEYS.MEASURE_PAGE_ENTER_SENT);
 
     if (sessionId && measurePageEnterSent !== 'true') {
+      localStorage.setItem(GA_STORAGE_KEYS.MEASURE_PAGE_ENTER_SENT, 'true');
       AnalyticsEvents.measurePageEnter({ session_id: sessionId });
-      localStorage.setItem('ga_measure_page_enter_sent', 'true');
     }
   }, []);
 

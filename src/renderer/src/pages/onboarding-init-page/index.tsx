@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ImageDescriptionPannel from '../onboarding-page/components/ImageDescriptionPanel';
 import InfoPanel from '../onboarding-page/components/InfoPanel';
-import { AnalyticsEvents } from '@shared/lib/analytics/events';
+import { AnalyticsEvents, GA_STORAGE_KEYS } from '@shared/lib/analytics';
 
 const OnboardinInitPage = () => {
   const navigate = useNavigate();
@@ -10,10 +10,10 @@ const OnboardinInitPage = () => {
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
 
   useEffect(() => {
-    const onboardingEnterSent = localStorage.getItem('ga_onboarding_enter_sent');
+    const onboardingEnterSent = localStorage.getItem(GA_STORAGE_KEYS.ONBOARDING_ENTER_SENT);
     if (onboardingEnterSent !== 'true') {
+      localStorage.setItem(GA_STORAGE_KEYS.ONBOARDING_ENTER_SENT, 'true');
       AnalyticsEvents.onboardingEnter({ step: 'posture_calibration' });
-      localStorage.setItem('ga_onboarding_enter_sent', 'true');
     }
   }, []);
 

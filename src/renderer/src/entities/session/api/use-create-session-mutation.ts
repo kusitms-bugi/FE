@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import api from '@shared/api';
 import { CreateSessionResponse } from '../types';
-import { AnalyticsEvents } from '@shared/lib/analytics/events';
+import { AnalyticsEvents, GA_STORAGE_KEYS, validateAndLogSessionId } from '@shared/lib/analytics';
 
 /**
  * 세션 생성 API
@@ -36,15 +36,13 @@ export const useCreateSessionMutation = () => {
       // 이전 세션의 lastSessionId 삭제 (중복 방지)
       localStorage.removeItem('lastSessionId');
 
-      if (!res.data.sessionId) {
-        console.warn('[GA] measure_start: Missing sessionId in response');
-      } else {
+      if (validateAndLogSessionId(res.data.sessionId, 'measure_start')) {
         AnalyticsEvents.measureStart({ session_id: res.data.sessionId });
       }
 
-      const signupCompletedAtRaw = localStorage.getItem('signupCompletedAt');
-      const firstMeasureSent = localStorage.getItem('ga_first_measure_start_sent');
-      const meaningfulUseSent = localStorage.getItem('ga_meaningful_use_sent');
+      const signupCompletedAtRaw = localStorage.getItem(GA_STORAGE_KEYS.SIGNUP_COMPLETED_AT);
+      const firstMeasureSent = localStorage.getItem(GA_STORAGE_KEYS.FIRST_MEASURE_START_SENT);
+      const meaningfulUseSent = localStorage.getItem(GA_STORAGE_KEYS.MEANINGFUL_USE_SENT);
       if (signupCompletedAtRaw && firstMeasureSent !== 'true') {
         const signupCompletedAt = Number(signupCompletedAtRaw);
         if (Number.isFinite(signupCompletedAt) && signupCompletedAt > 0) {
@@ -53,7 +51,7 @@ export const useCreateSessionMutation = () => {
             Math.round((Date.now() - signupCompletedAt) / 1000),
           );
           AnalyticsEvents.firstMeasureStart({ seconds_from_signup });
-          localStorage.setItem('ga_first_measure_start_sent', 'true');
+          localStorage.setItem(GA_STORAGE_KEYS.FIRST_MEASURE_START_SENT, 'true');
         }
       }
 
@@ -63,7 +61,7 @@ export const useCreateSessionMutation = () => {
           const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
           if (Date.now() - signupCompletedAt >= sevenDaysMs) {
             AnalyticsEvents.meaningfulUse({ type: 'measure_start' });
-            localStorage.setItem('ga_meaningful_use_sent', 'true');
+            localStorage.setItem(GA_STORAGE_KEYS.MEANINGFUL_USE_SENT, 'true');
           }
         }
       }

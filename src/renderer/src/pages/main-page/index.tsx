@@ -125,8 +125,11 @@ const MainPage = () => {
 
   useEffect(() => {
     const sessionId = localStorage.getItem('sessionId');
-    if (sessionId) {
+    const measurePageEnterSent = localStorage.getItem('ga_measure_page_enter_sent');
+
+    if (sessionId && measurePageEnterSent !== 'true') {
       AnalyticsEvents.measurePageEnter({ session_id: sessionId });
+      localStorage.setItem('ga_measure_page_enter_sent', 'true');
     }
   }, []);
 

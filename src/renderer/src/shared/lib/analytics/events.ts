@@ -1,9 +1,6 @@
 import { logEvent } from './client';
 
 export const AnalyticsEvents = {
-  downloadClick: (params: { platform: 'mac' | 'windows'; source: string }) =>
-    logEvent('download_click', params),
-
   signUpComplete: (params: { user_id?: string }) =>
     logEvent('sign_up_complete', params.user_id ? params : undefined),
 

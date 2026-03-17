@@ -1,5 +1,4 @@
 export type AnalyticsEventParamsMap = {
-  download_click: { platform: 'mac' | 'windows'; source: string };
   sign_up_complete: { user_id?: string };
   onboarding_enter: { step: string };
   measure_page_enter: { session_id: string };

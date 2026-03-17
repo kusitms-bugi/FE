@@ -1,0 +1,145 @@
+name: CI
+
+on:
+  push:
+    branches: ['main', 'develop']
+  pull_request:
+    branches: ['main', 'develop']
+
+# 병렬 실행 최적화
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # ============================================
+  # 코드 품질 체크
+  # ============================================
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Run ESLint
+        run: pnpm lint:check
+
+      - name: Run Prettier check
+        run: pnpm format:check
+
+      - name: Run TypeScript check
+        run: pnpm typecheck
+
+  # ============================================
+  # 의존성 취약점 스캔
+  # ============================================
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run npm audit
+        run: |
+          pnpm audit --audit-level moderate
+        continue-on-error: true
+
+  # ============================================
+  # 빌드 테스트
+  # ============================================
+  build:
+    runs-on: ubuntu-latest
+    needs: [quality]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build Main process
+        run: pnpm run build:main
+
+      - name: Build Preload
+        run: pnpm run build:preload
+
+      - name: Build Renderer
+        run: pnpm run build:renderer
+        env:
+          VITE_BASE_URL: ${{ secrets.VITE_BASE_URL }}
+
+      - name: Verify build outputs
+        run: |
+          echo "📁 Verifying build outputs..."
+          ls -la dist/main/ && echo "✅ Main build OK"
+          ls -la dist/preload/ && echo "✅ Preload build OK"
+          ls -la dist/renderer/ && echo "✅ Renderer build OK"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            dist/main/
+            dist/preload/
+            dist/renderer/
+          retention-days: 7
+
+  # ============================================
+  # 코드 복잡도 분석 (선택사항)
+  # ============================================
+  complexity:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # 변경된 파일만 분석
+      - name: Analyze code complexity
+        run: |
+          echo "📊 Analyzing code complexity for changed files..."
+          git diff --name-only origin/main | grep -E '\.(ts|tsx)$' | while read file; do
+            if [ -f "$file" ]; then
+              LINES=$(wc -l < "$file")
+              echo "📄 $file: $LINES lines"
+              if [ "$LINES" -gt 500 ]; then
+                echo "⚠️ Warning: $file has $LINES lines (consider splitting)"
+              fi
+            fi
+          done

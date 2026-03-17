@@ -36,7 +36,6 @@ jobs:
 
       - name: Run Biome check
         run: pnpm lint:check
-        continue-on-error: true
         continue-on-error: false
 
       - name: Run TypeScript check

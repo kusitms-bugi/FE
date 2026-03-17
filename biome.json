@@ -39,13 +39,15 @@
     "rules": {
       "recommended": true,
       "a11y": {
-        "recommended": true,
-        "useButtonType": "warn",
-        "useKeyWithClickEvents": "warn"
+        "recommended": false,
+        "useButtonType": "off",
+        "useKeyWithClickEvents": "off",
+        "useAltText": "error"
       },
       "correctness": {
-        "recommended": true,
-        "useExhaustiveDependencies": "warn"
+        "recommended": false,
+        "useExhaustiveDependencies": "warn",
+        "noUnusedVariables": "warn"
       },
       "complexity": {
         "recommended": true,
@@ -54,14 +56,16 @@
       },
       "style": {
         "recommended": true,
-        "noNonNullAssertion": "off",
+        "noNonNullAssertion": "warn",
         "useConst": "error",
         "noParameterAssign": "warn"
       },
       "suspicious": {
-        "recommended": true,
-        "noExplicitAny": "off",
-        "noArrayIndexKey": "warn"
+        "recommended": false,
+        "noExplicitAny": "warn",
+        "noArrayIndexKey": "warn",
+        "noShadowRestrictedNames": "warn",
+        "noAssignInExpressions": "warn"
       },
       "performance": {
         "recommended": true

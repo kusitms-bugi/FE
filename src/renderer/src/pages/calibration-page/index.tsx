@@ -19,6 +19,7 @@ import {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { lockCalibrationGate } from '@shared/lib/calibration-gate';
+import { AnalyticsEvents } from '@shared/lib/analytics/events';
 import Webcam from 'react-webcam';
 import MeasuringPanel from './components/MeasuringPanel';
 import WebcamView from './components/WebcamView';
@@ -184,7 +185,15 @@ const CalibrationPage = () => {
               timestamp: Date.now(),
             };
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload));
-            lockCalibrationGate(localStorage.getItem('userId'));
+            const userId = localStorage.getItem('userId');
+            lockCalibrationGate(userId);
+
+            // GA calibration_complete 이벤트 전송
+            if (userId) {
+              AnalyticsEvents.calibrationComplete({ user_id: userId });
+            } else {
+              console.warn('[GA] calibration_complete: user_id is missing');
+            }
           } catch {
             // 저장 실패 시 무시 (사일런트)
           }

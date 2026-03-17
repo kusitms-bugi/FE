@@ -142,6 +142,16 @@ app.on('activate', restoreOrCreateWindow);
 app
   .whenReady()
   .then(restoreOrCreateWindow)
+  .then(async () => {
+    // 앱 시작 시 app_open 이벤트 전송
+    try {
+      const { postToGa4 } = await import('/@/analytics');
+      await postToGa4('app_open', {});
+      console.log('[analytics] app_open event sent');
+    } catch (error) {
+      console.warn('[analytics] Failed to send app_open event:', error);
+    }
+  })
   .then(() => {
     /**
      * Install React & Redux devtools in development mode only

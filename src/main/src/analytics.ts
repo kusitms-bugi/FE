@@ -145,7 +145,7 @@ const sendRequest = async (url: string, payload: object) => {
   return response;
 };
 
-const postToGa4 = async (
+export const postToGa4 = async (
   eventName: string,
   eventParams?: AnalyticsParams,
   sourceScreen?: string,

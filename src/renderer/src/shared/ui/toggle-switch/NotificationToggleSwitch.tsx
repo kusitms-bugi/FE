@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { cn } from '@shared/lib/cn';
+import { cn } from '@shared/lib/cn'
+import * as React from 'react'
 
 interface NotificationToggleSwitchProps {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  isDisabled?: boolean;
+  checked: boolean
+  onChange: (checked: boolean) => void
+  isDisabled?: boolean
 }
 
 const NotificationToggleSwitch = React.forwardRef<
@@ -34,8 +34,8 @@ const NotificationToggleSwitch = React.forwardRef<
         )}
       />
     </button>
-  );
-});
+  )
+})
 
-NotificationToggleSwitch.displayName = 'NotificationToggleSwitch';
-export { NotificationToggleSwitch };
+NotificationToggleSwitch.displayName = 'NotificationToggleSwitch'
+export { NotificationToggleSwitch }

@@ -1,23 +1,23 @@
 // .env 파일 로드
-require('dotenv').config();
-const fs = require('fs');
+require('dotenv').config()
+const fs = require('node:fs')
 
 if (process.env.VITE_APP_VERSION === undefined) {
   try {
     // 기본은 package.json 버전을 사용 (autoUpdater/electron-updater의 semver 비교와 일치)
     // 필요하면 빌드 시점에 VITE_APP_VERSION으로 오버라이드 가능
     // 예) VITE_APP_VERSION=0.9.0 pnpm build:mac
-    const pkg = require('./package.json');
+    const pkg = require('./package.json')
     if (typeof pkg?.version === 'string' && pkg.version.trim().length > 0) {
-      process.env.VITE_APP_VERSION = pkg.version.trim();
+      process.env.VITE_APP_VERSION = pkg.version.trim()
     } else {
-      throw new Error('package.json version is missing');
+      throw new Error('package.json version is missing')
     }
   } catch {
-    const now = new Date();
+    const now = new Date()
     process.env.VITE_APP_VERSION = `${now.getUTCFullYear() - 2000}.${
       now.getUTCMonth() + 1
-    }.${now.getUTCDate()}-${now.getUTCHours() * 60 + now.getUTCMinutes()}`;
+    }.${now.getUTCDate()}-${now.getUTCHours() * 60 + now.getUTCMinutes()}`
   }
 }
 
@@ -31,7 +31,7 @@ const hasNotarizeCredentials = () => {
     process.env.APPLE_APP_SPECIFIC_PASSWORD &&
     process.env.APPLE_TEAM_ID
   ) {
-    return true;
+    return true
   }
 
   if (
@@ -39,25 +39,25 @@ const hasNotarizeCredentials = () => {
     process.env.APPLE_API_KEY_ID &&
     process.env.APPLE_API_ISSUER
   ) {
-    return true;
+    return true
   }
 
   if (process.env.APPLE_KEYCHAIN_PROFILE) {
-    return true;
+    return true
   }
 
-  return false;
-};
+  return false
+}
 
 const resolveNotarizeEnabled = () => {
   // Optional override:
   // - NOTARIZE=true  => force enable
   // - NOTARIZE=false => force disable
-  if (process.env.NOTARIZE === 'true') return true;
-  if (process.env.NOTARIZE === 'false') return false;
+  if (process.env.NOTARIZE === 'true') return true
+  if (process.env.NOTARIZE === 'false') return false
 
-  return hasNotarizeCredentials();
-};
+  return hasNotarizeCredentials()
+}
 
 /**
  * @type {import('electron-builder').Configuration}
@@ -93,21 +93,21 @@ const config = {
   ],
   asar: true,
   // 빌드 전에 필요한 파일들이 존재하는지 확인
-  beforeBuild: async (context) => {
-    const fs = require('fs');
-    const path = require('path');
+  beforeBuild: async context => {
+    const fs = require('node:fs')
+    const path = require('node:path')
 
     const requiredFiles = [
       'dist/main/index.cjs',
       'dist/preload/index.cjs',
       'dist/renderer/index.html',
-    ];
+    ]
 
     for (const file of requiredFiles) {
       if (!fs.existsSync(file)) {
         throw new Error(
           `Required file not found: ${file}. Run 'npm run build' first.`,
-        );
+        )
       }
     }
   },
@@ -188,13 +188,13 @@ const config = {
       { x: 410, y: 220, type: 'link', path: '/Applications' },
     ],
   },
-  afterPack: async (context) => {
-    const fs = require('fs');
+  afterPack: async context => {
+    const fs = require('node:fs')
 
-    const { electronPlatformName, appOutDir } = context;
+    const { electronPlatformName, appOutDir } = context
 
     if (electronPlatformName !== 'darwin') {
-      return;
+      return
     }
 
     const {
@@ -202,9 +202,9 @@ const config = {
       info: {
         _metadata: { electronLanguagesInfoPlistStrings },
       },
-    } = context.packager.appInfo;
+    } = context.packager.appInfo
 
-    const resPath = `${appOutDir}/${productFilename}.app/Contents/Resources/`;
+    const resPath = `${appOutDir}/${productFilename}.app/Contents/Resources/`
 
     console.log(
       '\n> package.json의 "electronLanguagesInfoPlistStrings" 설정을 기반으로 언어 패키지 생성 시작\n',
@@ -213,42 +213,42 @@ const config = {
       '\n\n',
       '>  ResourcesPath:',
       resPath,
-    );
+    )
 
     // APP 언어 패키지 파일 생성
     return await Promise.all(
-      Object.keys(electronLanguagesInfoPlistStrings).map((langKey) => {
-        const infoPlistStrPath = `${langKey}.lproj/InfoPlist.strings`;
-        let infos = '';
+      Object.keys(electronLanguagesInfoPlistStrings).map(langKey => {
+        const infoPlistStrPath = `${langKey}.lproj/InfoPlist.strings`
+        let infos = ''
 
-        const langItem = electronLanguagesInfoPlistStrings[langKey];
+        const langItem = electronLanguagesInfoPlistStrings[langKey]
 
-        Object.keys(langItem).forEach((infoKey) => {
-          infos += `"${infoKey}" = "${langItem[infoKey]}";\n`;
-        });
+        Object.keys(langItem).forEach(infoKey => {
+          infos += `"${infoKey}" = "${langItem[infoKey]}";\n`
+        })
 
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           // 디렉토리가 없으면 생성
-          const dirPath = `${resPath}${langKey}.lproj`;
+          const dirPath = `${resPath}${langKey}.lproj`
           if (!fs.existsSync(dirPath)) {
-            fs.mkdirSync(dirPath, { recursive: true });
+            fs.mkdirSync(dirPath, { recursive: true })
           }
 
-          fs.writeFile(`${resPath}${infoPlistStrPath}`, infos, (err) => {
+          fs.writeFile(`${resPath}${infoPlistStrPath}`, infos, err => {
             if (err) {
               console.error(
                 `>  "${resPath}${infoPlistStrPath}" 생성 실패:`,
                 err,
-              );
-              throw err;
+              )
+              throw err
             }
-            console.log(`>  "${resPath}${infoPlistStrPath}" 생성 완료.`);
-            resolve();
-          });
-        });
+            console.log(`>  "${resPath}${infoPlistStrPath}" 생성 완료.`)
+            resolve()
+          })
+        })
       }),
-    );
+    )
   },
-};
+}
 
-module.exports = config;
+module.exports = config

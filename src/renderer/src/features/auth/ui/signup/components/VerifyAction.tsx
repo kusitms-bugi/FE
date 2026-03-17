@@ -1,9 +1,9 @@
-import { Button } from '@shared/ui/button';
-import { TextField } from '@shared/ui/input-field';
-import { useNavigate } from 'react-router-dom';
+import { Button } from '@shared/ui/button'
+import { TextField } from '@shared/ui/input-field'
+import { useNavigate } from 'react-router-dom'
 
 export default function VerifyAction({ email }: { email: string }) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   return (
     <div className="mt-20 flex w-[440px] flex-col gap-5">
@@ -18,5 +18,5 @@ export default function VerifyAction({ email }: { email: string }) {
         onClick={() => navigate('/auth/login')}
       />
     </div>
-  );
+  )
 }

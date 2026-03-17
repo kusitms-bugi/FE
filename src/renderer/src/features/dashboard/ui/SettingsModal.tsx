@@ -1,82 +1,85 @@
-import CalibrationResetIcon from '@assets/option/CalibrationResetIcon.svg?react';
-import LogoutIcon from '@assets/option/LogoutIcon.svg?react';
-import WithdrawIcon from '@assets/option/WithdrawIcon.svg?react';
-import { useWithdrawMutation } from '@entities/user';
+import CalibrationResetIcon from '@assets/option/CalibrationResetIcon.svg?react'
+import LogoutIcon from '@assets/option/LogoutIcon.svg?react'
+import WithdrawIcon from '@assets/option/WithdrawIcon.svg?react'
+import { useWithdrawMutation } from '@entities/user'
+import { clearAnalyticsFlags } from '@shared/lib/analytics'
 import {
   clearCalibrationGate,
   requestCalibrationReset,
-} from '@shared/lib/calibration-gate';
-import { clearAnalyticsFlags } from '@shared/lib/analytics';
-import { Button } from '@shared/ui/button';
-import { ModalPortal } from '@shared/ui/modal';
-import { useNavigate } from 'react-router-dom';
+} from '@shared/lib/calibration-gate'
+import { Button } from '@shared/ui/button'
+import { ModalPortal } from '@shared/ui/modal'
+import { useNavigate } from 'react-router-dom'
 
 interface SettingsModalProps {
-  onClose: () => void;
+  onClose: () => void
 }
 
 const SettingsModal = ({ onClose }: SettingsModalProps) => {
-  const navigate = useNavigate();
-  const withdrawMutation = useWithdrawMutation();
+  const navigate = useNavigate()
+  const withdrawMutation = useWithdrawMutation()
 
-  const clearLocalAuthData = (userId: string | null, clearCalibration: boolean) => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('sessionId');
-    localStorage.removeItem('sessionStartAt');
-    localStorage.removeItem('sessionStartDistance');
-    localStorage.removeItem('lastSessionId');
-    localStorage.removeItem('widgetVisibleStartAt');
-    localStorage.removeItem('mainWindowActiveAt');
+  const clearLocalAuthData = (
+    userId: string | null,
+    clearCalibration: boolean,
+  ) => {
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('userId')
+    localStorage.removeItem('userName')
+    localStorage.removeItem('sessionId')
+    localStorage.removeItem('sessionStartAt')
+    localStorage.removeItem('sessionStartDistance')
+    localStorage.removeItem('lastSessionId')
+    localStorage.removeItem('widgetVisibleStartAt')
+    localStorage.removeItem('mainWindowActiveAt')
 
     // GA 플래그 클린업
-    clearAnalyticsFlags();
+    clearAnalyticsFlags()
 
     if (clearCalibration) {
-      localStorage.removeItem('calibration_result_v1');
-      clearCalibrationGate(userId);
+      localStorage.removeItem('calibration_result_v1')
+      clearCalibrationGate(userId)
     }
-  };
+  }
 
   const handleLogout = () => {
-    const userId = localStorage.getItem('userId');
-    clearLocalAuthData(userId, false);
-    onClose();
-    navigate('/auth/login', { replace: true });
-  };
+    const userId = localStorage.getItem('userId')
+    clearLocalAuthData(userId, false)
+    onClose()
+    navigate('/auth/login', { replace: true })
+  }
 
   const handleWithdraw = async () => {
-    if (withdrawMutation.isPending) return;
+    if (withdrawMutation.isPending) return
 
-    const shouldProceed = window.confirm('정말 회원탈퇴 하시겠어요?');
-    if (!shouldProceed) return;
+    const shouldProceed = window.confirm('정말 회원탈퇴 하시겠어요?')
+    if (!shouldProceed) return
 
     try {
-      await withdrawMutation.mutateAsync();
+      await withdrawMutation.mutateAsync()
 
-      const userId = localStorage.getItem('userId');
-      clearLocalAuthData(userId, true);
-      onClose();
-      navigate('/auth/signup', { replace: true });
-      alert('회원탈퇴가 완료되었습니다.');
+      const userId = localStorage.getItem('userId')
+      clearLocalAuthData(userId, true)
+      onClose()
+      navigate('/auth/signup', { replace: true })
+      alert('회원탈퇴가 완료되었습니다.')
     } catch (error: unknown) {
-      console.error('회원탈퇴 실패:', error);
+      console.error('회원탈퇴 실패:', error)
       const errorMessage =
         error instanceof Error
           ? error.message
-          : '회원탈퇴에 실패했습니다. 다시 시도해주세요.';
-      alert(errorMessage);
+          : '회원탈퇴에 실패했습니다. 다시 시도해주세요.'
+      alert(errorMessage)
     }
-  };
+  }
 
   const handleCalibrationReset = () => {
-    const userId = localStorage.getItem('userId');
-    requestCalibrationReset(userId);
-    onClose();
-    navigate('/onboarding/init');
-  };
+    const userId = localStorage.getItem('userId')
+    requestCalibrationReset(userId)
+    onClose()
+    navigate('/onboarding/init')
+  }
 
   const actionItems = [
     { label: '로그아웃', icon: <LogoutIcon />, onClick: handleLogout },
@@ -91,7 +94,7 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
       icon: <CalibrationResetIcon />,
       onClick: handleCalibrationReset,
     },
-  ];
+  ]
 
   return (
     <ModalPortal>
@@ -101,7 +104,7 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
       >
         <div
           className="bg-surface-modal border-grey-0 flex w-[339px] flex-col gap-4 rounded-[24px] border p-4 shadow-[0_0_24px_rgba(0,0,0,0.12)]"
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           <div className="bg-surface-modal-container rounded-[12px] p-3">
             <h2 className="text-body-lg-semibold text-grey-900">설정</h2>
@@ -140,7 +143,7 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
         </div>
       </div>
     </ModalPortal>
-  );
-};
+  )
+}
 
-export default SettingsModal;
+export default SettingsModal

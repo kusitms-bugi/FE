@@ -1,29 +1,29 @@
-import CompletionCharacter from '@assets/common/icons/completion.svg?react';
-import { useLevelQuery } from '@entities/dashboard';
-import { useCreateSessionMutation } from '@entities/session';
-import { Button } from '@shared/ui/button';
-import { useCameraStore } from '@widgets/camera';
-import { useNavigate } from 'react-router-dom';
+import CompletionCharacter from '@assets/common/icons/completion.svg?react'
+import { useLevelQuery } from '@entities/dashboard'
+import { useCreateSessionMutation } from '@entities/session'
+import { Button } from '@shared/ui/button'
+import { useCameraStore } from '@widgets/camera'
+import { useNavigate } from 'react-router-dom'
 
 const OnboardingCompletionPage = () => {
-  const navigate = useNavigate();
-  const { mutate: createSession, isPending } = useCreateSessionMutation();
-  const { setShow } = useCameraStore();
-  const { data: levelData } = useLevelQuery();
+  const navigate = useNavigate()
+  const { mutate: createSession, isPending } = useCreateSessionMutation()
+  const { setShow } = useCameraStore()
+  const { data: levelData } = useLevelQuery()
 
   const handleStart = () => {
     /* 세션 생성 후 메인 페이지로 이동 */
     createSession(undefined, {
       onSuccess: () => {
         // 세션 시작 시점의 이동거리 저장
-        const startDistance = levelData?.data.current || 0;
-        localStorage.setItem('sessionStartDistance', startDistance.toString());
+        const startDistance = levelData?.data.current || 0
+        localStorage.setItem('sessionStartDistance', startDistance.toString())
 
-        setShow(); // 카메라 활성화
-        navigate('/main');
+        setShow() // 카메라 활성화
+        navigate('/main')
       },
-    });
-  };
+    })
+  }
 
   return (
     <main className="hbp:h-[calc(100vh-75px)] flex h-[calc(100vh-60px)] flex-col items-center">
@@ -53,7 +53,7 @@ const OnboardingCompletionPage = () => {
         </div>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default OnboardingCompletionPage;
+export default OnboardingCompletionPage

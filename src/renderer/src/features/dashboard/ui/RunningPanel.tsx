@@ -1,72 +1,72 @@
-import AngelRiniVideo from '@assets/video/angel-rini.webm';
-import BackgroundVideo from '@assets/video/background.webm';
-import BugiVideo from '@assets/video/bugi.webm';
-import PmRiniVideo from '@assets/video/pm-rini.webm';
-import RiniVideo from '@assets/video/rini.webm';
-import StoneBugiVideo from '@assets/video/stone-bugi.webm';
-import TireBugiVideo from '@assets/video/tire-bugi.webm';
+import AngelRiniVideo from '@assets/video/angel-rini.webm'
+import BackgroundVideo from '@assets/video/background.webm'
+import BugiVideo from '@assets/video/bugi.webm'
+import PmRiniVideo from '@assets/video/pm-rini.webm'
+import RiniVideo from '@assets/video/rini.webm'
+import StoneBugiVideo from '@assets/video/stone-bugi.webm'
+import TireBugiVideo from '@assets/video/tire-bugi.webm'
 
-import AngelRiniRestSvg from '@assets/video/angel-rini-rest.svg';
-import BugiRestSvg from '@assets/video/bugi-rest.svg';
-import PmRiniRestSvg from '@assets/video/pm-rini-rest.svg';
-import RiniSvg from '@assets/video/rini.svg';
-import StoneBugiRestSvg from '@assets/video/stone-bugi-rest.svg';
-import TireBugiRestSvg from '@assets/video/tire-bugi-rest.svg';
+import AngelRiniRestSvg from '@assets/video/angel-rini-rest.svg'
+import BugiRestSvg from '@assets/video/bugi-rest.svg'
+import PmRiniRestSvg from '@assets/video/pm-rini-rest.svg'
+import RiniSvg from '@assets/video/rini.svg'
+import StoneBugiRestSvg from '@assets/video/stone-bugi-rest.svg'
+import TireBugiRestSvg from '@assets/video/tire-bugi-rest.svg'
 
-import { usePostureStore } from '@entities/posture';
-import { cn } from '@shared/lib/cn';
-import { getScoreLevel } from '@shared/lib/get-score-level';
-import { useCameraStore } from '@widgets/camera';
-import { useEffect, useMemo, useRef } from 'react';
+import { usePostureStore } from '@entities/posture'
+import { cn } from '@shared/lib/cn'
+import { getScoreLevel } from '@shared/lib/get-score-level'
+import { useCameraStore } from '@widgets/camera'
+import { useEffect, useMemo, useRef } from 'react'
 
 const RunningPanel = () => {
-  const score = usePostureStore((state) => state.score);
-  const cameraState = useCameraStore((state) => state.cameraState);
-  const isCameraShow = cameraState === 'show';
-  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+  const score = usePostureStore(state => state.score)
+  const cameraState = useCameraStore(state => state.cameraState)
+  const isCameraShow = cameraState === 'show'
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null)
 
   // 점수 기반 레벨 계산
-  const levelInfo = useMemo(() => getScoreLevel(score), [score]);
+  const levelInfo = useMemo(() => getScoreLevel(score), [score])
 
   // 레벨에 따른 비디오 선택
   const levelVideo = useMemo(() => {
     switch (levelInfo.level) {
       case 1:
-        return AngelRiniVideo;
+        return AngelRiniVideo
       case 2:
-        return PmRiniVideo;
+        return PmRiniVideo
       case 3:
-        return RiniVideo;
+        return RiniVideo
       case 4:
-        return BugiVideo;
+        return BugiVideo
       case 5:
-        return StoneBugiVideo;
+        return StoneBugiVideo
       case 6:
-        return TireBugiVideo;
+        return TireBugiVideo
       default:
-        return RiniVideo;
+        return RiniVideo
     }
-  }, [levelInfo.level]);
+  }, [levelInfo.level])
 
   // 레벨에 따른 SVG 선택 (카메라 hide 상태일 때 사용)
   const levelSvgSrc = useMemo(() => {
     switch (levelInfo.level) {
       case 1:
-        return AngelRiniRestSvg;
+        return AngelRiniRestSvg
       case 2:
-        return PmRiniRestSvg;
+        return PmRiniRestSvg
       case 3:
-        return RiniSvg;
+        return RiniSvg
       case 4:
-        return BugiRestSvg;
+        return BugiRestSvg
       case 5:
-        return StoneBugiRestSvg;
+        return StoneBugiRestSvg
       case 6:
-        return TireBugiRestSvg;
+        return TireBugiRestSvg
       default:
-        return RiniSvg;
+        return RiniSvg
     }
-  }, [levelInfo.level]);
+  }, [levelInfo.level])
 
   // 레벨에 따른 게이지바 비율 (레벨이 낮을수록(좋을수록) 더 많이 채워짐)
   const gaugeWidth = useMemo(() => {
@@ -78,19 +78,18 @@ const RunningPanel = () => {
       4: '50%',
       5: '75%',
       6: '100%',
-    };
-    return widthMap[levelInfo.level] || '70%';
-  }, [levelInfo.level]);
+    }
+    return widthMap[levelInfo.level] || '70%'
+  }, [levelInfo.level])
 
   // 레벨에 따른 그라데이션 색상
   const gradient = useMemo(() => {
     // 레벨이 낮을수록(좋을수록) 초록색, 높을수록(나쁠수록) 빨간색
     if (levelInfo.level <= 3) {
-      return 'linear-gradient(90deg, var(--color-olive-green) 0.18%, var(--color-success) 99.7%)';
-    } else {
-      return 'linear-gradient(90deg, var(--color-coral-red) 0%, var(--color-error) 100%)';
+      return 'linear-gradient(90deg, var(--color-olive-green) 0.18%, var(--color-success) 99.7%)'
     }
-  }, [levelInfo.level]);
+    return 'linear-gradient(90deg, var(--color-coral-red) 0%, var(--color-error) 100%)'
+  }, [levelInfo.level])
 
   // 레벨에 따른 상태 텍스트
   const runningStatus = useMemo(() => {
@@ -101,23 +100,23 @@ const RunningPanel = () => {
       4: '천천히 가는 중',
       5: '느릿느릿 가는중..',
       6: '엉금엉금 가는중..', // 가장 나쁨
-    };
-    return statusMap[levelInfo.level] || '가는 중';
-  }, [levelInfo.level]);
+    }
+    return statusMap[levelInfo.level] || '가는 중'
+  }, [levelInfo.level])
 
   // 카메라 상태에 따라 배경 영상 재생/멈춤 제어
   useEffect(() => {
-    const video = backgroundVideoRef.current;
-    if (!video) return;
+    const video = backgroundVideoRef.current
+    if (!video) return
 
     if (isCameraShow) {
-      video.play().catch((error) => {
-        console.warn('배경 영상 재생 실패:', error);
-      });
+      video.play().catch(error => {
+        console.warn('배경 영상 재생 실패:', error)
+      })
     } else {
-      video.pause();
+      video.pause()
     }
-  }, [isCameraShow]);
+  }, [isCameraShow])
 
   return (
     <div className="">
@@ -179,7 +178,7 @@ const RunningPanel = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default RunningPanel;
+export default RunningPanel

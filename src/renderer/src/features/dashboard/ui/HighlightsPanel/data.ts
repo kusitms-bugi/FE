@@ -1,8 +1,8 @@
 export type HighlightDatum = {
-  periodLabel: string;
-  value: number;
-  barKey: 'previous' | 'current';
-};
+  periodLabel: string
+  value: number
+  barKey: 'previous' | 'current'
+}
 
 export const WEEKLY_DATA: HighlightDatum[] = [
   {
@@ -15,9 +15,9 @@ export const WEEKLY_DATA: HighlightDatum[] = [
     value: 321,
     barKey: 'current',
   },
-];
+]
 
 export const MONTHLY_DATA: HighlightDatum[] = [
   { periodLabel: '저번 달', value: 210, barKey: 'previous' },
   { periodLabel: '이번 달', value: 225, barKey: 'current' },
-];
+]

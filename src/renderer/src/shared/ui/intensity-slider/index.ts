@@ -1,1 +1,1 @@
-export { IntensitySlider } from './IntensitySlider';
+export { IntensitySlider } from './IntensitySlider'

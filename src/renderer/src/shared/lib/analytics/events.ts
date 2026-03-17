@@ -1,4 +1,4 @@
-import { logEvent } from './client';
+import { logEvent } from './client'
 
 export const AnalyticsEvents = {
   signUpComplete: (params: { user_id?: string }) =>
@@ -29,20 +29,22 @@ export const AnalyticsEvents = {
     logEvent('bad_posture_enter', params),
 
   postureRecovered: (params: {
-    session_id: string;
-    posture_level: number;
-    recovery_time_sec: number;
+    session_id: string
+    posture_level: number
+    recovery_time_sec: number
   }) => logEvent('posture_recovered', params),
 
   widgetToggle: (params: { enabled: boolean }) =>
     logEvent('widget_toggle', params),
 
-  widgetVisibilityEnd: (params: { duration_sec: number; session_id?: string }) =>
-    logEvent('widget_visibility_end', params),
+  widgetVisibilityEnd: (params: {
+    duration_sec: number
+    session_id?: string
+  }) => logEvent('widget_visibility_end', params),
 
   notificationToggle: (params: { enabled: boolean }) =>
     logEvent('notification_toggle', params),
 
   meaningfulUse: (params: { type: string }) =>
     logEvent('meaningful_use', params),
-} as const;
+} as const

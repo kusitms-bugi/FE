@@ -1,15 +1,15 @@
-import stepOneCharacter from '@assets/main/averagePosture/step_one_character.png';
-import stepTwoCharacter from '@assets/main/averagePosture/step_two_character.png';
-import stepThreeCharacter from '@assets/main/averagePosture/step_three_character.png';
-import stepFourCharacter from '@assets/main/averagePosture/step_four_character.png';
-import stepFiveCharacter from '@assets/main/averagePosture/step_five_character.png';
+import stepFiveCharacter from '@assets/main/averagePosture/step_five_character.png'
+import stepFourCharacter from '@assets/main/averagePosture/step_four_character.png'
+import stepOneCharacter from '@assets/main/averagePosture/step_one_character.png'
+import stepThreeCharacter from '@assets/main/averagePosture/step_three_character.png'
+import stepTwoCharacter from '@assets/main/averagePosture/step_two_character.png'
 
 export interface LevelInfo {
-  level: number;
-  name: string;
-  tilt: string;
-  weight: string;
-  character: string;
+  level: number
+  name: string
+  tilt: string
+  weight: string
+  character: string
 }
 
 // 점수에 따른 레벨 정보
@@ -49,13 +49,13 @@ export const LEVEL_INFO: LevelInfo[] = [
     weight: '약 5–6 kg',
     character: stepFiveCharacter,
   },
-];
+]
 
 // 점수에 따른 레벨 계산
 export const getLevel = (score: number): number => {
-  if (score < 35) return 1;
-  if (score < 55) return 2;
-  if (score < 72) return 3;
-  if (score < 88) return 4;
-  return 5;
-};
+  if (score < 35) return 1
+  if (score < 55) return 2
+  if (score < 72) return 3
+  if (score < 88) return 4
+  return 5
+}

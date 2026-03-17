@@ -1,15 +1,15 @@
-import firstDarkImage from '@assets/onboarding/first_dark_image.png';
-import firstImage from '@assets/onboarding/first_image.png';
-import fourthDarkImage from '@assets/onboarding/fourth_dark_image.png';
-import fourthImage from '@assets/onboarding/fourth_image.png';
-import PrevIcon from '@assets/onboarding/prev_icon.svg?react';
-import RockIcon from '@assets/onboarding/rock_icon.svg?react';
-import secondDarkImage from '@assets/onboarding/second_dark_image.png';
-import secondImage from '@assets/onboarding/second_image.png';
-import thirdDarkImage from '@assets/onboarding/third_dark_image.png';
-import thirdImage from '@assets/onboarding/third_image.png';
-import { useEffect, useState } from 'react';
-import FirstImageDescription from './FirstImageDescription';
+import firstDarkImage from '@assets/onboarding/first_dark_image.png'
+import firstImage from '@assets/onboarding/first_image.png'
+import fourthDarkImage from '@assets/onboarding/fourth_dark_image.png'
+import fourthImage from '@assets/onboarding/fourth_image.png'
+import PrevIcon from '@assets/onboarding/prev_icon.svg?react'
+import RockIcon from '@assets/onboarding/rock_icon.svg?react'
+import secondDarkImage from '@assets/onboarding/second_dark_image.png'
+import secondImage from '@assets/onboarding/second_image.png'
+import thirdDarkImage from '@assets/onboarding/third_dark_image.png'
+import thirdImage from '@assets/onboarding/third_image.png'
+import { useEffect, useState } from 'react'
+import FirstImageDescription from './FirstImageDescription'
 
 /* 단계별 이미지 (1단계는 null, 2~5단계는 이미지) */
 const STEP_IMAGES_LIGHT = [
@@ -18,19 +18,19 @@ const STEP_IMAGES_LIGHT = [
   secondImage,
   thirdImage,
   fourthImage,
-];
+]
 const STEP_IMAGES_DARK = [
   null,
   firstDarkImage,
   secondDarkImage,
   thirdDarkImage,
   fourthDarkImage,
-];
+]
 
 interface ImageDescriptionPannelProps {
-  currentStep: number;
-  onPrev: () => void;
-  direction: 'next' | 'prev';
+  currentStep: number
+  onPrev: () => void
+  direction: 'next' | 'prev'
 }
 
 const ImageDescriptionPannel = ({
@@ -40,35 +40,35 @@ const ImageDescriptionPannel = ({
 }: ImageDescriptionPannelProps) => {
   const [isDark, setIsDark] = useState(() =>
     document.documentElement.classList.contains('dark'),
-  );
+  )
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    });
+      setIsDark(document.documentElement.classList.contains('dark'))
+    })
 
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class'],
-    });
+    })
 
-    return () => observer.disconnect();
-  }, []);
+    return () => observer.disconnect()
+  }, [])
 
   /* 이미지 프리로드 */
   useEffect(() => {
     const allImages = [...STEP_IMAGES_LIGHT, ...STEP_IMAGES_DARK].filter(
       (src): src is string => src !== null,
-    );
+    )
 
-    allImages.forEach((src) => {
-      const img = new Image();
-      img.src = src;
-    });
-  }, []);
+    allImages.forEach(src => {
+      const img = new Image()
+      img.src = src
+    })
+  }, [])
 
-  const stepImages = isDark ? STEP_IMAGES_DARK : STEP_IMAGES_LIGHT;
-  const stepImage = stepImages[currentStep - 1];
+  const stepImages = isDark ? STEP_IMAGES_DARK : STEP_IMAGES_LIGHT
+  const stepImage = stepImages[currentStep - 1]
 
   return (
     <div className="h-full min-w-[894px] flex-1">
@@ -112,7 +112,7 @@ const ImageDescriptionPannel = ({
         </p>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ImageDescriptionPannel;
+export default ImageDescriptionPannel

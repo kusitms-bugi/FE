@@ -1,58 +1,53 @@
-import FailIcon from '@assets/auth/error_icon.svg?react';
-import SaveIdIcon from '@assets/auth/saveid_icon.svg?react';
-import { useLoginMutation } from '@entities/user';
-import { TextField as TextInput } from '@shared/ui/input-field';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import LoginButton from './LoginButton';
-import PasswordField from './PasswordField';
+import FailIcon from '@assets/auth/error_icon.svg?react'
+import SaveIdIcon from '@assets/auth/saveid_icon.svg?react'
+import { useLoginMutation } from '@entities/user'
+import { TextField as TextInput } from '@shared/ui/input-field'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import LoginButton from './LoginButton'
+import PasswordField from './PasswordField'
 
 interface LoginFormData {
-  email: string;
-  password: string;
-  saveId: boolean;
+  email: string
+  password: string
+  saveId: boolean
 }
 
-const SAVED_EMAIL_KEY = 'savedEmail';
+const SAVED_EMAIL_KEY = 'savedEmail'
 
 const LoginForm = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-  } = useForm<LoginFormData>({
+  const { register, handleSubmit, watch, setValue } = useForm<LoginFormData>({
     mode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
       saveId: false,
     },
-  });
+  })
 
   useEffect(() => {
-    const savedEmail = localStorage.getItem(SAVED_EMAIL_KEY);
+    const savedEmail = localStorage.getItem(SAVED_EMAIL_KEY)
     if (savedEmail) {
-      setValue('email', savedEmail);
-      setValue('saveId', true);
+      setValue('email', savedEmail)
+      setValue('saveId', true)
     }
-  }, [setValue]);
+  }, [setValue])
 
-  const loginMutation = useLoginMutation();
-  const navigate = useNavigate();
+  const loginMutation = useLoginMutation()
+  const navigate = useNavigate()
 
   /* @react-refresh-ignore */
-  const email = watch('email');
+  const email = watch('email')
   /* @react-refresh-ignore */
-  const password = watch('password');
+  const password = watch('password')
 
   const handleSaveIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue('saveId', e.target.checked);
-  };
+    setValue('saveId', e.target.checked)
+  }
 
   const onSubmit = (data: LoginFormData) => {
-    console.log('로그인 시도:', data);
+    console.log('로그인 시도:', data)
 
     loginMutation.mutate(
       {
@@ -63,14 +58,14 @@ const LoginForm = () => {
         onSuccess: () => {
           /* 로그인 성공 시 아이디 저장 처리 */
           if (data.saveId) {
-            localStorage.setItem(SAVED_EMAIL_KEY, data.email);
+            localStorage.setItem(SAVED_EMAIL_KEY, data.email)
           } else {
-            localStorage.removeItem(SAVED_EMAIL_KEY);
+            localStorage.removeItem(SAVED_EMAIL_KEY)
           }
         },
       },
-    );
-  };
+    )
+  }
 
   return (
     <>
@@ -131,7 +126,7 @@ const LoginForm = () => {
         <span className="cursor-pointer">비밀번호 찾기</span>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm

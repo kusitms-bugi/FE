@@ -1,26 +1,24 @@
-import FailIcon from '@assets/auth/error_icon.svg?react';
-import SuccessIcon from '@assets/auth/success_icon.svg?react';
+import FailIcon from '@assets/auth/error_icon.svg?react'
+import SuccessIcon from '@assets/auth/success_icon.svg?react'
 import {
   useDuplicatedEmailMutation,
   useEmailStore,
   useSignupMutation,
-} from '@entities/user';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@shared/ui/button';
-import { TextField } from '@shared/ui/input-field';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import PasswordField from '../../login/components/PasswordField';
-import { SignUpFormData, signUpSchema } from '../utils/SignupSchemas';
+} from '@entities/user'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Button } from '@shared/ui/button'
+import { TextField } from '@shared/ui/input-field'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import PasswordField from '../../login/components/PasswordField'
+import { type SignUpFormData, signUpSchema } from '../utils/SignupSchemas'
 
 const SignUpForm = () => {
-  const { mutate: checkDuplicateEmail } = useDuplicatedEmailMutation();
-  const signupMutation = useSignupMutation();
-  const [duplicateMessage, setDuplicateMessage] = useState<string | null>(null);
-  const [duplicateSuccess, setDuplicateSuccess] = useState<boolean | null>(
-    null,
-  );
-  const { setEmail } = useEmailStore();
+  const { mutate: checkDuplicateEmail } = useDuplicatedEmailMutation()
+  const signupMutation = useSignupMutation()
+  const [duplicateMessage, setDuplicateMessage] = useState<string | null>(null)
+  const [duplicateSuccess, setDuplicateSuccess] = useState<boolean | null>(null)
+  const { setEmail } = useEmailStore()
   const {
     register,
     handleSubmit,
@@ -36,43 +34,43 @@ const SignUpForm = () => {
       confirmPassword: '',
       name: '',
     },
-  });
+  })
 
-  const formValues = watch();
+  const formValues = watch()
 
   /* 이메일 중복 확인 */
   const handleDuplicateCheck = () => {
-    const email = getValues('email');
-    if (!email) return;
+    const email = getValues('email')
+    if (!email) return
 
     checkDuplicateEmail(email, {
-      onSuccess: (data) => {
+      onSuccess: data => {
         if (data?.data?.isDuplicate) {
-          console.log(data);
-          setDuplicateSuccess(false);
-          setDuplicateMessage('이미 가입된 이메일입니다.');
+          console.log(data)
+          setDuplicateSuccess(false)
+          setDuplicateMessage('이미 가입된 이메일입니다.')
         } else {
-          console.log(data);
-          setDuplicateSuccess(true);
-          setDuplicateMessage('사용 가능한 이메일입니다');
+          console.log(data)
+          setDuplicateSuccess(true)
+          setDuplicateMessage('사용 가능한 이메일입니다')
         }
       },
       onError: () => {
-        setDuplicateSuccess(false);
-        setDuplicateMessage('이미 가입된 이메일입니다.');
+        setDuplicateSuccess(false)
+        setDuplicateMessage('이미 가입된 이메일입니다.')
       },
-    });
-  };
+    })
+  }
 
   /* 회원가입 */
   const onSubmit = (data: SignUpFormData) => {
     if (duplicateSuccess !== true) {
-      setDuplicateMessage('이메일 중복확인을 완료해주세요');
-      setDuplicateSuccess(false);
-      return;
+      setDuplicateMessage('이메일 중복확인을 완료해주세요')
+      setDuplicateSuccess(false)
+      return
     }
 
-    setEmail(data.email);
+    setEmail(data.email)
 
     signupMutation.mutate({
       email: data.email,
@@ -80,8 +78,8 @@ const SignUpForm = () => {
       name: data.name,
       avatar: '',
       callbackUrl: '',
-    });
-  };
+    })
+  }
 
   return (
     <form
@@ -105,19 +103,20 @@ const SignUpForm = () => {
               onChange: () => {
                 // 이메일 값이 바뀌면 중복확인 상태 초기화
                 if (duplicateSuccess !== null) {
-                  setDuplicateSuccess(null);
-                  setDuplicateMessage(null);
+                  setDuplicateSuccess(null)
+                  setDuplicateMessage(null)
                 }
               },
             })}
-            className={`hbp:text-body-xl-regular aspect-[338/60] flex-1 ${errors.email
+            className={`hbp:text-body-xl-regular aspect-[338/60] flex-1 ${
+              errors.email
                 ? '!border-error'
                 : duplicateSuccess === true
                   ? '!border-success'
                   : duplicateSuccess === false
                     ? '!border-error'
                     : ''
-              }`}
+            }`}
           />
           <Button
             onClick={handleDuplicateCheck}
@@ -129,10 +128,11 @@ const SignUpForm = () => {
         </div>
         {(errors.email || duplicateMessage) && (
           <div
-            className={`flex gap-1.5 ${errors.email || duplicateSuccess === false
+            className={`flex gap-1.5 ${
+              errors.email || duplicateSuccess === false
                 ? 'text-error'
                 : 'text-success'
-              }`}
+            }`}
           >
             {errors.email || duplicateSuccess === false ? (
               <FailIcon />
@@ -172,7 +172,7 @@ const SignUpForm = () => {
             !formValues.confirmPassword
               ? '' // 아무 입력 없으면 기본
               : formValues.password === formValues.confirmPassword &&
-                !errors.password
+                  !errors.password
                 ? '!border-success' // 입력 있음 + 비밀번호 조건 통과 + 일치시 초록색
                 : '!border-error' // 그 외는 모두 빨간색
           }
@@ -181,25 +181,25 @@ const SignUpForm = () => {
         {
           /* 비밀번호 일치 여부 및 유효성 메시지 표시 */
           formValues.confirmPassword &&
-          (() => {
-            /*비밀번호 불일치 또는 유효성 조건 미충족*/
-            const isError =
-              formValues.password !== formValues.confirmPassword ||
-              !!errors.password;
+            (() => {
+              /*비밀번호 불일치 또는 유효성 조건 미충족*/
+              const isError =
+                formValues.password !== formValues.confirmPassword ||
+                !!errors.password
 
-            const colorClass = isError ? 'text-error' : 'text-success';
-            const Icon = isError ? FailIcon : SuccessIcon;
-            const message = isError
-              ? errors.password?.message || '비밀번호가 일치하지 않습니다.'
-              : '비밀번호가 일치합니다.';
+              const colorClass = isError ? 'text-error' : 'text-success'
+              const Icon = isError ? FailIcon : SuccessIcon
+              const message = isError
+                ? errors.password?.message || '비밀번호가 일치하지 않습니다.'
+                : '비밀번호가 일치합니다.'
 
-            return (
-              <div className={`mt-1 flex gap-1.5 ${colorClass}`}>
-                <Icon />
-                <p className="text-caption-sm-regular">{message}</p>
-              </div>
-            );
-          })()
+              return (
+                <div className={`mt-1 flex gap-1.5 ${colorClass}`}>
+                  <Icon />
+                  <p className="text-caption-sm-regular">{message}</p>
+                </div>
+              )
+            })()
         }
       </div>
 
@@ -224,8 +224,9 @@ const SignUpForm = () => {
 
         {(formValues.name || !!errors.name) && (
           <div
-            className={`mt-1 flex items-center gap-1.5 ${errors.name ? 'text-error' : 'text-success'
-              }`}
+            className={`mt-1 flex items-center gap-1.5 ${
+              errors.name ? 'text-error' : 'text-success'
+            }`}
           >
             {errors.name ? <FailIcon /> : <SuccessIcon />}
             <p className="text-caption-sm-regular">
@@ -243,7 +244,7 @@ const SignUpForm = () => {
         disabled={!isValid || signupMutation.isPending}
       />
     </form>
-  );
-};
+  )
+}
 
-export default SignUpForm;
+export default SignUpForm

@@ -1,8 +1,8 @@
-import { Button } from '@shared/ui/button';
+import { Button } from '@shared/ui/button'
 
 interface WelcomePanelProps {
-  isPoseDetected: boolean;
-  onStartMeasurement: () => void;
+  isPoseDetected: boolean
+  onStartMeasurement: () => void
 }
 
 const WelcomePanel = ({
@@ -10,7 +10,7 @@ const WelcomePanel = ({
   onStartMeasurement,
 }: WelcomePanelProps) => {
   // localStorage에서 사용자 이름 가져오기
-  const username = localStorage.getItem('userName') || '사용자';
+  const username = localStorage.getItem('userName') || '사용자'
 
   return (
     <div className="flex w-[422px] min-w-[422px] shrink-0 flex-col pt-12">
@@ -32,7 +32,7 @@ const WelcomePanel = ({
         onClick={onStartMeasurement}
       />
     </div>
-  );
-};
+  )
+}
 
-export default WelcomePanel;
+export default WelcomePanel

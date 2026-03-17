@@ -1,1 +1,1 @@
-export { PannelHeader } from './PannelHeader';
+export { PannelHeader } from './PannelHeader'

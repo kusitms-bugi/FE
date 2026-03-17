@@ -1,1 +1,1 @@
-export { PageMoveButton } from './PageMoveButton';
+export { PageMoveButton } from './PageMoveButton'

@@ -1,9 +1,9 @@
+import { join } from 'node:path'
 // main/src/mainWindow.ts
-import { app, BrowserWindow } from 'electron';
-import { join } from 'path';
+import { BrowserWindow, app } from 'electron'
 
-const MIN_W = 1280;
-const MIN_H = 800;
+const MIN_W = 1280
+const MIN_H = 800
 
 async function createWindow() {
   const win = new BrowserWindow({
@@ -23,25 +23,25 @@ async function createWindow() {
       allowRunningInsecureContent: false,
       backgroundThrottling: false,
     },
-  });
+  })
 
   win.on('ready-to-show', () => {
-    win.center();
-    win.show();
-  });
+    win.center()
+    win.show()
+  })
 
   const pageUrl =
     import.meta.env.DEV && process.env.VITE_DEV_SERVER_URL
       ? process.env.VITE_DEV_SERVER_URL
-      : 'https://app.bugi.co.kr/';
+      : 'https://app.bugi.co.kr/'
 
-  await win.loadURL(pageUrl);
-  return win;
+  await win.loadURL(pageUrl)
+  return win
 }
 
 export async function restoreOrCreateWindow() {
-  let w = BrowserWindow.getAllWindows().find((x) => !x.isDestroyed());
-  if (!w) w = await createWindow();
-  if (w.isMinimized()) w.restore();
-  w.focus();
+  let w = BrowserWindow.getAllWindows().find(x => !x.isDestroyed())
+  if (!w) w = await createWindow()
+  if (w.isMinimized()) w.restore()
+  w.focus()
 }

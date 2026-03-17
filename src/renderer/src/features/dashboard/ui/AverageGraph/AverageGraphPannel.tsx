@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { PannelHeader } from '@shared/ui/panel-header'
+import { ToggleSwitch } from '@shared/ui/toggle-switch'
+import { useState } from 'react'
 import {
   Area,
   AreaChart,
@@ -7,34 +9,31 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts';
-import { PannelHeader } from '@shared/ui/panel-header';
-import { ToggleSwitch } from '@shared/ui/toggle-switch';
+} from 'recharts'
 import {
-  useAverageGraphChart,
   type AverageGraphPeriod,
-} from './hooks/useAverageGraphChart';
+  useAverageGraphChart,
+} from './hooks/useAverageGraphChart'
 
 const AverageGraphPannel = () => {
-  const [activePeriod, setActivePeriod] =
-    useState<AverageGraphPeriod>('weekly');
+  const [activePeriod, setActivePeriod] = useState<AverageGraphPeriod>('weekly')
 
   const { data, maxDomain, fillColor, strokeColor, gridColor, yAxisTicks } =
-    useAverageGraphChart(activePeriod);
+    useAverageGraphChart(activePeriod)
 
   const handleToggleChange = (isMonthly: boolean) => {
-    setActivePeriod(isMonthly ? 'monthly' : 'weekly');
-  };
+    setActivePeriod(isMonthly ? 'monthly' : 'weekly')
+  }
 
   /* 월간일 때는 12개 항목이 부모 너비 100%를 차지하도록 설정 */
   /* 12개 이하면 항상 100%, 12개 초과면 스크롤로 나머지 데이터 표시 */
   const chartWidth =
     activePeriod === 'monthly' && data.length > 12
       ? (`${(100 / 12) * data.length}%` as `${number}%`)
-      : '100%';
+      : '100%'
 
   /* 월간일 때만 스크롤 o */
-  const showScroll = activePeriod === 'monthly' && data.length > 12;
+  const showScroll = activePeriod === 'monthly' && data.length > 12
 
   return (
     <div className="flex h-full flex-col rounded-2xl p-5">
@@ -110,7 +109,7 @@ const AverageGraphPannel = () => {
         </ResponsiveContainer>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AverageGraphPannel;
+export default AverageGraphPannel

@@ -1,27 +1,27 @@
-import HideIcon from '@assets/common/icons/hide.svg?react';
-import ShowIcon from '@assets/common/icons/show.svg?react';
-import WidgetIcon from '@assets/common/icons/widget.svg?react';
+import HideIcon from '@assets/common/icons/hide.svg?react'
+import ShowIcon from '@assets/common/icons/show.svg?react'
+import WidgetIcon from '@assets/common/icons/widget.svg?react'
+import { useLevelQuery } from '@entities/dashboard'
+import type { PoseLandmark, WorldLandmark } from '@entities/posture'
 import {
   useCreateSessionMutation,
   usePauseSessionMutation,
   useResumeSessionMutation,
   useStopSessionMutation,
-} from '@entities/session';
-import { Button } from '@shared/ui/button';
-import { PoseLandmark, WorldLandmark } from '@entities/posture';
-import { useWidget } from '@widgets/widget';
-import { useCameraStore } from '@widgets/camera';
-import { WebcamView } from '@features/calibration/ui';
-import { useLevelQuery } from '@entities/dashboard';
+} from '@entities/session'
+import { WebcamView } from '@features/calibration/ui'
+import { Button } from '@shared/ui/button'
+import { useCameraStore } from '@widgets/camera'
+import { useWidget } from '@widgets/widget'
 
 interface Props {
-  onUserMediaError: (e: string | DOMException) => void;
+  onUserMediaError: (e: string | DOMException) => void
   onPoseDetected: (
     landmarks: PoseLandmark[],
     worldLandmarks?: WorldLandmark[],
-  ) => void;
-  onToggleWebcam: () => void;
-  onSendMetrics: () => Promise<void>;
+  ) => void
+  onToggleWebcam: () => void
+  onSendMetrics: () => Promise<void>
 }
 
 const WebcamPanel = ({
@@ -29,20 +29,20 @@ const WebcamPanel = ({
   onToggleWebcam,
   onSendMetrics,
 }: Props) => {
-  const { cameraState, setShow, setHide, setExit } = useCameraStore();
-  const { toggleWidget, isWidgetOpen } = useWidget();
-  const isWebcamOn = cameraState === 'show';
-  const isExit = cameraState === 'exit';
+  const { cameraState, setShow, setHide, setExit } = useCameraStore()
+  const { toggleWidget, isWidgetOpen } = useWidget()
+  const isWebcamOn = cameraState === 'show'
+  const isExit = cameraState === 'exit'
 
   const { mutate: createSession, isPending: isCreatingSession } =
-    useCreateSessionMutation();
+    useCreateSessionMutation()
   const { mutate: stopSession, isPending: isStoppingSession } =
-    useStopSessionMutation();
+    useStopSessionMutation()
   const { mutate: pauseSession, isPending: isPausingSession } =
-    usePauseSessionMutation();
+    usePauseSessionMutation()
   const { mutate: resumeSession, isPending: isResumingSession } =
-    useResumeSessionMutation();
-  const { data: levelData } = useLevelQuery();
+    useResumeSessionMutation()
+  const { data: levelData } = useLevelQuery()
 
   const handleStartStop = async () => {
     if (isExit) {
@@ -50,75 +50,72 @@ const WebcamPanel = ({
       createSession(undefined, {
         onSuccess: () => {
           /* 세션 시작 시점의 이동거리 저장 */
-          const startDistance = levelData?.data.current || 0;
-          localStorage.setItem(
-            'sessionStartDistance',
-            startDistance.toString(),
-          );
+          const startDistance = levelData?.data.current || 0
+          localStorage.setItem('sessionStartDistance', startDistance.toString())
 
-          setShow();
+          setShow()
         },
-      });
+      })
     } else {
       // 종료하기: 메트릭 전송 완료 → 세션 중단 → 카메라 종료 → 위젯 닫기
-      const sessionId = localStorage.getItem('sessionId');
+      const sessionId = localStorage.getItem('sessionId')
       if (sessionId) {
         // 1. 수집된 메트릭을 서버로 전송 (완료 대기)
-        await onSendMetrics();
+        await onSendMetrics()
 
         // 2. 세션 종료 (메트릭 전송 완료 후 실행)
         stopSession(sessionId, {
           onSuccess: () => {
-            setExit();
+            setExit()
             // 3. 위젯이 열려있으면 닫기
             if (isWidgetOpen) {
-              toggleWidget();
+              toggleWidget()
             }
           },
-        });
+        })
       } else {
         // sessionId가 없으면 그냥 카메라만 종료
-        setExit();
+        setExit()
         // 위젯이 열려있으면 닫기
         if (isWidgetOpen) {
-          toggleWidget();
+          toggleWidget()
         }
       }
     }
-  };
+  }
 
   // 카메라 보이기/숨기기 버튼: 일시정지/재개
   const handleToggleCamera = () => {
-    const sessionId = localStorage.getItem('sessionId');
+    const sessionId = localStorage.getItem('sessionId')
 
     if (isWebcamOn) {
       // 카메라 보이는 상태 → 숨기기: 세션 일시정지
       if (sessionId) {
         pauseSession(sessionId, {
           onSuccess: () => {
-            setHide();
-            onToggleWebcam();
+            setHide()
+            onToggleWebcam()
           },
-        });
+        })
       } else {
-        setHide();
-        onToggleWebcam();
+        setHide()
+        onToggleWebcam()
       }
     } else {
       // 카메라 숨김 상태 → 보이기: 세션 재개
       if (sessionId) {
         resumeSession(sessionId, {
           onSuccess: () => {
-            setShow();
-            onToggleWebcam();
+            setShow()
+            onToggleWebcam()
           },
-        });
+        })
       } else {
-        setShow();
-        onToggleWebcam();
+        setShow()
+        onToggleWebcam()
       }
     }
-  };
+  }
 
   return (
     <div className="flex w-full flex-col gap-3">
@@ -171,7 +168,7 @@ const WebcamPanel = ({
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default WebcamPanel;
+export default WebcamPanel

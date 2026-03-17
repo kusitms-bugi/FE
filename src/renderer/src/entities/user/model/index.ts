@@ -1,1 +1,1 @@
-export { useEmailStore } from './use-email-store';
+export { useEmailStore } from './use-email-store'

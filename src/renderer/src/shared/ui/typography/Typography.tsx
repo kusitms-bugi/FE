@@ -1,5 +1,5 @@
-import React from 'react';
-import { cn } from '@shared/lib/cn';
+import { cn } from '@shared/lib/cn'
+import type React from 'react'
 
 interface TypographyProps {
   variant?:
@@ -22,10 +22,10 @@ interface TypographyProps {
     | 'body-md-semibold'
     | 'caption-sm-regular'
     | 'caption-sm-medium'
-    | 'caption-sm-semibold';
-  children: React.ReactNode;
-  className?: string;
-  as?: React.ElementType;
+    | 'caption-sm-semibold'
+  children: React.ReactNode
+  className?: string
+  as?: React.ElementType
 }
 
 export function Typography({
@@ -55,11 +55,11 @@ export function Typography({
     'caption-sm-regular': 'text-caption-sm-regular',
     'caption-sm-medium': 'text-caption-sm-medium',
     'caption-sm-semibold': 'text-caption-sm-semibold',
-  };
+  }
 
   return (
     <Component className={cn(variantClasses[variant], className)}>
       {children}
     </Component>
-  );
+  )
 }

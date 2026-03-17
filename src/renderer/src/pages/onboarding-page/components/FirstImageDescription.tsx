@@ -1,8 +1,8 @@
-import GiraffeIcon from '@assets/onboarding/giraffe.svg?react';
-import TurtleIcon from '@assets/onboarding/turtle.svg?react';
+import GiraffeIcon from '@assets/onboarding/giraffe.svg?react'
+import TurtleIcon from '@assets/onboarding/turtle.svg?react'
 
 const FirstImageDescription = () => {
-  const userName = localStorage.getItem('userName') || '사용자';
+  const userName = localStorage.getItem('userName') || '사용자'
 
   return (
     <div className="relative flex h-full flex-col items-center justify-center">
@@ -14,7 +14,7 @@ const FirstImageDescription = () => {
         <GiraffeIcon />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default FirstImageDescription;
+export default FirstImageDescription

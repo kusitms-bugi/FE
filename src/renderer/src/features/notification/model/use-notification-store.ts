@@ -1,30 +1,30 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 export interface NotificationSettings {
-  isAllow: boolean;
+  isAllow: boolean
   stretching: {
-    isEnabled: boolean;
-    interval: number; // 분 단위
-  };
+    isEnabled: boolean
+    interval: number // 분 단위
+  }
   turtleNeck: {
-    isEnabled: boolean;
-    interval: number; // 분 단위
-  };
+    isEnabled: boolean
+    interval: number // 분 단위
+  }
 }
 
 interface NotificationStore extends NotificationSettings {
-  setIsAllow: (isAllow: boolean) => void;
-  setStretchingEnabled: (isEnabled: boolean) => void;
-  setStretchingInterval: (interval: number) => void;
-  setTurtleNeckEnabled: (isEnabled: boolean) => void;
-  setTurtleNeckInterval: (interval: number) => void;
-  setSettings: (settings: NotificationSettings) => void;
+  setIsAllow: (isAllow: boolean) => void
+  setStretchingEnabled: (isEnabled: boolean) => void
+  setStretchingInterval: (interval: number) => void
+  setTurtleNeckEnabled: (isEnabled: boolean) => void
+  setTurtleNeckInterval: (interval: number) => void
+  setSettings: (settings: NotificationSettings) => void
 }
 
 export const useNotificationStore = create<NotificationStore>()(
   persist(
-    (set) => ({
+    set => ({
       isAllow: false,
       stretching: {
         isEnabled: false,
@@ -35,33 +35,33 @@ export const useNotificationStore = create<NotificationStore>()(
         interval: 10,
       },
 
-      setIsAllow: (isAllow) => set({ isAllow }),
+      setIsAllow: isAllow => set({ isAllow }),
 
-      setStretchingEnabled: (isEnabled) =>
-        set((state) => ({
+      setStretchingEnabled: isEnabled =>
+        set(state => ({
           stretching: { ...state.stretching, isEnabled },
         })),
 
-      setStretchingInterval: (interval) =>
-        set((state) => ({
+      setStretchingInterval: interval =>
+        set(state => ({
           stretching: { ...state.stretching, interval },
         })),
 
-      setTurtleNeckEnabled: (isEnabled) =>
-        set((state) => ({
+      setTurtleNeckEnabled: isEnabled =>
+        set(state => ({
           turtleNeck: { ...state.turtleNeck, isEnabled },
         })),
 
-      setTurtleNeckInterval: (interval) =>
-        set((state) => ({
+      setTurtleNeckInterval: interval =>
+        set(state => ({
           turtleNeck: { ...state.turtleNeck, interval },
         })),
 
-      setSettings: (settings) => set(settings),
+      setSettings: settings => set(settings),
     }),
     {
       name: 'notification-settings-storage',
       storage: createJSONStorage(() => sessionStorage),
     },
   ),
-);
+)

@@ -1,21 +1,21 @@
-import AchivementMedal from '@assets/main/achivement_meadl.svg?react';
-import { useLevelQuery } from '@entities/dashboard';
-import { useModal } from '@shared/hooks/use-modal';
-import { LoadingSpinner } from '@shared/ui/loading';
-import { PannelHeader } from '@shared/ui/panel-header';
-import { lazy, Suspense } from 'react';
+import AchivementMedal from '@assets/main/achivement_meadl.svg?react'
+import { useLevelQuery } from '@entities/dashboard'
+import { useModal } from '@shared/hooks/use-modal'
+import { LoadingSpinner } from '@shared/ui/loading'
+import { PannelHeader } from '@shared/ui/panel-header'
+import { Suspense, lazy } from 'react'
 
 // TotalDistanceModal을 lazy import
-const TotalDistanceModal = lazy(() => import('./TotalDistanceModal'));
+const TotalDistanceModal = lazy(() => import('./TotalDistanceModal'))
 
 const TotalDistance = () => {
-  const { data, isLoading } = useLevelQuery();
-  const { isOpen, open, close } = useModal();
+  const { data, isLoading } = useLevelQuery()
+  const { isOpen, open, close } = useModal()
 
-  const level = data?.data.level ?? 1;
-  const current = data?.data.current ?? 0;
-  const required = data?.data.required ?? 1000;
-  const progressPercentage = (current / required) * 100;
+  const level = data?.data.level ?? 1
+  const current = data?.data.current ?? 0
+  const required = data?.data.required ?? 1000
+  const progressPercentage = (current / required) * 100
 
   return (
     <>
@@ -41,8 +41,8 @@ const TotalDistance = () => {
         </p>
         {/*게이지 바*/}
         <div className="bg-grey-50 relative my-[13.5px] h-3 w-[calc(100%-16px)] items-center rounded-full">
-          <div className="bg-grey-100 absolute top-[2px] left-1/3 z-0 h-2 w-2 -translate-x-1/3 rounded-full"></div>
-          <div className="bg-grey-100 absolute top-[2px] left-2/3 z-0 h-2 w-2 -translate-x-2/3 rounded-full"></div>
+          <div className="bg-grey-100 absolute top-[2px] left-1/3 z-0 h-2 w-2 -translate-x-1/3 rounded-full" />
+          <div className="bg-grey-100 absolute top-[2px] left-2/3 z-0 h-2 w-2 -translate-x-2/3 rounded-full" />
           {/*진행바 */}
           <div
             className="relative z-10 flex h-full items-center justify-end rounded-full bg-yellow-400 py-[3px] pr-[3px] transition-all duration-1000"
@@ -54,7 +54,7 @@ const TotalDistance = () => {
         </div>
         <div className="text-caption-xs-regular text-grey-300 flex w-full items-center justify-between">
           {Array.from({ length: 4 }, (_, i) => i * (required / 3)).map(
-            (value) => (
+            value => (
               <span key={value}>{Math.floor(value).toLocaleString()}</span>
             ),
           )}
@@ -72,7 +72,7 @@ const TotalDistance = () => {
         </Suspense>
       )}
     </>
-  );
-};
+  )
+}
 
-export default TotalDistance;
+export default TotalDistance

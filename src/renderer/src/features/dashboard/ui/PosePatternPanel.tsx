@@ -1,20 +1,20 @@
-import * as React from 'react';
+import * as React from 'react'
 
-import CalendarIcon from '@assets/common/icons/calendar.svg?react';
-import ChevronRigthIcon from '@assets/common/icons/chevron-right.svg?react';
-import ClockIcon from '@assets/common/icons/clock.svg?react';
-import GlassHourIcon from '@assets/common/icons/hourglass.svg?react';
-import TumbupIcon from '@assets/common/icons/thumbup.svg?react';
-import { usePosturePatternQuery } from '@entities/dashboard';
-import { PannelHeader } from '@shared/ui/panel-header';
+import CalendarIcon from '@assets/common/icons/calendar.svg?react'
+import ChevronRigthIcon from '@assets/common/icons/chevron-right.svg?react'
+import ClockIcon from '@assets/common/icons/clock.svg?react'
+import GlassHourIcon from '@assets/common/icons/hourglass.svg?react'
+import TumbupIcon from '@assets/common/icons/thumbup.svg?react'
+import { usePosturePatternQuery } from '@entities/dashboard'
+import { PannelHeader } from '@shared/ui/panel-header'
 
 // 시간 형식 변환: "14:00:00" -> "오후 2시"
 const formatTime = (timeStr: string): string => {
-  const [hours,] = timeStr.split(':').map(Number);
-  const hour12 = hours % 12 || 12;
-  const period = hours < 12 ? '오전' : '오후';
-  return `${period} ${hour12}시`;
-};
+  const [hours] = timeStr.split(':').map(Number)
+  const hour12 = hours % 12 || 12
+  const period = hours < 12 ? '오전' : '오후'
+  return `${period} ${hour12}시`
+}
 
 // 요일 변환: "FRIDAY" -> "금요일"
 const formatDay = (dayStr: string): string => {
@@ -26,17 +26,17 @@ const formatDay = (dayStr: string): string => {
     FRIDAY: '금요일',
     SATURDAY: '토요일',
     SUNDAY: '일요일',
-  };
-  return dayMap[dayStr] || dayStr;
-};
+  }
+  return dayMap[dayStr] || dayStr
+}
 
-type PatternHeaderIcon = 'thumb' | 'clock' | 'calendar' | 'hourglass';
+type PatternHeaderIcon = 'thumb' | 'clock' | 'calendar' | 'hourglass'
 
 interface PatternHeaderProps {
-  children?: React.ReactNode;
-  icon: PatternHeaderIcon;
-  className?: string;
-  iconSize?: number;
+  children?: React.ReactNode
+  icon: PatternHeaderIcon
+  className?: string
+  iconSize?: number
 }
 
 const iconMap: Record<
@@ -47,11 +47,11 @@ const iconMap: Record<
   clock: ClockIcon,
   calendar: CalendarIcon,
   hourglass: GlassHourIcon,
-};
+}
 
 const PatternHeader = React.forwardRef<HTMLDivElement, PatternHeaderProps>(
   ({ children, icon, className, iconSize = 20 }, ref) => {
-    const IconComp = iconMap[icon];
+    const IconComp = iconMap[icon]
 
     return (
       <div
@@ -70,22 +70,22 @@ const PatternHeader = React.forwardRef<HTMLDivElement, PatternHeaderProps>(
         </span>
         <span>{children}</span>
       </div>
-    );
+    )
   },
-);
-PatternHeader.displayName = 'PatternHeader';
+)
+PatternHeader.displayName = 'PatternHeader'
 
 const PosePatternPanel = () => {
-  const { data: patternData } = usePosturePatternQuery();
+  const { data: patternData } = usePosturePatternQuery()
 
   const worstTime = patternData?.data.worstTime
     ? formatTime(patternData.data.worstTime)
-    : '오후 2시';
+    : '오후 2시'
   const worstDay = patternData?.data.worstDay
     ? formatDay(patternData.data.worstDay)
-    : '수요일';
-  const recovery = patternData?.data.recovery ?? 18;
-  const stretching = patternData?.data.stretching ?? '목돌리기';
+    : '수요일'
+  const recovery = patternData?.data.recovery ?? 18
+  const stretching = patternData?.data.stretching ?? '목돌리기'
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-3 p-4">
@@ -139,7 +139,7 @@ const PosePatternPanel = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PosePatternPanel;
+export default PosePatternPanel

@@ -10,5 +10,5 @@ export default function ResendEmailHerosection() {
         링크는 발송 시점으로부터 24시간 동안 유효합니다.
       </p>
     </div>
-  );
+  )
 }

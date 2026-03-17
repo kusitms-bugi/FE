@@ -8,4 +8,4 @@ export const GA_STORAGE_KEYS = {
   FIRST_MEASURE_START_SENT: 'ga_first_measure_start_sent',
   MEANINGFUL_USE_SENT: 'ga_meaningful_use_sent',
   SIGNUP_COMPLETED_AT: 'signupCompletedAt',
-} as const;
+} as const

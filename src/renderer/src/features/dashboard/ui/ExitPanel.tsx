@@ -1,27 +1,26 @@
-import { useLevelQuery } from '@entities/dashboard';
-import { useSessionReportQuery } from '@entities/session';
-import { useEffect, useMemo, useState } from 'react';
-import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
+import { useLevelQuery } from '@entities/dashboard'
+import { useSessionReportQuery } from '@entities/session'
+import { useEffect, useMemo, useState } from 'react'
+import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 
 const ExitPanel = () => {
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null)
 
   // localStorage에서 sessionId 가져오기 (없으면 lastSessionId 사용)
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const id =
-      localStorage.getItem('sessionId') ||
-      localStorage.getItem('lastSessionId');
+      localStorage.getItem('sessionId') || localStorage.getItem('lastSessionId')
     if (id && id !== sessionId) {
-      setSessionId(id);
+      setSessionId(id)
     }
-  }, [sessionId]);
+  }, [sessionId])
 
   // 세션 리포트 조회
-  const { data, isLoading, error } = useSessionReportQuery(sessionId);
+  const { data, isLoading, error } = useSessionReportQuery(sessionId)
 
   // 현재 이동거리 조회
-  const { data: levelData } = useLevelQuery();
+  const { data: levelData } = useLevelQuery()
 
   // CSS 변수에서 색상 가져오기
   const getColor = (cssVar: string, fallback: string) => {
@@ -29,31 +28,31 @@ const ExitPanel = () => {
       getComputedStyle(document.documentElement)
         .getPropertyValue(cssVar)
         .trim() || fallback
-    );
-  };
+    )
+  }
 
   // 세션 조회 API 데이터 사용
-  const totalSeconds = data?.data.totalSeconds || 0;
-  const goodSeconds = data?.data.goodSeconds || 0;
+  const totalSeconds = data?.data.totalSeconds || 0
+  const goodSeconds = data?.data.goodSeconds || 0
 
-  const totalTime = Math.round(totalSeconds / 60); // 초를 분으로 변환
+  const totalTime = Math.round(totalSeconds / 60) // 초를 분으로 변환
 
   // 비율은 초 단위로 먼저 계산 후 반올림 (정확도 향상)
   const correctPosturePercentage =
-    totalSeconds > 0 ? Math.round((goodSeconds / totalSeconds) * 100) : 0;
+    totalSeconds > 0 ? Math.round((goodSeconds / totalSeconds) * 100) : 0
 
-  const score = data?.data.score || 0; // 바른 자세 점수
+  const score = data?.data.score || 0 // 바른 자세 점수
 
   /* 이번 세션에서 이동한 거리 계산 */
-  const currentDistance = levelData?.data.current || 0;
-  const startDistance = parseInt(
+  const currentDistance = levelData?.data.current || 0
+  const startDistance = Number.parseInt(
     localStorage.getItem('sessionStartDistance') || '0',
     10,
-  );
+  )
   const sessionDistance = Math.max(
     0,
     currentDistance - startDistance,
-  ); /* 오늘 이동거리 */
+  ) /* 오늘 이동거리 */
 
   // CSS 변수에서 색상 가져오기 (다크모드 변경 시 재계산)
   const colors = useMemo(
@@ -63,13 +62,13 @@ const ExitPanel = () => {
       score: getColor('--color-yellow-400', '#fbbf24'),
     }),
     [],
-  );
+  )
 
   // 안쪽 링 배경 데이터 (회색) - 전체를 회색으로 채움
   const innerBackgroundData = useMemo(
     () => [{ name: '배경', value: 100, color: colors.background }],
     [colors.background],
-  );
+  )
 
   // 안쪽 링 프로그레스 데이터 (노란색) - 바른 자세 비율만큼 노란색
   const ScoreProgressData = useMemo(
@@ -81,13 +80,13 @@ const ExitPanel = () => {
       },
     ],
     [correctPosturePercentage, colors.score],
-  );
+  )
 
   const formatTime = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}시간 ${mins}분`;
-  };
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    return `${hours}시간 ${mins}분`
+  }
 
   // 로딩 중
   if (isLoading) {
@@ -101,7 +100,7 @@ const ExitPanel = () => {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   // 에러 발생
@@ -116,7 +115,7 @@ const ExitPanel = () => {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   // 데이터 없음
@@ -131,7 +130,7 @@ const ExitPanel = () => {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -224,7 +223,7 @@ const ExitPanel = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ExitPanel;
+export default ExitPanel

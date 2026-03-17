@@ -1,5 +1,5 @@
-import { Outlet } from 'react-router-dom';
-import Header from './header/Header';
+import { Outlet } from 'react-router-dom'
+import Header from './header/Header'
 // import { DevNavbar } from '../dev';
 
 const Layout = () => {
@@ -9,7 +9,7 @@ const Layout = () => {
       <Header />
       <Outlet />
     </div>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout

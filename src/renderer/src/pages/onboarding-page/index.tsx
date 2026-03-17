@@ -1,5 +1,5 @@
-import CameraIcon from '@assets/common/icons/camera.svg?react';
-import CameraPermissionButton from './components/CameraPermissionButton';
+import CameraIcon from '@assets/common/icons/camera.svg?react'
+import CameraPermissionButton from './components/CameraPermissionButton'
 
 const OnboardingPage = () => {
   return (
@@ -20,7 +20,7 @@ const OnboardingPage = () => {
         </section>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default OnboardingPage;
+export default OnboardingPage

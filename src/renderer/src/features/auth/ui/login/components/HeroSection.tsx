@@ -1,5 +1,5 @@
-import Logo from '@assets/common/icons/logo.svg?react';
-import Symbol from '@assets/common/icons/symbol.svg?react';
+import Logo from '@assets/common/icons/logo.svg?react'
+import Symbol from '@assets/common/icons/symbol.svg?react'
 
 export default function HeroSection() {
   return (
@@ -12,5 +12,5 @@ export default function HeroSection() {
         세상 모든 거북목들이 기린이 될 때까지
       </p>
     </div>
-  );
+  )
 }

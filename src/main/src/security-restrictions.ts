@@ -1,5 +1,5 @@
-import { app, shell } from 'electron';
-import { URL } from 'url';
+import { URL } from 'node:url'
+import { app, shell } from 'electron'
 
 /**
  * List of origins that you allow open INSIDE the application and permissions for each of them.
@@ -24,7 +24,7 @@ const ALLOWED_ORIGINS_AND_PERMISSIONS = new Map<string, Set<string>>(
         // 프로덕션 배포 URL에 media 권한 추가 (모든 가능한 variant 포함)
         ['https://app.bugi.co.kr', new Set(['media'])],
       ],
-);
+)
 
 /**
  * List of origins that you allow open IN BROWSER.
@@ -40,7 +40,7 @@ const ALLOWED_EXTERNAL_ORIGINS = new Set<`https://${string}`>([
   'https://github.com',
   'https://clean-rail-ebf.notion.site',
   'https://adhesive-wrench-b12.notion.site',
-]);
+])
 
 app.on('web-contents-created', (_, contents) => {
   /**
@@ -52,18 +52,18 @@ app.on('web-contents-created', (_, contents) => {
    * @see https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
    */
   contents.on('will-navigate', (event, url) => {
-    const { origin } = new URL(url);
+    const { origin } = new URL(url)
     if (ALLOWED_ORIGINS_AND_PERMISSIONS.has(origin)) {
-      return;
+      return
     }
 
     // Prevent navigation
-    event.preventDefault();
+    event.preventDefault()
 
     if (import.meta.env.DEV) {
-      console.warn('Blocked navigating to an unallowed origin:', origin);
+      console.warn('Blocked navigating to an unallowed origin:', origin)
     }
-  });
+  })
 
   /**
    * Block requested unallowed permissions.
@@ -73,39 +73,39 @@ app.on('web-contents-created', (_, contents) => {
    */
   contents.session.setPermissionRequestHandler(
     (webContents, permission, callback) => {
-      const currentUrl = webContents.getURL();
-      const { origin } = new URL(currentUrl);
+      const currentUrl = webContents.getURL()
+      const { origin } = new URL(currentUrl)
 
-      const allowedPermissions = ALLOWED_ORIGINS_AND_PERMISSIONS.get(origin);
-      const permissionGranted = !!allowedPermissions?.has(permission);
+      const allowedPermissions = ALLOWED_ORIGINS_AND_PERMISSIONS.get(origin)
+      const permissionGranted = !!allowedPermissions?.has(permission)
 
       // 프로덕션에서도 로그 출력하여 디버깅 가능하게 함
       if (permission === 'media') {
         console.log(
           `[Permission Request] URL: ${currentUrl}, Origin: ${origin}, Permission: ${permission}, Granted: ${permissionGranted}`,
-        );
+        )
         console.log(
-          `[Permission Details] Allowed permissions for origin:`,
+          '[Permission Details] Allowed permissions for origin:',
           Array.from(allowedPermissions || []),
-        );
+        )
         console.log(
-          `[Permission Details] All allowed origins:`,
+          '[Permission Details] All allowed origins:',
           Array.from(ALLOWED_ORIGINS_AND_PERMISSIONS.keys()),
-        );
+        )
       }
 
-      callback(permissionGranted);
+      callback(permissionGranted)
 
       if (!permissionGranted) {
-        const logMessage = `${origin} requested permission for '${permission}', but was blocked.`;
+        const logMessage = `${origin} requested permission for '${permission}', but was blocked.`
         if (import.meta.env.DEV) {
-          console.warn(logMessage);
+          console.warn(logMessage)
         } else {
-          console.error(logMessage);
+          console.error(logMessage)
         }
       }
     },
-  );
+  )
 
   /**
    * Hyperlinks to allowed sites open in the default browser.
@@ -118,19 +118,19 @@ app.on('web-contents-created', (_, contents) => {
    * @see https://www.electronjs.org/docs/latest/tutorial/security#15-do-not-use-openexternal-with-untrusted-content
    */
   contents.setWindowOpenHandler(({ url }) => {
-    const { origin } = new URL(url);
+    const { origin } = new URL(url)
 
     // @ts-expect-error Type checking is performed in runtime
     if (ALLOWED_EXTERNAL_ORIGINS.has(origin)) {
       // Open default browser
-      shell.openExternal(url).catch(console.error);
+      shell.openExternal(url).catch(console.error)
     } else if (import.meta.env.DEV) {
-      console.warn('Blocked the opening of an unallowed origin:', origin);
+      console.warn('Blocked the opening of an unallowed origin:', origin)
     }
 
     // Prevent creating new window in application
-    return { action: 'deny' };
-  });
+    return { action: 'deny' }
+  })
 
   /**
    * Verify webview options before creation
@@ -140,26 +140,26 @@ app.on('web-contents-created', (_, contents) => {
    * @see https://www.electronjs.org/docs/latest/tutorial/security#12-verify-webview-options-before-creation
    */
   contents.on('will-attach-webview', (event, webPreferences, params) => {
-    const { origin } = new URL(params.src);
+    const { origin } = new URL(params.src)
     if (!ALLOWED_ORIGINS_AND_PERMISSIONS.has(origin)) {
       if (import.meta.env.DEV) {
         console.warn(
           `A webview tried to attach ${params.src}, but was blocked.`,
-        );
+        )
       }
 
-      event.preventDefault();
-      return;
+      event.preventDefault()
+      return
     }
 
     // Strip away preload scripts if unused or verify their location is legitimate
-    delete webPreferences.preload;
+    webPreferences.preload = undefined
     // @ts-expect-error `preloadURL` exists - see https://www.electronjs.org/docs/latest/api/web-contents#event-will-attach-webview
-    delete webPreferences.preloadURL;
+    webPreferences.preloadURL = undefined
 
     // Disable Node.js integration
-    webPreferences.nodeIntegration = false;
-  });
+    webPreferences.nodeIntegration = false
+  })
 
   /**
    * Prevent page reload (F5, Ctrl+R, Cmd+R) and DevTools (F12, Ctrl+Shift+I)
@@ -168,25 +168,23 @@ app.on('web-contents-created', (_, contents) => {
   contents.on('before-input-event', (event, input) => {
     // 개발 모드에서는 새로고침 및 DevTools 허용
     if (import.meta.env.DEV) {
-      return;
+      return
     }
 
-    const key = input.key.toLowerCase();
-    const withCtrlOrCmd = input.control || input.meta;
-    const withCtrlOrCmdShift = withCtrlOrCmd && input.shift;
+    const key = input.key.toLowerCase()
+    const withCtrlOrCmd = input.control || input.meta
+    const withCtrlOrCmdShift = withCtrlOrCmd && input.shift
 
     // F5 또는 새로고침 단축키 (Ctrl+R, Cmd+R) 막기
-    const isReloadShortcut = input.key === 'F5' || (key === 'r' && withCtrlOrCmd);
+    const isReloadShortcut =
+      input.key === 'F5' || (key === 'r' && withCtrlOrCmd)
     // DevTools 단축키 (F12, Ctrl/Cmd+Shift+I/J) 막기
     const isDevToolsShortcut =
       input.key === 'F12' ||
-      (withCtrlOrCmdShift && (key === 'i' || key === 'j'));
+      (withCtrlOrCmdShift && (key === 'i' || key === 'j'))
 
-    if (
-      isReloadShortcut ||
-      isDevToolsShortcut
-    ) {
-      event.preventDefault();
+    if (isReloadShortcut || isDevToolsShortcut) {
+      event.preventDefault()
     }
 
     // F12 또는 DevTools 단축키 (Ctrl+Shift+I, Cmd+Option+I) 막기
@@ -194,9 +192,9 @@ app.on('web-contents-created', (_, contents) => {
       input.key === 'F12' ||
       (input.key === 'I' && input.shift && (input.control || input.meta))
     ) {
-      event.preventDefault();
+      event.preventDefault()
     }
-  });
+  })
 
   /**
    * Prevent DevTools from opening even if triggered by other means
@@ -204,8 +202,8 @@ app.on('web-contents-created', (_, contents) => {
    */
   if (import.meta.env.PROD) {
     contents.on('devtools-opened', () => {
-      contents.closeDevTools();
-    });
+      contents.closeDevTools()
+    })
   }
 
   /**
@@ -214,15 +212,15 @@ app.on('web-contents-created', (_, contents) => {
    */
   if (import.meta.env.PROD) {
     contents.openDevTools = () => {
-      console.warn('DevTools is disabled in production mode');
-    };
+      console.warn('DevTools is disabled in production mode')
+    }
     contents.toggleDevTools = () => {
-      console.warn('DevTools is disabled in production mode');
-    };
+      console.warn('DevTools is disabled in production mode')
+    }
 
     contents.reload = () => {
-      console.warn('Page reload is disabled in production mode');
+      console.warn('Page reload is disabled in production mode')
       // 새로고침 실행하지 않음
-    };
+    }
   }
-});
+})

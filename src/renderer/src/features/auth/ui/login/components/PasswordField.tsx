@@ -1,14 +1,14 @@
-import { TextField as TextInput } from '@shared/ui/input-field';
-import { forwardRef, useState, type ChangeEvent } from 'react';
-import InvisibleIcon from '@assets/auth/invisible_icon.svg?react';
-import VisibleIcon from '@assets/auth/visible_icon.svg?react';
+import InvisibleIcon from '@assets/auth/invisible_icon.svg?react'
+import VisibleIcon from '@assets/auth/visible_icon.svg?react'
+import { TextField as TextInput } from '@shared/ui/input-field'
+import { type ChangeEvent, forwardRef, useState } from 'react'
 
 interface PasswordFieldProps {
-  hasValue?: boolean;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  className?: string;
-  name?: string;
+  hasValue?: boolean
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+  placeholder?: string
+  className?: string
+  name?: string
 }
 
 const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
@@ -17,9 +17,9 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
     ref,
   ) => {
     /* 비밀번호 보이기/숨기기 */
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState(false)
 
-    const toggleVisibility = () => setIsVisible((prev) => !prev);
+    const toggleVisibility = () => setIsVisible(prev => !prev)
 
     return (
       <div className="relative w-full">
@@ -38,7 +38,7 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
         {hasValue && (
           <button
             type="button"
-            onMouseDown={(e) => e.preventDefault()}
+            onMouseDown={e => e.preventDefault()}
             onClick={toggleVisibility}
             className="absolute top-1/2 right-6 -translate-y-1/2 cursor-pointer p-1"
           >
@@ -50,10 +50,10 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
           </button>
         )}
       </div>
-    );
+    )
   },
-);
+)
 
-PasswordField.displayName = 'PasswordField';
+PasswordField.displayName = 'PasswordField'
 
-export default PasswordField;
+export default PasswordField

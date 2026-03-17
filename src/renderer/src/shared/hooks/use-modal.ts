@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
 /**
  * 모달 상태를 관리하는 훅
@@ -12,16 +12,16 @@ import { useState } from 'react';
  * ```
  */
 export const useModal = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
-  const open = () => setIsOpen(true);
-  const close = () => setIsOpen(false);
-  const toggle = () => setIsOpen((prev) => !prev);
+  const open = () => setIsOpen(true)
+  const close = () => setIsOpen(false)
+  const toggle = () => setIsOpen(prev => !prev)
 
   return {
     isOpen,
     open,
     close,
     toggle,
-  };
-};
+  }
+}

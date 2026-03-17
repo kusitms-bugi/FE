@@ -2,46 +2,46 @@
  * @module preload
  */
 
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron'
 
 // Health 응답 타입 (예시)
 // TODO: 실제 메인 프로세스에서 보내는 데이터 구조에 맞게 수정
 type HealthResponse = {
-  status: 'ok';
-  uptime: number;
-};
+  status: 'ok'
+  uptime: number
+}
 
 // Version 응답 타입 (예시)
 type VersionInfo = {
-  appVersion: string;
-  electron: string;
-  chrome: string;
-  node: string;
-};
+  appVersion: string
+  electron: string
+  chrome: string
+  node: string
+}
 
 // 플랫폼 정보 (예시)
 type PlatformInfo = {
   // eslint-disable-next-line no-undef
-  os: NodeJS.Platform;
-  arch: string;
-};
+  os: NodeJS.Platform
+  arch: string
+}
 
 // 로그 작성 결과 (예시)
 type WriteLogResult = {
-  success: boolean;
-  path?: string;
-  error?: string;
-};
+  success: boolean
+  path?: string
+  error?: string
+}
 
 // 시스템 테마 타입 (예시)
-type SystemTheme = 'light' | 'dark' | 'system';
+type SystemTheme = 'light' | 'dark' | 'system'
 
 // 업데이트 정보 타입
 type UpdateInfo = {
-  version: string;
-  releaseDate?: string;
-  releaseNotes?: string;
-};
+  version: string
+  releaseDate?: string
+  releaseNotes?: string
+}
 
 // 업데이터 이벤트 채널 타입
 type UpdaterEventChannel =
@@ -50,7 +50,7 @@ type UpdaterEventChannel =
   | 'updater:update-not-available'
   | 'updater:error'
   | 'updater:download-progress'
-  | 'updater:update-downloaded';
+  | 'updater:update-downloaded'
 
 type AnalyticsEventName =
   | 'download_click'
@@ -65,90 +65,90 @@ type AnalyticsEventName =
   | 'widget_toggle'
   | 'widget_visibility_end'
   | 'notification_toggle'
-  | 'meaningful_use';
+  | 'meaningful_use'
 
-type AnalyticsParams = Record<string, string | number | boolean>;
+type AnalyticsParams = Record<string, string | number | boolean>
 
 // window.bugi 타입
 type BugiAPI = {
-  version: number;
-};
+  version: number
+}
 
 // window.nodeCrypto 타입
 type NodeCryptoAPI = {
-  sha256sum: (data: string) => Promise<string>;
-};
+  sha256sum: (data: string) => Promise<string>
+}
 
 // window.electronAPI 타입
 interface ElectronAPI {
   // Health check
-  getHealth: () => Promise<HealthResponse>;
+  getHealth: () => Promise<HealthResponse>
 
   // Version info
-  getVersion: () => Promise<VersionInfo>;
+  getVersion: () => Promise<VersionInfo>
 
   // Hash generation
-  generateHash: (data: string) => Promise<string>;
+  generateHash: (data: string) => Promise<string>
 
   // Batch hash generation
-  generateBatchHash: (dataList: string[]) => Promise<string[]>;
+  generateBatchHash: (dataList: string[]) => Promise<string[]>
 
   // Platform info
-  getPlatform: () => Promise<PlatformInfo>;
+  getPlatform: () => Promise<PlatformInfo>
 
   // Write log file
-  writeLog: (data: string, filename?: string) => Promise<WriteLogResult>;
+  writeLog: (data: string, filename?: string) => Promise<WriteLogResult>
 
   widget: {
-    open: () => Promise<void>;
-    close: () => Promise<void>;
-    isOpen: () => Promise<boolean>;
-  };
+    open: () => Promise<void>
+    close: () => Promise<void>
+    isOpen: () => Promise<boolean>
+  }
 
   // 시스템 테마 조회
-  getSystemTheme: () => Promise<SystemTheme>;
+  getSystemTheme: () => Promise<SystemTheme>
 
   // 알림 API
   notification: {
     show: (
       title: string,
       body: string,
-    ) => Promise<{ success: boolean; error?: string }>;
-    requestPermission: () => Promise<{ success: boolean; supported: boolean }>;
-  };
+    ) => Promise<{ success: boolean; error?: string }>
+    requestPermission: () => Promise<{ success: boolean; supported: boolean }>
+  }
 
   // 업데이터 API
   updater: {
     checkForUpdates: () => Promise<{
-      success: boolean;
-      updateInfo?: UpdateInfo;
-      error?: string;
-    }>;
-    downloadUpdate: () => Promise<{ success: boolean; error?: string }>;
-    quitAndInstall: () => Promise<{ success: boolean; error?: string }>;
-    getVersion: () => Promise<{ version: string; currentVersion: string }>;
+      success: boolean
+      updateInfo?: UpdateInfo
+      error?: string
+    }>
+    downloadUpdate: () => Promise<{ success: boolean; error?: string }>
+    quitAndInstall: () => Promise<{ success: boolean; error?: string }>
+    getVersion: () => Promise<{ version: string; currentVersion: string }>
     on: (
       channel: UpdaterEventChannel,
       callback: (data?: unknown) => void,
-    ) => void;
+    ) => void
     removeListener: (
       channel: UpdaterEventChannel,
       callback: (data?: unknown) => void,
-    ) => void;
-  };
+    ) => void
+  }
 
   analytics: {
     logEvent: (
       name: AnalyticsEventName,
       params?: AnalyticsParams,
-    ) => Promise<{ success: boolean }>;
-    setUserId: (userId: string) => Promise<{ success: boolean }>;
-  };
+    ) => Promise<{ success: boolean }>
+    setUserId: (userId: string) => Promise<{ success: boolean }>
+  }
 }
 
 // Expose version number to renderer
-const bugiAPI: BugiAPI = { version: 0.1 };
-contextBridge.exposeInMainWorld('bugi', bugiAPI);
+const bugiAPI: BugiAPI = { version: 0.1 }
+contextBridge.exposeInMainWorld('bugi', bugiAPI)
 
 /**
  * The "Main World" is the JavaScript context that your main renderer code runs in.
@@ -173,14 +173,14 @@ contextBridge.exposeInMainWorld('bugi', bugiAPI);
  */
 const nodeCryptoAPI: NodeCryptoAPI = {
   sha256sum: async (data: string) => {
-    const encoder = new TextEncoder();
-    const dataBuffer = encoder.encode(data);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    const encoder = new TextEncoder()
+    const dataBuffer = encoder.encode(data)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
   },
-};
-contextBridge.exposeInMainWorld('nodeCrypto', nodeCryptoAPI);
+}
+contextBridge.exposeInMainWorld('nodeCrypto', nodeCryptoAPI)
 
 /**
  * Expose API functionality to renderer
@@ -273,13 +273,13 @@ const electronAPI: ElectronAPI = {
         ElectronAPI['updater']['getVersion']
       >,
     on: (channel: UpdaterEventChannel, callback: (data?: unknown) => void) => {
-      ipcRenderer.on(channel, (_event, data) => callback(data));
+      ipcRenderer.on(channel, (_event, data) => callback(data))
     },
     removeListener: (
       channel: UpdaterEventChannel,
       callback: (data?: unknown) => void,
     ) => {
-      ipcRenderer.removeListener(channel, (_event, data) => callback(data));
+      ipcRenderer.removeListener(channel, (_event, data) => callback(data))
     },
   },
 
@@ -293,5 +293,5 @@ const electronAPI: ElectronAPI = {
         ElectronAPI['analytics']['setUserId']
       >,
   },
-};
-contextBridge.exposeInMainWorld('electronAPI', electronAPI);
+}
+contextBridge.exposeInMainWorld('electronAPI', electronAPI)

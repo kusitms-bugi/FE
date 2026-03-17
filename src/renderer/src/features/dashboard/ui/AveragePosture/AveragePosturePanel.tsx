@@ -1,13 +1,13 @@
-import { useAverageScoreQuery } from '@entities/dashboard';
-import { LEVEL_INFO, getLevel } from './levelConfig';
+import { useAverageScoreQuery } from '@entities/dashboard'
+import { LEVEL_INFO, getLevel } from './levelConfig'
 
 const AveragePosturePanel = () => {
-  const { data, isLoading } = useAverageScoreQuery();
-  const score = data?.data.score ?? 0;
-  const level = getLevel(score);
-  const levelInfo = LEVEL_INFO[level - 1];
+  const { data, isLoading } = useAverageScoreQuery()
+  const score = data?.data.score ?? 0
+  const level = getLevel(score)
+  const levelInfo = LEVEL_INFO[level - 1]
 
-  const isTurtle = level <= 2;
+  const isTurtle = level <= 2
 
   return (
     <div
@@ -47,7 +47,7 @@ const AveragePosturePanel = () => {
         </p>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AveragePosturePanel;
+export default AveragePosturePanel

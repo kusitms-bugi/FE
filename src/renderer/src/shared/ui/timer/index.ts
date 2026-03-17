@@ -1,2 +1,2 @@
-export { Timer } from './Timer';
-export { default } from './Timer';
+export { Timer } from './Timer'
+export { default } from './Timer'

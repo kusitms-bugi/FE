@@ -17,7 +17,7 @@ export function SuccessIcon({ className }: { className?: string }) {
         strokeLinecap="round"
       />
     </svg>
-  );
+  )
 }
 
 /** 에러 아이콘 */
@@ -51,5 +51,5 @@ export function ErrorIcon({ className }: { className?: string }) {
         </clipPath>
       </defs>
     </svg>
-  );
+  )
 }

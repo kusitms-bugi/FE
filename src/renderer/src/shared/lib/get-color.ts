@@ -4,5 +4,5 @@ export const getColor = (cssVar: string, fallback: string) => {
     getComputedStyle(document.documentElement)
       .getPropertyValue(cssVar)
       .trim() || fallback
-  );
-};
+  )
+}

@@ -1,24 +1,24 @@
-import { useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useVerifyEmailMutation } from '@entities/user';
-import CompletionCharacter from '@assets/common/icons/completion.svg?react';
+import CompletionCharacter from '@assets/common/icons/completion.svg?react'
+import { useVerifyEmailMutation } from '@entities/user'
+import { useEffect, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 const EmailVerificationCallbackPage = () => {
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
-  const processedTokenRef = useRef<string | null>(null);
+  const [searchParams] = useSearchParams()
+  const token = searchParams.get('token')
+  const processedTokenRef = useRef<string | null>(null)
 
   const { mutate } = useVerifyEmailMutation({
     redirectTo: '/auth/verify-callback',
-  });
+  })
   useEffect(() => {
     if (!token || processedTokenRef.current === token) {
-      return;
+      return
     }
 
-    processedTokenRef.current = token;
-    mutate(token);
-  }, [mutate, token]);
+    processedTokenRef.current = token
+    mutate(token)
+  }, [mutate, token])
 
   return (
     <main className="hbp:min-h-[calc(100vh-75px)] flex min-h-[calc(100vh-60px)] flex-col items-center justify-center">
@@ -40,7 +40,7 @@ const EmailVerificationCallbackPage = () => {
         </section>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default EmailVerificationCallbackPage;
+export default EmailVerificationCallbackPage

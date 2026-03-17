@@ -1,4 +1,4 @@
-import { GA_STORAGE_KEYS } from './storage-keys';
+import { GA_STORAGE_KEYS } from './storage-keys'
 
 /**
  * GA 이벤트 중복 전송 방지 플래그들을 모두 삭제합니다
@@ -11,7 +11,7 @@ export const clearAnalyticsFlags = (): void => {
     GA_STORAGE_KEYS.FIRST_MEASURE_START_SENT,
     GA_STORAGE_KEYS.MEANINGFUL_USE_SENT,
     GA_STORAGE_KEYS.SIGNUP_COMPLETED_AT,
-  ];
+  ]
 
-  flags.forEach((flag) => localStorage.removeItem(flag));
-};
+  flags.forEach(flag => localStorage.removeItem(flag))
+}

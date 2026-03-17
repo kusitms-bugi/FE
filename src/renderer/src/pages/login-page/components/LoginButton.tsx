@@ -1,11 +1,11 @@
-import { Button } from '@shared/ui/button';
+import { Button } from '@shared/ui/button'
 
 interface LoginButtonProps {
-  text?: string;
-  type?: 'button' | 'submit' | 'reset';
-  onClick?: () => void;
-  disabled?: boolean;
-  className?: string;
+  text?: string
+  type?: 'button' | 'submit' | 'reset'
+  onClick?: () => void
+  disabled?: boolean
+  className?: string
 }
 
 export default function LoginButton({
@@ -27,5 +27,5 @@ export default function LoginButton({
     >
       로그인
     </Button>
-  );
+  )
 }

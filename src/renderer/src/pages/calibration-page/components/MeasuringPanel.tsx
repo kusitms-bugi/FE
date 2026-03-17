@@ -1,8 +1,8 @@
-import { NotificateMessage } from '@shared/ui/notification-message';
+import { NotificateMessage } from '@shared/ui/notification-message'
 
 interface MeasuringPanelProps {
-  step1Error?: string | null;
-  step2Error?: string | null;
+  step1Error?: string | null
+  step2Error?: string | null
 }
 
 const MeasuringPanel = ({ step1Error, step2Error }: MeasuringPanelProps) => {
@@ -28,7 +28,7 @@ const MeasuringPanel = ({ step1Error, step2Error }: MeasuringPanelProps) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MeasuringPanel;
+export default MeasuringPanel

@@ -13,11 +13,11 @@ export const validateAndLogUserId = (
   eventName: string,
 ): userId is string => {
   if (!userId) {
-    console.warn(`[GA] ${eventName}: user_id is missing from response`);
-    return false;
+    console.warn(`[GA] ${eventName}: user_id is missing from response`)
+    return false
   }
-  return true;
-};
+  return true
+}
 
 /**
  * sessionId 유효성을 검증하고 로그를 출력합니다
@@ -30,8 +30,8 @@ export const validateAndLogSessionId = (
   eventName: string,
 ): sessionId is string => {
   if (!sessionId) {
-    console.warn(`[GA] ${eventName}: session_id is missing`);
-    return false;
+    console.warn(`[GA] ${eventName}: session_id is missing`)
+    return false
   }
-  return true;
-};
+  return true
+}

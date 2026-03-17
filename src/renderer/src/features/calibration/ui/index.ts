@@ -1,1 +1,1 @@
-export { default as WebcamView } from './components/WebcamView';
+export { default as WebcamView } from './components/WebcamView'

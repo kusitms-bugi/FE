@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import type { MetricData } from '@entities/session';
+import type { MetricData } from '@entities/session'
+import { useEffect, useRef, useState } from 'react'
 
 /**
  * 5분마다 자동으로 메트릭 데이터를 전송하는 훅
@@ -15,43 +15,43 @@ export const useAutoMetricsSender = (
   // sessionId를 state로 관리하여 변경 감지
   const [sessionId, setSessionId] = useState<string | null>(() =>
     localStorage.getItem('sessionId'),
-  );
+  )
 
   // sendMetrics 함수를 ref로 저장 (dependency 문제 방지)
-  const sendMetricsRef = useRef(sendMetrics);
+  const sendMetricsRef = useRef(sendMetrics)
 
   // sendMetrics가 변경되면 ref 업데이트
   useEffect(() => {
-    sendMetricsRef.current = sendMetrics;
-  }, [sendMetrics]);
+    sendMetricsRef.current = sendMetrics
+  }, [sendMetrics])
 
   // sessionId 변경 감지 (1초마다 체크)
   useEffect(() => {
     const checkSessionId = () => {
-      const currentSessionId = localStorage.getItem('sessionId');
+      const currentSessionId = localStorage.getItem('sessionId')
       if (currentSessionId !== sessionId) {
-        setSessionId(currentSessionId);
+        setSessionId(currentSessionId)
       }
-    };
+    }
 
-    const checkInterval = setInterval(checkSessionId, 1000);
+    const checkInterval = setInterval(checkSessionId, 1000)
 
     return () => {
-      clearInterval(checkInterval);
-    };
-  }, [sessionId]);
+      clearInterval(checkInterval)
+    }
+  }, [sessionId])
 
   // 5분마다 자동 전송 (sessionId가 변경되면 타이머 재시작)
   useEffect(() => {
     // 세션이 없으면 interval을 시작하지 않음
     if (!sessionId) {
-      return;
+      return
     }
 
-    const FIVE_MINUTES = 5 * 60 * 1000; // 5분 = 300,000ms
+    const FIVE_MINUTES = 5 * 60 * 1000 // 5분 = 300,000ms
 
     const intervalId = setInterval(() => {
-      const currentSessionId = localStorage.getItem('sessionId');
+      const currentSessionId = localStorage.getItem('sessionId')
 
       // 세션이 활성화되어 있고, 전송할 데이터가 있을 때만 전송
       if (
@@ -59,13 +59,13 @@ export const useAutoMetricsSender = (
         metricsRef.current &&
         metricsRef.current.length > 0
       ) {
-        sendMetricsRef.current(); // ref를 통해 최신 함수 호출
+        sendMetricsRef.current() // ref를 통해 최신 함수 호출
       }
-    }, FIVE_MINUTES);
+    }, FIVE_MINUTES)
 
     // 클린업: 컴포넌트 언마운트 시 또는 세션 변경 시 interval 정리
     return () => {
-      clearInterval(intervalId);
-    };
-  }, [sessionId, metricsRef]); // sendMetrics 제거!
-};
+      clearInterval(intervalId)
+    }
+  }, [sessionId, metricsRef]) // sendMetrics 제거!
+}

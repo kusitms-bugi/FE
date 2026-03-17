@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const DevNavbar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isDev = import.meta.env.DEV;
-  const [isWidgetOpen, setIsWidgetOpen] = useState(false);
+  const navigate = useNavigate()
+  const location = useLocation()
+  const isDev = import.meta.env.DEV
+  const [isWidgetOpen, setIsWidgetOpen] = useState(false)
 
   // 개발 모드가 아니면 렌더링하지 않음
-  if (!isDev) return null;
+  if (!isDev) return null
 
   const navItems = [
     { path: '/', label: '메인' },
@@ -16,24 +16,24 @@ const DevNavbar = () => {
     { path: '/auth/signup', label: '회원가입' },
     { path: '/onboarding', label: '온보딩' },
     { path: '/onboarding/calibration', label: '캘리브레이션' },
-  ];
+  ]
 
   // 위젯 토글
   const handleToggleWidget = async () => {
     try {
       if (window.electronAPI?.widget) {
         if (isWidgetOpen) {
-          await window.electronAPI.widget.close();
-          setIsWidgetOpen(false);
+          await window.electronAPI.widget.close()
+          setIsWidgetOpen(false)
         } else {
-          await window.electronAPI.widget.open();
-          setIsWidgetOpen(true);
+          await window.electronAPI.widget.open()
+          setIsWidgetOpen(true)
         }
       }
     } catch (error) {
-      console.error('위젯 토글 실패:', error);
+      console.error('위젯 토글 실패:', error)
     }
-  };
+  }
 
   return (
     <div className="fixed top-0 right-0 left-0 z-[9999] h-10 border-b-2 border-yellow-400 bg-yellow-100">
@@ -43,7 +43,7 @@ const DevNavbar = () => {
             🚧 개발 모드 네비게이션
           </div>
           <nav className="flex gap-2">
-            {navItems.map((item) => (
+            {navItems.map(item => (
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
@@ -72,7 +72,7 @@ const DevNavbar = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DevNavbar;
+export default DevNavbar

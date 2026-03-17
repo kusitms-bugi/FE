@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import {
   useSaveMetricsMutation,
   useStopSessionMutation,
-} from '@entities/session';
-import type { MetricData } from '@entities/session';
+} from '@entities/session'
+import type { MetricData } from '@entities/session'
+import { useEffect } from 'react'
 
 /**
  * 창 닫기 시 세션 정리 훅
@@ -24,12 +24,12 @@ export const useSessionCleanup = (
   metricsRef: React.RefObject<MetricData[]>,
   setExit: () => void,
 ) => {
-  const { mutate: saveMetrics } = useSaveMetricsMutation();
-  const { mutate: stopSession } = useStopSessionMutation();
+  const { mutate: saveMetrics } = useSaveMetricsMutation()
+  const { mutate: stopSession } = useStopSessionMutation()
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      const sessionId = localStorage.getItem('sessionId');
+      const sessionId = localStorage.getItem('sessionId')
 
       /* 세션이 활성화되어 있는 경우에만 서버와 통신 */
       if (sessionId) {
@@ -39,46 +39,46 @@ export const useSessionCleanup = (
             saveMetrics({
               sessionId,
               metrics: metricsRef.current,
-            });
+            })
           } catch (error) {
-            console.error('Failed to save metrics on cleanup:', error);
+            console.error('Failed to save metrics on cleanup:', error)
           }
         }
 
         /* 2. 세션 종료 API 호출 시도 (비동기, 완료 보장 안됨) */
         try {
-          stopSession(sessionId);
+          stopSession(sessionId)
         } catch (error) {
-          console.error('Failed to stop session on cleanup:', error);
+          console.error('Failed to stop session on cleanup:', error)
         }
 
         /* 3. sessionId를 lastSessionId로 백업 (동기 작업, 확실히 실행됨)
          useStopSessionMutation의 onSuccess가 실행 안될 수 있으므로 여기서도 처리 */
-        localStorage.setItem('lastSessionId', sessionId);
+        localStorage.setItem('lastSessionId', sessionId)
 
         /*  4. sessionId 삭제 (동기 작업, 확실히 실행됨) */
-        localStorage.removeItem('sessionId');
+        localStorage.removeItem('sessionId')
       }
 
       /* 5. 카메라 상태를 exit로 변경 (동기 작업, 확실히 실행됨)
        세션 유무와 관계없이 항상 실행하여 재진입 시 오늘의 리포트 표시 */
-      setExit();
+      setExit()
 
       /* 6. 위젯 닫기 (동기 작업, 확실히 실행됨)
        세션 유무와 관계없이 항상 실행 */
       if (window.electronAPI?.widget?.close) {
         try {
-          window.electronAPI.widget.close();
+          window.electronAPI.widget.close()
         } catch (error) {
-          console.error('Failed to close widget:', error);
+          console.error('Failed to close widget:', error)
         }
       }
-    };
+    }
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload)
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [saveMetrics, stopSession, metricsRef, setExit]);
-};
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [saveMetrics, stopSession, metricsRef, setExit])
+}

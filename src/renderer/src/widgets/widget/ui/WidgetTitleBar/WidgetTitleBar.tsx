@@ -1,9 +1,9 @@
-import MediumDragIcon from '@assets/widget/drag_icon.svg?react';
-import MiniDragIcon from '@assets/widget/mini_drag_icon.svg?react';
+import MediumDragIcon from '@assets/widget/drag_icon.svg?react'
+import MiniDragIcon from '@assets/widget/mini_drag_icon.svg?react'
 
 interface WidgetTitleBarProps {
-  onClose?: () => void;
-  isMini?: boolean; // 미니 모드 여부
+  onClose?: () => void
+  isMini?: boolean // 미니 모드 여부
 }
 
 /* 커스텀 위젯 타이틀바 (frame: false 일 때 사용) */
@@ -15,7 +15,7 @@ export function WidgetTitleBar({
   const handleClose = async () => {
     try {
       if (window.electronAPI?.widget) {
-        await window.electronAPI.widget.close();
+        await window.electronAPI.widget.close()
 
         // 위젯 닫힘 로그 저장
         if (window.electronAPI?.writeLog) {
@@ -23,18 +23,18 @@ export function WidgetTitleBar({
             const logData = JSON.stringify({
               event: 'widget_closed',
               timestamp: new Date().toISOString(),
-            });
-            await window.electronAPI.writeLog(logData);
+            })
+            await window.electronAPI.writeLog(logData)
           } catch (error) {
-            console.error('위젯 닫힘 로그 저장 실패:', error);
+            console.error('위젯 닫힘 로그 저장 실패:', error)
           }
         }
       }
-      onClose?.();
+      onClose?.()
     } catch (error) {
-      console.error('위젯 닫기 실패:', error);
+      console.error('위젯 닫기 실패:', error)
     }
-  };
+  }
 
   return (
     <div
@@ -71,5 +71,5 @@ export function WidgetTitleBar({
 
       {/* 드래그 영역 (사용자가 창 크기를 조절할 수 있음) */}
     </div>
-  );
+  )
 }

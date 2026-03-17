@@ -1,1 +1,1 @@
-export { usePostureStore } from './use-posture-store';
+export { usePostureStore } from './use-posture-store'

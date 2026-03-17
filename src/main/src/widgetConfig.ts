@@ -1,5 +1,5 @@
 // 위젯 크기 타입 정의
-export type WidgetSize = 'mini' | 'medium';
+export type WidgetSize = 'mini' | 'medium'
 
 // 위젯 기본 설정
 export const WIDGET_CONFIG = {
@@ -30,4 +30,4 @@ export const WIDGET_CONFIG = {
     minWidth: 192,
     minHeight: 268,
   },
-} as const;
+} as const

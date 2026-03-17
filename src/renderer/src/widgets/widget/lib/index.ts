@@ -1,1 +1,1 @@
-export { useWidget } from './useWidget';
+export { useWidget } from './useWidget'

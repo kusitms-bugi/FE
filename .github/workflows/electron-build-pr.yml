@@ -6,7 +6,7 @@ on:
     paths:
       - 'src/**'
       - 'package.json'
-      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
       - '.electron-builder.config.js'
       - '.github/workflows/electron-build-pr.yml'
 
@@ -14,11 +14,87 @@ permissions:
   contents: read
   pull-requests: write
 
+# PR마다 독립적으로 실행 (캔슬 방지)
+concurrency:
+  group: pr-${{ github.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
+  # ============================================
+  # Lint & Type Check (병렬 실행)
+  # ============================================
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Run Biome check
+        run: pnpm lint:check
+        continue-on-error: true
+
+      - name: Run TypeScript check
+        run: pnpm typecheck
+        continue-on-error: true
+
+  # ============================================
+  # 의존성 설치 및 캐싱
+  # ============================================
+  setup:
+    runs-on: ubuntu-latest
+    needs: quality-check
+    outputs:
+      cache-key: ${{ steps.cache-keys.outputs.key }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate cache keys
+        id: cache-keys
+        run: |
+          echo "key=${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          echo "✅ Dependencies installed"
+
+      - name: Cache node_modules
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+            .pnpm-store
+          key: ${{ steps.cache-keys.outputs.key }}
+
+  # ============================================
+  # Electron 빌드 (병렬 실행)
+  # ============================================
   build-electron:
+    needs: setup
     runs-on: ${{ matrix.os }}
     env:
-      # macOS notarization / codesign secrets (Windows builds 무관)
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -41,17 +117,27 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
 
-      - name: Install dependencies
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            .pnpm-store
+          key: ${{ needs.setup.outputs.cache-key }}
+          fail-on-cache-miss: false
+
+      - name: Install dependencies (cache miss fallback)
         run: pnpm install --frozen-lockfile --ignore-scripts
+        if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Verify project setup
-        shell: bash #기본 shell 설정
+        shell: bash
         run: |
           echo "✅ Dependencies installed successfully"
           echo "📁 Project structure:"
@@ -73,21 +159,31 @@ jobs:
           name: electron-${{ matrix.os }}-${{ github.event.number }}
           if-no-files-found: warn
           path: |
-            # macOS 빌드 결과물
             electron-dist/*.dmg
             electron-dist/*.zip
             electron-dist/*.blockmap
             electron-dist/mac/**
             electron-dist/mac-arm64/**
-            # Windows 빌드 결과물
-            # NSIS 설치 프로그램 (artifactName: 거부기린.${ext})
             electron-dist/거부기린.*
-            # Portable 빌드 결과물 (폴더 형태)
             electron-dist/win-ia32-unpacked/**
             electron-dist/win-unpacked/**
 
+      # 빌드 실패 시 로그 업로드
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-${{ matrix.os_short }}
+          path: |
+            ~/Library/Logs/
+            ~/.npm/_logs/
+          if-no-files-found: ignore
+
+  # ============================================
+  # PR 코멘트 (마지막에 실행)
+  # ============================================
   comment:
-    needs: build-electron
+    needs: [build-electron, quality-check]
     runs-on: ubuntu-latest
     if: always()
     permissions:
@@ -98,31 +194,41 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // 현재 workflow run의 모든 job 가져오기
             const jobs = await github.rest.actions.listJobsForWorkflowRun({
               owner: context.repo.owner,
               repo: context.repo.repo,
               run_id: context.runId,
             });
 
-            // 빌드 job들 찾기 (matrix로 생성된 job들)
-            const buildJobs = jobs.data.jobs.filter(job => 
+            const buildJobs = jobs.data.jobs.filter(job =>
               job.name.startsWith('build-electron')
             );
 
-            // 댓글 본문 생성
+            const qualityJob = jobs.data.jobs.find(job =>
+              job.name === 'quality-check'
+            );
+
             let body = `## 🔧 Electron Build Results\n\n`;
 
+            // 품질 체크 결과
+            if (qualityJob) {
+              const qualityIcon = qualityJob.conclusion === 'success' ? '✅' :
+                                qualityJob.conclusion === 'failure' ? '❌' : '⚠️';
+              body += `### ${qualityIcon} Quality Check\n`;
+              body += `- **Status**: ${qualityJob.conclusion || 'In Progress'}\n`;
+              body += `- **Job**: [${qualityJob.name}](${qualityJob.html_url})\n\n`;
+            }
+
+            // 빌드 결과
             buildJobs.forEach(job => {
-              const osName = job.name.includes('macos') ? 'macOS' : 
-                           job.name.includes('windows') ? 'Windows' : 
-                           job.name;
-              const statusIcon = job.conclusion === 'success' ? '✅' : 
+              const osName = job.name.includes('macos') ? 'macOS' :
+                           job.name.includes('windows') ? 'Windows' : job.name;
+              const statusIcon = job.conclusion === 'success' ? '✅' :
                                 job.conclusion === 'failure' ? '❌' : '⚠️';
               const statusText = job.conclusion === 'success' ? 'Success' :
-                               job.conclusion === 'failure' ? 'Failed' : 
+                               job.conclusion === 'failure' ? 'Failed' :
                                job.conclusion === 'cancelled' ? 'Cancelled' : 'In Progress';
-              
+
               body += `### ${statusIcon} ${osName}\n`;
               body += `- **Status**: ${statusText}\n`;
               body += `- **Job**: [${job.name}](${job.html_url})\n\n`;
@@ -130,20 +236,18 @@ jobs:
 
             body += `---\n*This is an automated comment.*`;
 
-            // 기존 댓글 찾기
             const comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
 
-            const existingComment = comments.data.find(comment => 
-              comment.user.type === 'Bot' && 
+            const existingComment = comments.data.find(comment =>
+              comment.user.type === 'Bot' &&
               comment.body.includes('## 🔧 Electron Build Results')
             );
 
             if (existingComment) {
-              // 기존 댓글 업데이트
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -151,7 +255,6 @@ jobs:
                 body
               });
             } else {
-              // 새 댓글 작성
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,

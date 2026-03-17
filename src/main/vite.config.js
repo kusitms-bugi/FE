@@ -1,8 +1,8 @@
-import { node } from '../../.electron-vendors.cache.json';
-import { join } from 'path';
-import { builtinModules } from 'module';
+import { builtinModules } from 'node:module'
+import { join } from 'node:path'
+import { node } from '../../.electron-vendors.cache.json'
 
-const PACKAGE_ROOT = __dirname;
+const PACKAGE_ROOT = __dirname
 
 /**
  * @type {import('vite').UserConfig}
@@ -14,7 +14,7 @@ const config = {
   envDir: process.cwd(),
   resolve: {
     alias: {
-      '/@/': join(PACKAGE_ROOT, 'src') + '/',
+      '/@/': `${join(PACKAGE_ROOT, 'src')}/`,
     },
   },
   build: {
@@ -31,7 +31,7 @@ const config = {
       external: [
         'electron',
         'electron-devtools-installer',
-        ...builtinModules.flatMap((p) => [p, `node:${p}`]),
+        ...builtinModules.flatMap(p => [p, `node:${p}`]),
       ],
       output: {
         entryFileNames: '[name].cjs',
@@ -40,6 +40,6 @@ const config = {
     emptyOutDir: true,
     brotliSize: false,
   },
-};
+}
 
-export default config;
+export default config

@@ -1,5 +1,5 @@
 interface ResendSectionProps {
-  onClick: () => void;
+  onClick: () => void
 }
 
 export default function ResendSection({ onClick }: ResendSectionProps) {
@@ -13,5 +13,5 @@ export default function ResendSection({ onClick }: ResendSectionProps) {
         이메일 다시 보내기
       </span>
     </p>
-  );
+  )
 }

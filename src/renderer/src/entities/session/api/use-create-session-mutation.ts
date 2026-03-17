@@ -1,21 +1,25 @@
-import { useMutation } from '@tanstack/react-query';
-import api from '@shared/api';
-import { CreateSessionResponse } from '../types';
-import { AnalyticsEvents } from '@shared/lib/analytics/events';
+import api from '@shared/api'
+import {
+  AnalyticsEvents,
+  GA_STORAGE_KEYS,
+  validateAndLogSessionId,
+} from '@shared/lib/analytics'
+import { useMutation } from '@tanstack/react-query'
+import type { CreateSessionResponse } from '../types'
 
 /**
  * 세션 생성 API
  */
 const createSession = async (): Promise<CreateSessionResponse> => {
-  const response = await api.post<CreateSessionResponse>('/sessions', {});
-  const result = response.data;
+  const response = await api.post<CreateSessionResponse>('/sessions', {})
+  const result = response.data
 
   if (!result.success) {
-    throw new Error(result.message || '세션 생성 실패');
+    throw new Error(result.message || '세션 생성 실패')
   }
 
-  return result;
-};
+  return result
+}
 
 /**
  * 세션 생성 mutation 훅
@@ -26,46 +30,54 @@ const createSession = async (): Promise<CreateSessionResponse> => {
 export const useCreateSessionMutation = () => {
   return useMutation({
     mutationFn: createSession,
-    onSuccess: (res) => {
-      console.log('세션 생성 성공:', res.data.sessionId);
+    onSuccess: res => {
+      console.log('세션 생성 성공:', res.data.sessionId)
 
       // sessionId를 localStorage에 저장
-      localStorage.setItem('sessionId', res.data.sessionId);
-      localStorage.setItem('sessionStartAt', Date.now().toString());
+      localStorage.setItem('sessionId', res.data.sessionId)
+      localStorage.setItem('sessionStartAt', Date.now().toString())
 
       // 이전 세션의 lastSessionId 삭제 (중복 방지)
-      localStorage.removeItem('lastSessionId');
+      localStorage.removeItem('lastSessionId')
 
-      AnalyticsEvents.measureStart({ session_id: res.data.sessionId });
+      if (validateAndLogSessionId(res.data.sessionId, 'measure_start')) {
+        AnalyticsEvents.measureStart({ session_id: res.data.sessionId })
+      }
 
-      const signupCompletedAtRaw = localStorage.getItem('signupCompletedAt');
-      const firstMeasureSent = localStorage.getItem('ga_first_measure_start_sent');
-      const meaningfulUseSent = localStorage.getItem('ga_meaningful_use_sent');
+      const signupCompletedAtRaw = localStorage.getItem(
+        GA_STORAGE_KEYS.SIGNUP_COMPLETED_AT,
+      )
+      const firstMeasureSent = localStorage.getItem(
+        GA_STORAGE_KEYS.FIRST_MEASURE_START_SENT,
+      )
+      const meaningfulUseSent = localStorage.getItem(
+        GA_STORAGE_KEYS.MEANINGFUL_USE_SENT,
+      )
       if (signupCompletedAtRaw && firstMeasureSent !== 'true') {
-        const signupCompletedAt = Number(signupCompletedAtRaw);
+        const signupCompletedAt = Number(signupCompletedAtRaw)
         if (Number.isFinite(signupCompletedAt) && signupCompletedAt > 0) {
           const seconds_from_signup = Math.max(
             0,
             Math.round((Date.now() - signupCompletedAt) / 1000),
-          );
-          AnalyticsEvents.firstMeasureStart({ seconds_from_signup });
-          localStorage.setItem('ga_first_measure_start_sent', 'true');
+          )
+          AnalyticsEvents.firstMeasureStart({ seconds_from_signup })
+          localStorage.setItem(GA_STORAGE_KEYS.FIRST_MEASURE_START_SENT, 'true')
         }
       }
 
       if (signupCompletedAtRaw && meaningfulUseSent !== 'true') {
-        const signupCompletedAt = Number(signupCompletedAtRaw);
+        const signupCompletedAt = Number(signupCompletedAtRaw)
         if (Number.isFinite(signupCompletedAt) && signupCompletedAt > 0) {
-          const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+          const sevenDaysMs = 7 * 24 * 60 * 60 * 1000
           if (Date.now() - signupCompletedAt >= sevenDaysMs) {
-            AnalyticsEvents.meaningfulUse({ type: 'measure_start' });
-            localStorage.setItem('ga_meaningful_use_sent', 'true');
+            AnalyticsEvents.meaningfulUse({ type: 'measure_start' })
+            localStorage.setItem(GA_STORAGE_KEYS.MEANINGFUL_USE_SENT, 'true')
           }
         }
       }
     },
-    onError: (error) => {
-      console.error('세션 생성 오류:', error);
+    onError: error => {
+      console.error('세션 생성 오류:', error)
     },
-  });
-};
+  })
+}

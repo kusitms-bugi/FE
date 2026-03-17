@@ -1,1 +1,1 @@
-export { useNotificationScheduler } from './useNotificationScheduler';
+export { useNotificationScheduler } from './useNotificationScheduler'

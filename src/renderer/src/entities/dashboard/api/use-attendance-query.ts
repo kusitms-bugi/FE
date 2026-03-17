@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import api from '@shared/api';
-import { AttendanceQueryParams, AttendanceResponse } from '../types';
+import api from '@shared/api'
+import { useQuery } from '@tanstack/react-query'
+import type { AttendanceQueryParams, AttendanceResponse } from '../types'
 
 /**
  * 출석 현황 조회 API
@@ -12,23 +12,23 @@ const getAttendance = async (
   const queryParams = new URLSearchParams({
     period: params.period,
     year: params.year.toString(),
-  });
+  })
 
   if (params.month !== undefined) {
-    queryParams.append('month', params.month.toString());
+    queryParams.append('month', params.month.toString())
   }
 
   const response = await api.get<AttendanceResponse>(
     `/dashboard/attendance?${queryParams.toString()}`,
-  );
-  const result = response.data;
+  )
+  const result = response.data
 
   if (!result.success) {
-    throw new Error(result.message || '출석 현황 조회 실패');
+    throw new Error(result.message || '출석 현황 조회 실패')
   }
 
-  return result;
-};
+  return result
+}
 
 /**
  * 출석 현황 조회 query 훅
@@ -45,7 +45,7 @@ const getAttendance = async (
  */
 export const useAttendanceQuery = (
   params: AttendanceQueryParams,
-  enabled: boolean = true,
+  enabled = true,
 ) => {
   return useQuery({
     queryKey: ['attendance', params.period, params.year, params.month],
@@ -53,5 +53,5 @@ export const useAttendanceQuery = (
     enabled: enabled && !!params.year,
     staleTime: 1000 * 60 * 5, // 5분간 데이터 신선하게 유지
     retry: 1, // 실패 시 1번만 재시도
-  });
-};
+  })
+}

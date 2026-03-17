@@ -14,7 +14,7 @@ const TrendPanel = () => {
       </div>
       <div className="bg-grey-50 h-[200px] rounded-xl" />
     </div>
-  );
-};
+  )
+}
 
-export default TrendPanel;
+export default TrendPanel

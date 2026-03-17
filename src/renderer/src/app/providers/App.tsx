@@ -1,11 +1,11 @@
-import { router } from '@shared/config/router';
-import { LoadingSpinner } from '@shared/ui/loading';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Suspense } from 'react';
-import { RouterProvider } from 'react-router-dom';
+import { router } from '@shared/config/router'
+import { LoadingSpinner } from '@shared/ui/loading'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Suspense } from 'react'
+import { RouterProvider } from 'react-router-dom'
 
 function App() {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient()
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -19,7 +19,7 @@ function App() {
         <RouterProvider router={router} />
       </Suspense>
     </QueryClientProvider>
-  );
+  )
 }
 
-export default App;
+export default App

@@ -21,7 +21,7 @@ const LevelProgressPanel = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LevelProgressPanel;
+export default LevelProgressPanel

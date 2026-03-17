@@ -1,10 +1,10 @@
-import { Button } from '@shared/ui/button';
-import { ModalPortal } from '@shared/ui/modal';
-import CharacterSpeedRow from './CharacterSpeedRow';
-import { CHARACTER_SPEED_DATA } from './CharacterSpeedRow/constants';
+import { Button } from '@shared/ui/button'
+import { ModalPortal } from '@shared/ui/modal'
+import CharacterSpeedRow from './CharacterSpeedRow'
+import { CHARACTER_SPEED_DATA } from './CharacterSpeedRow/constants'
 
 interface TotalDistanceModalProps {
-  onClose: () => void;
+  onClose: () => void
 }
 
 const TotalDistanceModal = ({ onClose }: TotalDistanceModalProps) => {
@@ -16,7 +16,7 @@ const TotalDistanceModal = ({ onClose }: TotalDistanceModalProps) => {
       >
         <div
           className="bg-surface-modal border-grey-0 flex flex-col gap-4 rounded-[24px] border p-6"
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           <div className="flex w-[438px] flex-col px-4">
             <h2 className="text-body-lg-semibold text-grey-900 mb-6 text-center max-[1439px]:mb-4">
@@ -30,7 +30,7 @@ const TotalDistanceModal = ({ onClose }: TotalDistanceModalProps) => {
               </div>
               <div className="bg-bg-line my-2 h-px w-full" />
               <div className="text-caption-xs-meidum flex w-full flex-col gap-3 text-gray-500 max-[1439px]:gap-1">
-                {CHARACTER_SPEED_DATA.map((character) => (
+                {CHARACTER_SPEED_DATA.map(character => (
                   <CharacterSpeedRow
                     key={character.level}
                     level={character.level}
@@ -51,7 +51,7 @@ const TotalDistanceModal = ({ onClose }: TotalDistanceModalProps) => {
         </div>
       </div>
     </ModalPortal>
-  );
-};
+  )
+}
 
-export default TotalDistanceModal;
+export default TotalDistanceModal

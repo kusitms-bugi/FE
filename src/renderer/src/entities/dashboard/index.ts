@@ -1,5 +1,5 @@
-export * from './api';
-export * from './types';
+export * from './api'
+export * from './types'
 
 // 타입 명시적 export
 export type {
@@ -19,4 +19,4 @@ export type {
   PostureGraphResponse,
   PosturePatternData,
   PosturePatternResponse,
-} from './types';
+} from './types'

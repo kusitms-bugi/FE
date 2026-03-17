@@ -1,4 +1,4 @@
-import SignUpForm from '@features/auth/ui/signup/components/SignUpform';
+import SignUpForm from '@features/auth/ui/signup/components/SignUpform'
 
 const SignUpPage = () => {
   return (
@@ -14,7 +14,7 @@ const SignUpPage = () => {
         </section>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default SignUpPage;
+export default SignUpPage

@@ -1,8 +1,8 @@
-import InfoIcon from '@assets/common/icons/info-circle.svg?react';
-import * as React from 'react';
+import InfoIcon from '@assets/common/icons/info-circle.svg?react'
+import * as React from 'react'
 
 interface PannelHeaderProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
 const PannelHeader = React.forwardRef<HTMLDivElement, PannelHeaderProps>(
@@ -15,9 +15,9 @@ const PannelHeader = React.forwardRef<HTMLDivElement, PannelHeaderProps>(
         {children}
         <InfoIcon className="[&_path]:stroke-grey-200 cursor-pointer" />
       </div>
-    );
+    )
   },
-);
+)
 
-PannelHeader.displayName = 'PannelHeader';
-export { PannelHeader };
+PannelHeader.displayName = 'PannelHeader'
+export { PannelHeader }

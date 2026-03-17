@@ -1,18 +1,18 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
-type CameraState = 'show' | 'hide' | 'exit';
+type CameraState = 'show' | 'hide' | 'exit'
 
 interface CameraStore {
-  cameraState: CameraState;
-  setShow: () => void;
-  setHide: () => void;
-  setExit: () => void;
+  cameraState: CameraState
+  setShow: () => void
+  setHide: () => void
+  setExit: () => void
 }
 
 export const useCameraStore = create<CameraStore>()(
   persist(
-    (set) => ({
+    set => ({
       cameraState: 'hide',
       setShow: () => set({ cameraState: 'show' }),
       setHide: () => set({ cameraState: 'hide' }),
@@ -23,4 +23,4 @@ export const useCameraStore = create<CameraStore>()(
       storage: createJSONStorage(() => localStorage),
     },
   ),
-);
+)

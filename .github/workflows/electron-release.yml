@@ -14,8 +14,62 @@ on:
 permissions:
   contents: write  # Releases 생성 및 업로드를 위해 필수
 
+# 병렬 실행 방지 (동일 태그/브랜치)
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
+  # ============================================
+  # 의존성 설치 및 캐싱 Job
+  # ============================================
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-keys.outputs.key }}
+      node-version: ${{ steps.node-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate cache keys
+        id: cache-keys
+        run: |
+          echo "key=${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}" >> $GITHUB_OUTPUT
+
+      - name: Get Node.js version from package.json
+        id: node-version
+        run: |
+          VERSION=$(node -p "require('./package.json').engines.node.replace('>=', '')")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          echo "✅ Dependencies installed"
+
+      - name: Cache node_modules
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+            .pnpm-store
+          key: ${{ steps.cache-keys.outputs.key }}
+
+  # ============================================
+  # 빌드 및 릴리즈 Job (병렬 실행)
+  # ============================================
   build-and-release:
+    needs: setup
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -25,30 +79,49 @@ jobs:
             os_short: mac
           - os: windows-latest
             os_short: win
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+          cache: 'pnpm'
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            .pnpm-store
+          key: ${{ needs.setup.outputs.cache-key }}
+          fail-on-cache-miss: false
+
+      - name: Install dependencies (cache miss fallback)
+        run: pnpm install --frozen-lockfile --ignore-scripts
+        if: steps.cache.outputs.cache-hit != 'true'
+
       - name: Extract version from tag
         id: get_version
         shell: bash
         run: |
           set -euo pipefail
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            # 수동 실행 시 입력값 사용
             VERSION="${{ github.event.inputs.version }}"
           else
-            # 태그에서 버전 추출 (v1.0.0 -> 1.0.0)
             VERSION="${GITHUB_REF#refs/tags/v}"
           fi
 
-          # 입력에 v 접두사가 들어온 경우 제거
           VERSION="${VERSION#v}"
 
-          # semver 기본 형식 검증
+          # semver 검증
           if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
             echo "❌ Invalid version: $VERSION"
             exit 1
@@ -56,19 +129,8 @@ jobs:
 
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "📦 Version: $VERSION"
-      
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-      
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-      
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
 
+      # macOS 코드 사이닝
       - name: Import Apple code-signing certificate
         if: matrix.os_short == 'mac'
         shell: bash
@@ -115,25 +177,21 @@ jobs:
           GA4_DEBUG_MP=false
           EOF
           echo "runtime.env generated"
-      
+
       - name: Build and publish to GitHub Releases
         env:
-          # 버전 환경변수 설정 (.electron-builder.config.js에서 사용)
           VITE_APP_VERSION: ${{ steps.get_version.outputs.version }}
-          # macOS notarization / codesign secrets
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_IDENTITY: ${{ secrets.APPLE_IDENTITY }}
-          # GitHub Token (자동 제공)
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Build target: ${{ matrix.os_short }}"
           echo "VITE_APP_VERSION=$VITE_APP_VERSION"
           pnpm run build:${{ matrix.os_short }} --publish always
 
-      # 간헐적으로 publish 단계가 중간에 실패/타임아웃 나면 updater 메타 파일이 누락될 수 있어
-      # 마지막에 한번 더 업로드를 보장합니다. (이미 있으면 --clobber로 덮어쓰기)
+      # 업데이터 메타데이터 보장
       - name: Ensure mac updater metadata uploaded
         if: matrix.os_short == 'mac'
         shell: bash
@@ -163,3 +221,11 @@ jobs:
           else
             echo "No $FILE found; skip."
           fi
+
+      # 빌드 실패 시 Slack 알림 (선택사항)
+      - name: Notify build failure
+        if: failure() && matrix.os_short == 'mac'
+        run: |
+          echo "❌ Build failed for ${{ matrix.os_short }}"
+          echo "🔗 Check logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          # 여기에 Slack/Discord 웹훅 추가 가능

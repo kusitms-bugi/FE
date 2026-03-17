@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { cn } from '@shared/lib/cn';
+import { cn } from '@shared/lib/cn'
+import * as React from 'react'
 
 interface IntensitySliderProps {
-  leftLabel?: string;
-  rightLabel?: string;
+  leftLabel?: string
+  rightLabel?: string
 }
 
 const LEVEL_COLORS = [
@@ -12,7 +12,7 @@ const LEVEL_COLORS = [
   'bg-yellow-200', // 중간 노란색
   'bg-yellow-400', // 밝은 노란색/주황빛
   'bg-yellow-500', // 가장 진한 주황색/노란색
-] as const;
+] as const
 
 const IntensitySlider = React.forwardRef<HTMLDivElement, IntensitySliderProps>(
   ({ leftLabel = 'Less', rightLabel = 'More' }, ref) => {
@@ -32,9 +32,9 @@ const IntensitySlider = React.forwardRef<HTMLDivElement, IntensitySliderProps>(
           {rightLabel}
         </span>
       </div>
-    );
+    )
   },
-);
+)
 
-IntensitySlider.displayName = 'IntensitySlider';
-export { IntensitySlider };
+IntensitySlider.displayName = 'IntensitySlider'
+export { IntensitySlider }

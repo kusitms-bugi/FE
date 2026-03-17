@@ -1,43 +1,43 @@
-import { NotificationToggleSwitch } from '@shared/ui/toggle-switch';
-import { useState } from 'react';
-import { useTimeEditor } from './hooks/useTimeEditor';
-import { TimeControlSection } from './components/TimeControlSection';
-import { Button } from '@shared/ui/button';
-import { useNotificationStore } from '../model/use-notification-store';
-import { AnalyticsEvents } from '@shared/lib/analytics/events';
+import { AnalyticsEvents } from '@shared/lib/analytics/events'
+import { Button } from '@shared/ui/button'
+import { NotificationToggleSwitch } from '@shared/ui/toggle-switch'
+import { useState } from 'react'
+import { useNotificationStore } from '../model/use-notification-store'
+import { TimeControlSection } from './components/TimeControlSection'
+import { useTimeEditor } from './hooks/useTimeEditor'
 
 interface NotificationModalProps {
-  onClose: () => void;
+  onClose: () => void
 }
 
 const NotificationModal = ({ onClose }: NotificationModalProps) => {
-  const store = useNotificationStore();
+  const store = useNotificationStore()
 
   /* 알림 허용 */
-  const [isAllow, setIsAllow] = useState(store.isAllow);
+  const [isAllow, setIsAllow] = useState(store.isAllow)
 
   /* 스트레칭 주기 */
   const [isStretchingEnabled, setIsStretchingEnabled] = useState(
     store.stretching.isEnabled,
-  );
+  )
   const stretching = useTimeEditor({
     initialTime: store.stretching.interval,
     isEnabled: isAllow && isStretchingEnabled,
-  });
+  })
 
   /* 거북목 경고 */
   const [isTurtleNeckEnabled, setIsTurtleNeckEnabled] = useState(
     store.turtleNeck.isEnabled,
-  );
+  )
   const turtleNeck = useTimeEditor({
     initialTime: store.turtleNeck.interval,
     isEnabled: isAllow && isTurtleNeckEnabled,
-  });
+  })
 
   /* 저장하기 핸들러 - 알림 허용, 스트레칭, 거북목 시간 간격 전역 저장 */
   const handleSave = async () => {
     if (store.isAllow !== isAllow) {
-      AnalyticsEvents.notificationToggle({ enabled: isAllow });
+      AnalyticsEvents.notificationToggle({ enabled: isAllow })
     }
 
     store.setSettings({
@@ -50,18 +50,18 @@ const NotificationModal = ({ onClose }: NotificationModalProps) => {
         isEnabled: isTurtleNeckEnabled,
         interval: turtleNeck.time,
       },
-    });
+    })
 
     /* 알림 권한 요청 (처음 활성화하는 경우) */
     if (isAllow) {
       try {
-        await window.electronAPI.notification.requestPermission();
+        await window.electronAPI.notification.requestPermission()
       } catch (error) {
-        console.error('Failed to request notification permission:', error);
+        console.error('Failed to request notification permission:', error)
       }
     }
-    onClose();
-  };
+    onClose()
+  }
 
   return (
     <>
@@ -71,7 +71,7 @@ const NotificationModal = ({ onClose }: NotificationModalProps) => {
       >
         <div
           className="bg-surface-modal border-grey-0 fixed top-[45%] left-1/2 flex w-[339px] -translate-x-1/2 -translate-y-1/2 flex-col gap-2 rounded-[24px] border p-4"
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           {/* 알림 허용 */}
           <div className="bg-surface-modal-container flex items-center justify-between rounded-[12px] p-3">
@@ -115,7 +115,7 @@ const NotificationModal = ({ onClose }: NotificationModalProps) => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default NotificationModal;
+export default NotificationModal

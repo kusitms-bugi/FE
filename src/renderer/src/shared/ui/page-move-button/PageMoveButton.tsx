@@ -1,11 +1,11 @@
-import PageMoveIcon from '@assets/common/icons/page-move-button.svg?react';
-import * as React from 'react';
-import { cn } from '@shared/lib/cn';
+import PageMoveIcon from '@assets/common/icons/page-move-button.svg?react'
+import { cn } from '@shared/lib/cn'
+import * as React from 'react'
 
 interface PageMoveButtonProps {
-  direction?: 'prev' | 'next';
-  onClick?: () => void;
-  disabled?: boolean;
+  direction?: 'prev' | 'next'
+  onClick?: () => void
+  disabled?: boolean
 }
 
 const PageMoveButton = React.forwardRef<HTMLButtonElement, PageMoveButtonProps>(
@@ -36,9 +36,9 @@ const PageMoveButton = React.forwardRef<HTMLButtonElement, PageMoveButtonProps>(
           )}
         />
       </button>
-    );
+    )
   },
-);
+)
 
-PageMoveButton.displayName = 'PageMoveButton';
-export { PageMoveButton };
+PageMoveButton.displayName = 'PageMoveButton'
+export { PageMoveButton }

@@ -1,6 +1,6 @@
-import { cva, type VariantProps } from 'class-variance-authority';
-import * as React from 'react';
-import { ErrorIcon, SuccessIcon } from './icons';
+import { type VariantProps, cva } from 'class-variance-authority'
+import type * as React from 'react'
+import { ErrorIcon, SuccessIcon } from './icons'
 
 const notification = cva(
   'w-[544px] p-[18px] text-body-md-regular transition-all duration-200 ease-in-out rounded-full',
@@ -15,7 +15,7 @@ const notification = cva(
       variant: 'default',
     },
   },
-);
+)
 
 const icon = cva(
   'inline-flex items-center justify-center w-10 h-10 rounded-full shrink-0',
@@ -28,16 +28,16 @@ const icon = cva(
       },
     },
   },
-);
+)
 
 type Props = {
   /** 알림 메시지 내용 */
-  message: React.ReactNode;
+  message: React.ReactNode
   /** 스텝 번호 (기본 상태에서 사용) */
-  step: number;
+  step: number
   /** 에러 메시지 (기본 상태에서만 사용) */
-  errorMessage?: React.ReactNode;
-} & VariantProps<typeof notification>;
+  errorMessage?: React.ReactNode
+} & VariantProps<typeof notification>
 
 export function NotificateMessage({
   message,
@@ -47,12 +47,12 @@ export function NotificateMessage({
 }: Props) {
   const getIcon = () => {
     if (variant === 'success') {
-      return <SuccessIcon className="h-10 w-10" />;
+      return <SuccessIcon className="h-10 w-10" />
     }
 
     // default 상태에서는 항상 스텝 번호 표시
-    return <span className="text-sm font-medium">{step}</span>;
-  };
+    return <span className="text-sm font-medium">{step}</span>
+  }
 
   return (
     <>
@@ -82,7 +82,7 @@ export function NotificateMessage({
         </div>
       )}
     </>
-  );
+  )
 }
 
-export default NotificateMessage;
+export default NotificateMessage

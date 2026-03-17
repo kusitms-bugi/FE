@@ -1,22 +1,22 @@
-import DownIcon from '@assets/common/icons/arrow-narrow-down.svg?react';
-import UpIcon from '@assets/common/icons/arrow-narrow-up.svg?react';
-import { useAttendanceQuery } from '@entities/dashboard';
-import { IntensitySlider } from '@shared/ui/intensity-slider';
-import { PageMoveButton } from '@shared/ui/page-move-button';
-import { PannelHeader } from '@shared/ui/panel-header';
-import { ToggleSwitch } from '@shared/ui/toggle-switch';
-import { useState } from 'react';
+import DownIcon from '@assets/common/icons/arrow-narrow-down.svg?react'
+import UpIcon from '@assets/common/icons/arrow-narrow-up.svg?react'
+import { useAttendanceQuery } from '@entities/dashboard'
+import { IntensitySlider } from '@shared/ui/intensity-slider'
+import { PageMoveButton } from '@shared/ui/page-move-button'
+import { PannelHeader } from '@shared/ui/panel-header'
+import { ToggleSwitch } from '@shared/ui/toggle-switch'
+import { useState } from 'react'
 
 type CalendarProps = {
-  year: number;
-  month: number; // month: 0~11
-  attendances?: Record<string, number>; // 날짜별 레벨 값
-};
+  year: number
+  month: number // month: 0~11
+  attendances?: Record<string, number> // 날짜별 레벨 값
+}
 
 interface CircleProps {
-  level: number | null; // 1~5 또는 null (데이터 없음)
-  today: boolean;
-  future: boolean;
+  level: number | null // 1~5 또는 null (데이터 없음)
+  today: boolean
+  future: boolean
 }
 
 // 사용시간 0~1시간: 가장 연한 노란색
@@ -30,7 +30,7 @@ const LEVEL_COLORS = [
   'bg-yellow-300', // 3레벨 (2 시간 이상~3 시간 미만): 3단계 노랑
   'bg-yellow-400', // 4레벨 (3 이상~4 미만): 4단계 노랑
   'bg-yellow-500', // 5레벨 (4 이상): 5단계 노랑 (가장 진한 노란색)
-] as const;
+] as const
 
 /**
  * 사용 시간(시간 단위)에 따라 레벨(1~5)을 반환합니다.
@@ -38,19 +38,19 @@ const LEVEL_COLORS = [
  * @returns 레벨 1~5
  */
 const getLevelFromHours = (hours: number): number => {
-  if (hours <= 1) return 1; // 0~1시간: 레벨 1
-  if (hours < 2) return 2; // 1 초과~2 시간 미만: 레벨 2
-  if (hours < 3) return 3; // 2 시간 이상~3 시간 미만: 레벨 3
-  if (hours < 4) return 4; // 3 이상~4 미만: 레벨 4
-  return 5; // 4 이상: 레벨 5
-};
+  if (hours <= 1) return 1 // 0~1시간: 레벨 1
+  if (hours < 2) return 2 // 1 초과~2 시간 미만: 레벨 2
+  if (hours < 3) return 3 // 2 시간 이상~3 시간 미만: 레벨 3
+  if (hours < 4) return 4 // 3 이상~4 미만: 레벨 4
+  return 5 // 4 이상: 레벨 5
+}
 
 const Circle = ({ level, today, future }: CircleProps) => {
   // 미래 날짜
   if (future) {
     return (
       <div className="border-bg-line h-[18px] w-[18px] rounded-full border bg-transparent" />
-    );
+    )
   }
 
   // 데이터 없는 날 (안 사용한 날)
@@ -64,12 +64,12 @@ const Circle = ({ level, today, future }: CircleProps) => {
             : '',
         ].join(' ')}
       />
-    );
+    )
   }
 
   // 데이터 있는 날 (레벨 색 Circle)
-  const clampedLevel = Math.min(Math.max(level, 1), LEVEL_COLORS.length);
-  const colorClass = LEVEL_COLORS[clampedLevel - 1];
+  const clampedLevel = Math.min(Math.max(level, 1), LEVEL_COLORS.length)
+  const colorClass = LEVEL_COLORS[clampedLevel - 1]
 
   return (
     <div
@@ -79,38 +79,36 @@ const Circle = ({ level, today, future }: CircleProps) => {
         today ? 'ring-offset-grey-0 ring-2 ring-yellow-500 ring-offset-2' : '',
       ].join(' ')}
     />
-  );
-};
+  )
+}
 
 const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
-  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  const days = ['일', '월', '화', '수', '목', '금', '토']
 
-  const firstDayOfMonth = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOfMonth = new Date(year, month, 1).getDay()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
 
   // 7의 배수 칸으로 맞추기 (마지막 주 패딩)
-  const totalCells = Math.ceil((firstDayOfMonth + daysInMonth) / 7) * 7;
-  const trailing = totalCells - (firstDayOfMonth + daysInMonth);
+  const totalCells = Math.ceil((firstDayOfMonth + daysInMonth) / 7) * 7
+  const trailing = totalCells - (firstDayOfMonth + daysInMonth)
 
   const calendarDays: (number | null)[] = [
     ...(Array(firstDayOfMonth).fill(null) as (number | null)[]),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
     ...(Array(trailing).fill(null) as (number | null)[]),
-  ];
+  ]
 
   // 오늘 정보
-  const today = new Date();
-  const todayYear = today.getFullYear();
-  const todayMonth = today.getMonth();
-  const todayDate = today.getDate();
-
-
+  const today = new Date()
+  const todayYear = today.getFullYear()
+  const todayMonth = today.getMonth()
+  const todayDate = today.getDate()
 
   // API 데이터에서 날짜별 레벨 가져오기
   const getLevelForDay = (day: number): number | null => {
     // 날짜를 YYYY-MM-DD 형식으로 변환
-    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const usageMinutes = attendances[dateStr];
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+    const usageMinutes = attendances[dateStr]
 
     // 사용 시간이 없거나 0이면 null (안 사용한 날 - 그레이로 표시)
     if (
@@ -118,24 +116,24 @@ const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
       usageMinutes === null ||
       usageMinutes === 0
     ) {
-      return null;
+      return null
     }
 
     // 분을 시간으로 변환
-    const usageHours = usageMinutes / 60;
+    const usageHours = usageMinutes / 60
 
     // 사용 시간에 따라 레벨 결정 (1~5)
-    return getLevelFromHours(usageHours);
-  };
+    return getLevelFromHours(usageHours)
+  }
 
   const isFutureDay = (day: number) => {
     // 같은 달 기준으로 오늘 이후
-    if (year > todayYear) return true;
-    if (year === todayYear && month > todayMonth) return true;
+    if (year > todayYear) return true
+    if (year === todayYear && month > todayMonth) return true
     if (year === todayYear && month === todayMonth && day > todayDate)
-      return true;
-    return false;
-  };
+      return true
+    return false
+  }
 
   return (
     <div className="h-[150px] w-full">
@@ -167,13 +165,13 @@ const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
 // subContent 값에 따른 메시지 매핑
 const getSubContentMessage = (subContent?: string): string => {
   if (!subContent) {
-    return '당신은 매일 골든리트리버 한 마리를 목에 업고 작업한 것과 같아요 🥺';
+    return '당신은 매일 골든리트리버 한 마리를 목에 업고 작업한 것과 같아요 🥺'
   }
 
   const messageMap: Record<string, string> = {
@@ -182,41 +180,41 @@ const getSubContentMessage = (subContent?: string): string => {
     아기기린: '무거운 볼링공을 목에 걸고 일하는 중이에요 🎳',
     쑥쑥기린: '작은 수박 한 통 정도를 목에 얹은 상태예요 🍉',
     꽃꼿기린: '머리 본연의 무게만 딱! 지금 아주 좋아요 🌸',
-  };
+  }
 
-  return messageMap[subContent] || subContent;
-};
+  return messageMap[subContent] || subContent
+}
 
 const AttendacePanel = () => {
   // 오늘 월(1일)로 정규화
-  const today = new Date();
-  const todayYm = new Date(today.getFullYear(), today.getMonth(), 1);
+  const today = new Date()
+  const todayYm = new Date(today.getFullYear(), today.getMonth(), 1)
 
-  const [viewDate, setViewDate] = useState<Date>(todayYm);
-  const viewYear = viewDate.getFullYear();
-  const viewMonth = viewDate.getMonth(); // 0~11
+  const [viewDate, setViewDate] = useState<Date>(todayYm)
+  const viewYear = viewDate.getFullYear()
+  const viewMonth = viewDate.getMonth() // 0~11
 
   // API 호출
   const { data: attendanceData } = useAttendanceQuery({
     period: 'MONTHLY',
     year: viewYear,
     month: viewMonth + 1, // API는 1~12월 사용
-  });
+  })
 
   const clampToTodayMonth = (d: Date) => {
-    const y = d.getFullYear();
-    const m = d.getMonth();
-    const ty = todayYm.getFullYear();
-    const tm = todayYm.getMonth();
-    if (y > ty || (y === ty && m > tm)) return todayYm; // 미래 달로 못감
-    return d;
-  };
+    const y = d.getFullYear()
+    const m = d.getMonth()
+    const ty = todayYm.getFullYear()
+    const tm = todayYm.getMonth()
+    if (y > ty || (y === ty && m > tm)) return todayYm // 미래 달로 못감
+    return d
+  }
 
   const addMonthsSafe = (base: Date, delta: number) =>
-    clampToTodayMonth(new Date(base.getFullYear(), base.getMonth() + delta, 1));
+    clampToTodayMonth(new Date(base.getFullYear(), base.getMonth() + delta, 1))
 
   const isAtCurrentMonth =
-    viewYear === todayYm.getFullYear() && viewMonth === todayYm.getMonth();
+    viewYear === todayYm.getFullYear() && viewMonth === todayYm.getMonth()
 
   return (
     <div className="grid h-full w-full grid-cols-4 grid-rows-[57px_1fr_1fr_1fr] gap-2 p-4">
@@ -232,24 +230,24 @@ const AttendacePanel = () => {
         <div className="flex gap-2">
           <PageMoveButton
             direction="prev"
-            onClick={() => setViewDate((d) => addMonthsSafe(d, -1))}
+            onClick={() => setViewDate(d => addMonthsSafe(d, -1))}
           />
           <PageMoveButton
             direction="next"
-            onClick={() => setViewDate((d) => addMonthsSafe(d, +1))}
+            onClick={() => setViewDate(d => addMonthsSafe(d, +1))}
             disabled={isAtCurrentMonth}
           />
         </div>
       </div>
 
-      <div></div>
+      <div />
 
       <div className="flex flex-col items-end justify-end gap-3">
         <ToggleSwitch
           uncheckedLabel="월간"
           checkedLabel="연간"
           checked={false}
-          onChange={() => { }}
+          onChange={() => {}}
         />
         <IntensitySlider leftLabel="Less" rightLabel="More" />
       </div>
@@ -288,7 +286,7 @@ const AttendacePanel = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AttendacePanel;
+export default AttendacePanel

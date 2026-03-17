@@ -1,0 +1,54 @@
+version: 2
+updates:
+  # pnpm 의존성 업데이트
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - choihooo
+    assignees:
+      - choihooo
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "pnpm"
+    ignore:
+      # 주요 업데이트만 받기 (패치 버전 무시)
+      - dependency-name: "@types/*"
+        update-types: ["version-update:semver-patch"]
+      - dependency-name: "eslint-*"
+        update-types: ["version-update:semver-patch"]
+      - dependency-name: "@typescript-eslint/*"
+        update-types: ["version-update:semver-patch"]
+    groups:
+      # React 관련 패키지는 한 번에 업데이트
+      react-dependencies:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-*"
+      # TypeScript 관련 패키지 그룹화
+      typescript-dependencies:
+        patterns:
+          - "typescript"
+          - "@types/*"
+      # 빌드 도구 그룹화
+      build-dependencies:
+        patterns:
+          - "vite"
+          - "electron*"
+          - "esbuild"
+      # Zustand 관련 패키지
+      state-dependencies:
+        patterns:
+          - "zustand"
+      # MediaPipe 관련 패키지
+      mediapipe-dependencies:
+        patterns:
+          - "@mediapipe/*"

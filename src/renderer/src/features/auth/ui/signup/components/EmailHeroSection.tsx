@@ -1,8 +1,8 @@
-import { useEmailStore } from '@entities/user';
-import EmailIcon from '@assets/auth/email_icon.svg?react';
+import EmailIcon from '@assets/auth/email_icon.svg?react'
+import { useEmailStore } from '@entities/user'
 
 export default function EmailHeroSection() {
-  const email = useEmailStore((state) => state.email);
+  const email = useEmailStore(state => state.email)
 
   return (
     <div className="mb-12 flex flex-col items-center gap-[46px]">
@@ -12,7 +12,7 @@ export default function EmailHeroSection() {
         <p className="text-headline-2xl-regular text-grey-800 text-center">
           본인 인증 메일을 귀하의
           <span className="text-headline-2xl-semibold text-yellow-500">
-            {' ' + email}
+            {` ${email}`}
           </span>
           로 보냈습니다.
           <br />
@@ -22,5 +22,5 @@ export default function EmailHeroSection() {
         </p>
       </div>
     </div>
-  );
+  )
 }

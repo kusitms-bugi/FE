@@ -1,5 +1,5 @@
-export * from './lib';
-export * from './model';
+export * from './lib'
+export * from './model'
 
 // 타입 명시적 export
 export type {
@@ -10,4 +10,4 @@ export type {
   PostureClassification,
   CalibrationState,
   CalibrationFrame,
-} from './lib/types';
+} from './lib/types'

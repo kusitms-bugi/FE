@@ -1,5 +1,5 @@
-import HeroSection from './components/HeroSection';
-import LoginForm from './components/Loginforrm';
+import HeroSection from './components/HeroSection'
+import LoginForm from './components/Loginforrm'
 
 const LoginPage = () => {
   return (
@@ -11,7 +11,7 @@ const LoginPage = () => {
         </section>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default LoginPage;
+export default LoginPage

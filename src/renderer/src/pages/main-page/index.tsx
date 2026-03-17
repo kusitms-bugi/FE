@@ -1,14 +1,14 @@
 import {
-  PoseLandmark as AnalyzerPoseLandmark,
+  type PoseLandmark as AnalyzerPoseLandmark,
+  PostureClassifier,
+  type WorldLandmark,
   calculatePI,
   checkFrontality,
-  PostureClassifier,
   usePostureStore,
-  WorldLandmark,
-} from '@entities/posture';
-import type { MetricData } from '@entities/session';
-import { useSaveMetricsMutation } from '@entities/session';
-import { useNotificationScheduler } from '@features/calibration';
+} from '@entities/posture'
+import type { MetricData } from '@entities/session'
+import { useSaveMetricsMutation } from '@entities/session'
+import { useNotificationScheduler } from '@features/calibration'
 import {
   AttendacePanel,
   AveragePosturePanel,
@@ -16,54 +16,54 @@ import {
   MiniRunningPanel,
   PosePatternPanel,
   TotalDistancePanel,
+  WebcamPanel,
   useAutoMetricsSender,
   useSessionCleanup,
-  WebcamPanel,
-} from '@features/dashboard';
-import { useModal } from '@shared/hooks/use-modal';
-import { LoadingSpinner } from '@shared/ui/loading';
-import { ModalPortal } from '@shared/ui/modal';
-import { useCameraStore } from '@widgets/camera';
-import { lazy, Suspense, useEffect, useRef } from 'react';
-import { AnalyticsEvents } from '@shared/lib/analytics/events';
+} from '@features/dashboard'
+import { useModal } from '@shared/hooks/use-modal'
+import { AnalyticsEvents, GA_STORAGE_KEYS } from '@shared/lib/analytics'
+import { LoadingSpinner } from '@shared/ui/loading'
+import { ModalPortal } from '@shared/ui/modal'
+import { useCameraStore } from '@widgets/camera'
+import { Suspense, lazy, useEffect, useRef } from 'react'
 
 // Recharts를 사용하는 컴포넌트들을 lazy import
 const AverageGraphPannel = lazy(
   () => import('@features/dashboard/ui/AverageGraph/AverageGraphPannel'),
-);
+)
 const HighlightsPanel = lazy(
   () => import('@features/dashboard/ui/HighlightsPanel'),
-);
+)
 
 // 모달 컴포넌트들을 lazy import
 const NotificationModal = lazy(
   () => import('@features/notification/ui/NotificationModal'),
-);
+)
 
-const LOCAL_STORAGE_KEY = 'calibration_result_v1';
-const MAIN_WINDOW_ACTIVE_KEY = 'main-window-active';
+const LOCAL_STORAGE_KEY = 'calibration_result_v1'
+const MAIN_WINDOW_ACTIVE_KEY = 'main-window-active'
 
 const MainPage = () => {
-  const setStatus = usePostureStore((state) => state.setStatus);
-  const { cameraState, setHide, setShow, setExit } = useCameraStore();
-  const badPostureStartAtRef = useRef<number | null>(null);
-  const badPostureLevelRef = useRef<number | null>(null);
+  const setStatus = usePostureStore(state => state.setStatus)
+  const { cameraState, setHide, setShow, setExit } = useCameraStore()
+  const badPostureStartAtRef = useRef<number | null>(null)
+  const badPostureLevelRef = useRef<number | null>(null)
 
   // 메트릭 저장 mutation
-  const { mutate: saveMetrics } = useSaveMetricsMutation();
+  const { mutate: saveMetrics } = useSaveMetricsMutation()
 
   // 메트릭 데이터를 저장할 ref (리렌더링 방지)
-  const metricsRef = useRef<MetricData[]>([]);
+  const metricsRef = useRef<MetricData[]>([])
 
   // 마지막 저장 시간을 추적 (1초마다 저장용)
-  const lastSaveTimeRef = useRef<number>(0);
+  const lastSaveTimeRef = useRef<number>(0)
 
-  const classifierRef = useRef(new PostureClassifier());
+  const classifierRef = useRef(new PostureClassifier())
 
   // 메트릭을 서버로 전송하는 함수 (Promise 반환)
   const sendMetricsToServer = (): Promise<void> => {
-    return new Promise((resolve) => {
-      const sessionId = localStorage.getItem('sessionId');
+    return new Promise(resolve => {
+      const sessionId = localStorage.getItem('sessionId')
       if (sessionId && metricsRef.current.length > 0) {
         saveMetrics(
           {
@@ -73,95 +73,100 @@ const MainPage = () => {
           {
             onSuccess: () => {
               // 전송 완료 후 메트릭 초기화
-              metricsRef.current = [];
-              resolve();
+              metricsRef.current = []
+              resolve()
             },
             onError: () => {
               // 에러가 발생해도 resolve (계속 진행)
-              metricsRef.current = [];
-              resolve();
+              metricsRef.current = []
+              resolve()
             },
           },
-        );
+        )
       } else {
         // 전송할 데이터가 없으면 즉시 완료
-        resolve();
+        resolve()
       }
-    });
-  };
+    })
+  }
 
   /* 창 닫기 시 세션 정리 (메트릭 전송, 세션 종료, 카메라 종료, 위젯 닫기) */
-  useSessionCleanup(metricsRef, setExit);
+  useSessionCleanup(metricsRef, setExit)
 
   /* 5분마다 자동으로 메트릭 전송 */
-  useAutoMetricsSender(metricsRef, sendMetricsToServer);
+  useAutoMetricsSender(metricsRef, sendMetricsToServer)
 
   const handleToggleWebcam = () => {
     if (cameraState === 'show') {
-      setHide();
+      setHide()
     } else {
-      setShow();
+      setShow()
     }
-  };
+  }
 
   // 캘리브레이션 로드
   const calib = (() => {
     try {
-      const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      return { mu: parsed.mu_PI as number, sigma: parsed.sigma_PI as number };
+      const raw = localStorage.getItem(LOCAL_STORAGE_KEY)
+      if (!raw) return null
+      const parsed = JSON.parse(raw)
+      return { mu: parsed.mu_PI as number, sigma: parsed.sigma_PI as number }
     } catch {
-      return null;
+      return null
     }
-  })();
+  })()
 
   // 캘리브레이션이 로드될 때 초기화
   useEffect(() => {
     if (calib) {
-      classifierRef.current.reset();
+      classifierRef.current.reset()
     }
-  }, [calib]);
+  }, [calib])
 
   useEffect(() => {
-    const sessionId = localStorage.getItem('sessionId');
-    if (sessionId) {
-      AnalyticsEvents.measurePageEnter({ session_id: sessionId });
+    const sessionId = localStorage.getItem('sessionId')
+    const measurePageEnterSent = localStorage.getItem(
+      GA_STORAGE_KEYS.MEASURE_PAGE_ENTER_SENT,
+    )
+
+    if (sessionId && measurePageEnterSent !== 'true') {
+      localStorage.setItem(GA_STORAGE_KEYS.MEASURE_PAGE_ENTER_SENT, 'true')
+      AnalyticsEvents.measurePageEnter({ session_id: sessionId })
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     const heartbeat = () => {
-      localStorage.setItem(MAIN_WINDOW_ACTIVE_KEY, Date.now().toString());
-    };
+      localStorage.setItem(MAIN_WINDOW_ACTIVE_KEY, Date.now().toString())
+    }
 
-    heartbeat();
-    const interval = window.setInterval(heartbeat, 500);
+    heartbeat()
+    const interval = window.setInterval(heartbeat, 500)
 
     return () => {
-      window.clearInterval(interval);
-      localStorage.removeItem(MAIN_WINDOW_ACTIVE_KEY);
-    };
-  }, []);
+      window.clearInterval(interval)
+      localStorage.removeItem(MAIN_WINDOW_ACTIVE_KEY)
+    }
+  }, [])
 
   const handleUserMediaError = () => {
-    setHide();
-  };
+    setHide()
+  }
 
   const handlePoseDetected = async (
     landmarks: AnalyzerPoseLandmark[],
     worldLandmarks?: WorldLandmark[],
   ) => {
-    if (!calib) return; // 캘리브레이션 없으면 판정 중지
-    if (!landmarks || landmarks.length === 0) return;
+    if (!calib) return // 캘리브레이션 없으면 판정 중지
+    if (!landmarks || landmarks.length === 0) return
 
     const world =
       worldLandmarks && worldLandmarks.length > 0
         ? worldLandmarks
-        : (landmarks as unknown as WorldLandmark[]);
-    const pi = calculatePI(landmarks, world);
-    if (!pi) return;
-    const frontal = checkFrontality(landmarks);
+        : (landmarks as unknown as WorldLandmark[])
+    const pi = calculatePI(landmarks, world)
+    if (!pi) return
+    const frontal = checkFrontality(landmarks)
 
     // PostureClassifier가 내부적으로 안정화 로직을 처리함
     const result = classifierRef.current.classify(
@@ -169,54 +174,54 @@ const MainPage = () => {
       calib.mu,
       calib.sigma,
       frontal,
-    );
+    )
 
     // 안정화된 결과로 상태 업데이트
-    setStatus(result.cls, result.Score);
+    setStatus(result.cls, result.Score)
 
-    const sessionId = localStorage.getItem('sessionId');
+    const sessionId = localStorage.getItem('sessionId')
     if (sessionId) {
       if (result.events.includes('enter_bad')) {
-        badPostureStartAtRef.current = Date.now();
-        badPostureLevelRef.current = result.cls;
+        badPostureStartAtRef.current = Date.now()
+        badPostureLevelRef.current = result.cls
         AnalyticsEvents.badPostureEnter({
           session_id: sessionId,
           posture_level: result.cls,
-        });
+        })
       }
 
       if (result.events.includes('exit_bad')) {
-        const startedAt = badPostureStartAtRef.current;
-        const postureLevel = badPostureLevelRef.current ?? result.cls;
+        const startedAt = badPostureStartAtRef.current
+        const postureLevel = badPostureLevelRef.current ?? result.cls
         if (startedAt) {
           const recovery_time_sec = Math.max(
             0,
             Math.round((Date.now() - startedAt) / 1000),
-          );
+          )
           AnalyticsEvents.postureRecovered({
             session_id: sessionId,
             posture_level: postureLevel,
             recovery_time_sec,
-          });
+          })
         }
-        badPostureStartAtRef.current = null;
-        badPostureLevelRef.current = null;
+        badPostureStartAtRef.current = null
+        badPostureLevelRef.current = null
       }
     }
 
     // 메트릭 데이터 수집 (1초마다 한 번씩만 저장)
-    const currentTime = Date.now();
-    const timeSinceLastSave = currentTime - lastSaveTimeRef.current;
+    const currentTime = Date.now()
+    const timeSinceLastSave = currentTime - lastSaveTimeRef.current
 
     if (timeSinceLastSave >= 1000) {
       // 1초(1000ms) 이상 지났으면 저장
       // KST(UTC+9) 시간으로 변환
-      const kstTime = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString();
+      const kstTime = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString()
       metricsRef.current.push({
         score: result.cls, // 자세 상태별 레벨 (1~6) 저장
         timestamp: kstTime,
-      });
-      lastSaveTimeRef.current = currentTime;
+      })
+      lastSaveTimeRef.current = currentTime
     }
 
     // Electron 환경에서 로그 파일로 저장
@@ -228,19 +233,19 @@ const MainPage = () => {
           z_pi: result.z_PI,
           status: result.text,
           timestamp: new Date().toISOString(),
-        });
-        await window.electronAPI.writeLog(logData);
+        })
+        await window.electronAPI.writeLog(logData)
       } catch (error) {
-        console.error('Failed to write log file:', error);
+        console.error('Failed to write log file:', error)
       }
     }
-  };
+  }
 
   /* 모달 오픈 */
-  const { isOpen, open: handleOpenModal, close: handleCloseModal } = useModal();
+  const { isOpen, open: handleOpenModal, close: handleCloseModal } = useModal()
 
   /* 알림 스케줄러 활성화 */
-  useNotificationScheduler();
+  useNotificationScheduler()
 
   return (
     <>
@@ -342,7 +347,7 @@ const MainPage = () => {
         </div>
       </main>
     </>
-  );
-};
+  )
+}
 
-export default MainPage;
+export default MainPage

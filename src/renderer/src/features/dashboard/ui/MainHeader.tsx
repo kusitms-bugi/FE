@@ -1,48 +1,48 @@
-import DashboardIcon from '@assets/common/icons/dashboard.svg?react';
-import Logo from '@assets/common/icons/logo.svg?react';
-import SettingIcon from '@assets/common/icons/setting.svg?react';
-import Symbol from '@assets/common/icons/symbol.svg?react';
-import TipOff from '@assets/common/icons/tip-off.svg?react';
-import NotificationIcon from '@assets/main/bell_icon.svg?react';
-import { Button } from '@shared/ui/button';
-import type { ComponentType, SVGProps } from 'react';
-import { useNavigate } from 'react-router-dom';
+import DashboardIcon from '@assets/common/icons/dashboard.svg?react'
+import Logo from '@assets/common/icons/logo.svg?react'
+import SettingIcon from '@assets/common/icons/setting.svg?react'
+import Symbol from '@assets/common/icons/symbol.svg?react'
+import TipOff from '@assets/common/icons/tip-off.svg?react'
+import NotificationIcon from '@assets/main/bell_icon.svg?react'
+import { Button } from '@shared/ui/button'
+import type { ComponentType, SVGProps } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { useModal } from '@shared/hooks/use-modal';
-import { useThemePreference } from '@shared/hooks/use-theme-preference';
-import { cn } from '@shared/lib/cn';
-import { ThemeToggleSwitch } from '@shared/ui/theme-toggle-switch';
-import SettingsModal from './SettingsModal';
+import { useModal } from '@shared/hooks/use-modal'
+import { useThemePreference } from '@shared/hooks/use-theme-preference'
+import { cn } from '@shared/lib/cn'
+import { ThemeToggleSwitch } from '@shared/ui/theme-toggle-switch'
+import SettingsModal from './SettingsModal'
 
-type TabType = 'dashboard' | 'settings' | 'report' | 'review';
-type IconType = ComponentType<SVGProps<SVGSVGElement>>;
+type TabType = 'dashboard' | 'settings' | 'report' | 'review'
+type IconType = ComponentType<SVGProps<SVGSVGElement>>
 
 interface TabItem {
-  id: TabType;
-  label: string;
-  icon?: IconType;
-  disabled: boolean;
-  path: string;
+  id: TabType
+  label: string
+  icon?: IconType
+  disabled: boolean
+  path: string
 }
 
 interface MainHeaderProps {
-  onClickNotification?: () => void;
+  onClickNotification?: () => void
 }
 
 const ERROR_REPORT_URL =
-  'https://adhesive-wrench-b12.notion.site/3067d0b568e281fd97b4f2954d09a2f6?pvs=105';
+  'https://adhesive-wrench-b12.notion.site/3067d0b568e281fd97b4f2954d09a2f6?pvs=105'
 const REVIEW_FORM_URL =
-  'https://adhesive-wrench-b12.notion.site/30f7d0b568e28033b440c1352d8a1a43?pvs=105';
+  'https://adhesive-wrench-b12.notion.site/30f7d0b568e28033b440c1352d8a1a43?pvs=105'
 
 const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
-  const [isDark, setIsDark] = useThemePreference();
-  const navigate = useNavigate();
+  const [isDark, setIsDark] = useThemePreference()
+  const navigate = useNavigate()
   const {
     isOpen: isSettingsOpen,
     open: openSettings,
     close: closeSettings,
-  } = useModal();
-  const activeTab: TabType = isSettingsOpen ? 'settings' : 'dashboard';
+  } = useModal()
+  const activeTab: TabType = isSettingsOpen ? 'settings' : 'dashboard'
 
   const tabs: TabItem[] = [
     {
@@ -72,7 +72,7 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
       disabled: false,
       path: '/main',
     },
-  ];
+  ]
 
   return (
     <>
@@ -87,27 +87,35 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
 
           {/* 네비게이션 탭 */}
           <nav className="flex gap-2">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
+            {tabs.map(tab => {
+              const Icon = tab.icon
+              const isActive = activeTab === tab.id
 
               return (
                 <Button
                   key={tab.id}
                   onClick={() => {
                     if (tab.id === 'settings') {
-                      openSettings();
-                      return;
+                      openSettings()
+                      return
                     }
                     if (tab.id === 'report') {
-                      window.open(ERROR_REPORT_URL, '_blank', 'noopener,noreferrer');
-                      return;
+                      window.open(
+                        ERROR_REPORT_URL,
+                        '_blank',
+                        'noopener,noreferrer',
+                      )
+                      return
                     }
                     if (tab.id === 'review') {
-                      window.open(REVIEW_FORM_URL, '_blank', 'noopener,noreferrer');
-                      return;
+                      window.open(
+                        REVIEW_FORM_URL,
+                        '_blank',
+                        'noopener,noreferrer',
+                      )
+                      return
                     }
-                    navigate(tab.path);
+                    navigate(tab.path)
                   }}
                   disabled={tab.disabled}
                   variant={isActive ? 'primary' : 'grey'}
@@ -136,7 +144,7 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
                     </div>
                   }
                 />
-              );
+              )
             })}
           </nav>
         </div>
@@ -152,7 +160,7 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default MainHeader;
+export default MainHeader

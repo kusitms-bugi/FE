@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from 'react'
 import {
   Bar,
   BarChart,
@@ -8,18 +8,18 @@ import {
   ResponsiveContainer,
   XAxis,
   YAxis,
-} from 'recharts';
+} from 'recharts'
 
-import { PannelHeader } from '@shared/ui/panel-header';
-import { ToggleSwitch } from '@shared/ui/toggle-switch';
-import type { HighlightDatum } from './HighlightsPanel/data';
+import { PannelHeader } from '@shared/ui/panel-header'
+import { ToggleSwitch } from '@shared/ui/toggle-switch'
+import type { HighlightDatum } from './HighlightsPanel/data'
 import {
-  useHighlightsChart,
   type HighlightPeriod,
-} from './HighlightsPanel/hooks/useHighlightsChart';
+  useHighlightsChart,
+} from './HighlightsPanel/hooks/useHighlightsChart'
 
 const HighlightsPanel = () => {
-  const [activePeriod, setActivePeriod] = useState<HighlightPeriod>('weekly');
+  const [activePeriod, setActivePeriod] = useState<HighlightPeriod>('weekly')
 
   const {
     data,
@@ -35,11 +35,11 @@ const HighlightsPanel = () => {
     labelPosition,
     gridColor,
     yAxisTicks,
-  } = useHighlightsChart(activePeriod);
+  } = useHighlightsChart(activePeriod)
 
   const handleToggleChange = (isMonthly: boolean) => {
-    setActivePeriod(isMonthly ? 'monthly' : 'weekly');
-  };
+    setActivePeriod(isMonthly ? 'monthly' : 'weekly')
+  }
 
   return (
     <div className="flex h-full flex-col rounded-2xl p-5">
@@ -130,31 +130,31 @@ const HighlightsPanel = () => {
                 position={labelPosition}
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 content={(props: any) => {
-                  const { value, index, viewBox } = props;
-                  if (viewBox == null || index == null) return null;
+                  const { value, index, viewBox } = props
+                  if (viewBox == null || index == null) return null
 
                   const { x, y, width, height } = viewBox as {
-                    x: number;
-                    y: number;
-                    width: number;
-                    height: number;
-                  };
+                    x: number
+                    y: number
+                    width: number
+                    height: number
+                  }
 
-                  const datum = data[index] as HighlightDatum | undefined;
-                  if (!datum) return null;
+                  const datum = data[index] as HighlightDatum | undefined
+                  if (!datum) return null
 
-                  const isCurrent = datum.barKey === 'current';
+                  const isCurrent = datum.barKey === 'current'
 
                   // 막대 중앙 좌표
-                  const cx = x + width / 2;
-                  const cy = y + height / 2;
+                  const cx = x + width / 2
+                  const cy = y + height / 2
 
-                  const fill = isCurrent ? labelColor : previousLabelColor;
+                  const fill = isCurrent ? labelColor : previousLabelColor
 
-                  let text: string;
-                  if (typeof value === 'number') text = value.toString();
-                  else if (typeof value === 'string') text = value;
-                  else return null;
+                  let text: string
+                  if (typeof value === 'number') text = value.toString()
+                  else if (typeof value === 'string') text = value
+                  else return null
 
                   return (
                     <text
@@ -168,7 +168,7 @@ const HighlightsPanel = () => {
                     >
                       {text}
                     </text>
-                  );
+                  )
                 }}
               />
             </Bar>
@@ -176,7 +176,7 @@ const HighlightsPanel = () => {
         </ResponsiveContainer>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default HighlightsPanel;
+export default HighlightsPanel

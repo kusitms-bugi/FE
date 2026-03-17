@@ -1,11 +1,11 @@
-import * as React from 'react';
-import MoonIcon from '@assets/common/icons/moon_icon.svg?react';
-import SunIcon from '@assets/common/icons/sun_icon.svg?react';
-import { cn } from '@shared/lib/cn';
+import MoonIcon from '@assets/common/icons/moon_icon.svg?react'
+import SunIcon from '@assets/common/icons/sun_icon.svg?react'
+import { cn } from '@shared/lib/cn'
+import * as React from 'react'
 
 interface ThemeToggleSwitchProps {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
+  checked: boolean
+  onChange: (checked: boolean) => void
 }
 
 const ThemeToggleSwitch = React.forwardRef<
@@ -36,10 +36,10 @@ const ThemeToggleSwitch = React.forwardRef<
           'absolute left-[3px] flex h-[24px] w-[24px] items-center justify-center rounded-full bg-yellow-400 transition-transform duration-400 ease-in-out',
           checked ? 'translate-x-[32px]' : 'translate-x-[0px]',
         )}
-      ></span>
+      />
     </button>
-  );
-});
+  )
+})
 
-ThemeToggleSwitch.displayName = 'ThemeToggleSwitch';
-export { ThemeToggleSwitch };
+ThemeToggleSwitch.displayName = 'ThemeToggleSwitch'
+export { ThemeToggleSwitch }

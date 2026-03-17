@@ -1,15 +1,15 @@
-import { NotificationToggleSwitch } from '@shared/ui/toggle-switch';
-import { useTimeEditor } from '../hooks/useTimeEditor';
-import MinusIcon from '@assets/main/minus_icon.svg?react';
-import PlusIcon from '@assets/main/plus_icon.svg?react';
+import MinusIcon from '@assets/main/minus_icon.svg?react'
+import PlusIcon from '@assets/main/plus_icon.svg?react'
+import { NotificationToggleSwitch } from '@shared/ui/toggle-switch'
+import type { useTimeEditor } from '../hooks/useTimeEditor'
 
 interface TimeControlSectionProps {
-  title: string;
-  description: string;
-  isEnabled: boolean;
-  onToggle: () => void;
-  isDisabled?: boolean;
-  timeEditor: ReturnType<typeof useTimeEditor>;
+  title: string
+  description: string
+  isEnabled: boolean
+  onToggle: () => void
+  isDisabled?: boolean
+  timeEditor: ReturnType<typeof useTimeEditor>
 }
 
 export const TimeControlSection = ({
@@ -87,5 +87,5 @@ export const TimeControlSection = ({
         </button>
       </div>
     </div>
-  );
-};
+  )
+}

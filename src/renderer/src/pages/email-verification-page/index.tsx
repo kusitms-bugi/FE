@@ -1,20 +1,20 @@
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@shared/ui/button';
-import { useResendVerifyEmailMuation, useEmailStore } from '@entities/user';
-import EmailHeroSection from '@features/auth/ui/signup/components/EmailHeroSection';
-import ResendSection from '@features/auth/ui/signup/components/ResendSection';
+import { useEmailStore, useResendVerifyEmailMuation } from '@entities/user'
+import EmailHeroSection from '@features/auth/ui/signup/components/EmailHeroSection'
+import ResendSection from '@features/auth/ui/signup/components/ResendSection'
+import { Button } from '@shared/ui/button'
+import { useNavigate } from 'react-router-dom'
 
 const EmailVerificationPage = () => {
-  const resendverifyEmailMutation = useResendVerifyEmailMuation();
-  const email = useEmailStore((state) => state.email);
-  const navigate = useNavigate();
+  const resendverifyEmailMutation = useResendVerifyEmailMuation()
+  const email = useEmailStore(state => state.email)
+  const navigate = useNavigate()
 
   /* 토큰 여부에 따른 이메일 인증 */
 
   /*이메일 다시 보내기 */
   const onResendClick = () => {
-    resendverifyEmailMutation.mutate({ email: email, callbackUrl: '' });
-  };
+    resendverifyEmailMutation.mutate({ email: email, callbackUrl: '' })
+  }
 
   return (
     <main className="hbp:min-h-[calc(100vh-75px)] flex min-h-[calc(100vh-60px)] flex-col items-center justify-center">
@@ -30,7 +30,7 @@ const EmailVerificationPage = () => {
         </section>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default EmailVerificationPage;
+export default EmailVerificationPage

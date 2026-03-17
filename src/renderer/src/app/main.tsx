@@ -1,8 +1,8 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import App from './providers/App';
-import '../index.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './providers/App'
+import '../index.css'
 
 // React Query 클라이언트 생성
 const queryClient = new QueryClient({
@@ -13,10 +13,10 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
-});
+})
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
     <App />
   </QueryClientProvider>,
-);
+)

@@ -1,4 +1,4 @@
-import { cva } from 'class-variance-authority';
+import { cva } from 'class-variance-authority'
 
 export const buttonVariants = cva(
   'inline-flex items-center justify-center rounded-full transition-colors focus-visible:outline-none disabled:cursor-not-allowed active:scale-95',
@@ -24,5 +24,4 @@ export const buttonVariants = cva(
       size: 'md',
     },
   },
-);
-
+)

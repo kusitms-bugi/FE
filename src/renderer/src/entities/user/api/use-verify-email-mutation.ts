@@ -105,10 +105,12 @@ export const useVerifyEmailMutation = (
       const gaFirstMeasure = localStorage.getItem('ga_first_measure_start_sent');
       const gaMeaningful = localStorage.getItem('ga_meaningful_use_sent');
       const gaOnboardingEnter = localStorage.getItem('ga_onboarding_enter_sent');
+      const gaMeasurePageEnter = localStorage.getItem('ga_measure_page_enter_sent');
 
       if (gaFirstMeasure) preserved.ga_first_measure_start_sent = gaFirstMeasure;
       if (gaMeaningful) preserved.ga_meaningful_use_sent = gaMeaningful;
       if (gaOnboardingEnter) preserved.ga_onboarding_enter_sent = gaOnboardingEnter;
+      if (gaMeasurePageEnter) preserved.ga_measure_page_enter_sent = gaMeasurePageEnter;
 
       AnalyticsEvents.signUpComplete({ user_id: userId });
 

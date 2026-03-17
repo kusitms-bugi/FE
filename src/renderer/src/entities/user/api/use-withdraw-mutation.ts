@@ -1,4 +1,5 @@
 import api from '@shared/api'
+import { parseErrorMessage } from '@shared/lib/error/parse-error'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 

@@ -5,6 +5,7 @@ import {
   validateAndLogUserId,
 } from '@shared/lib/analytics'
 import { markCalibrationInitialRequired } from '@shared/lib/calibration-gate'
+import { parseErrorMessage } from '@shared/lib/error/parse-error'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
@@ -151,9 +152,7 @@ export const useVerifyEmailMutation = (
     },
     onError: (error: unknown) => {
       console.error('인증 실패:', error)
-      const errorMessage =
-        error instanceof Error ? error.message : '인증 실패! 다시 시도해주세요'
-      alert(errorMessage)
+      alert(parseErrorMessage(error))
     },
   })
 }
@@ -170,9 +169,7 @@ export const useResendVerifyEmailMuation = () => {
     },
     onError: (error: unknown) => {
       console.error('인증 다시 보내기 실패:', error)
-      const errorMessage =
-        error instanceof Error ? error.message : '인증 다시 보내기 실패'
-      alert(errorMessage)
+      alert(parseErrorMessage(error))
     },
   })
 }

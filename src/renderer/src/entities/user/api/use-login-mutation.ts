@@ -8,6 +8,7 @@ import {
   canAccessCalibrationFlow,
   markCalibrationInitialRequired,
 } from '@shared/lib/calibration-gate'
+import { parseErrorMessage } from '@shared/lib/error/parse-error'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
@@ -86,11 +87,7 @@ export const useLoginMutation = () => {
     },
     onError: (error: unknown) => {
       console.error('로그인 오류:', error)
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : '로그인에 실패했습니다. 다시 시도해주세요.'
-      alert(errorMessage)
+      alert(parseErrorMessage(error))
     },
   })
 }

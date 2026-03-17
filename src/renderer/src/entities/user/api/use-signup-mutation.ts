@@ -1,4 +1,5 @@
 import api from '@shared/api'
+import { parseErrorMessage } from '@shared/lib/error/parse-error'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
@@ -55,11 +56,7 @@ export const useSignupMutation = () => {
     },
     onError: (error: unknown) => {
       console.error('회원가입 실패:', error)
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : '회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.'
-      alert(errorMessage)
+      alert(parseErrorMessage(error))
     },
   })
 }

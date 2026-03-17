@@ -7,6 +7,7 @@ import {
   clearCalibrationGate,
   requestCalibrationReset,
 } from '@shared/lib/calibration-gate'
+import { parseErrorMessage } from '@shared/lib/error/parse-error'
 import { Button } from '@shared/ui/button'
 import { ModalPortal } from '@shared/ui/modal'
 import { useNavigate } from 'react-router-dom'
@@ -66,11 +67,7 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
       alert('회원탈퇴가 완료되었습니다.')
     } catch (error: unknown) {
       console.error('회원탈퇴 실패:', error)
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : '회원탈퇴에 실패했습니다. 다시 시도해주세요.'
-      alert(errorMessage)
+      alert(parseErrorMessage(error))
     }
   }
 

@@ -75,7 +75,7 @@
     "esbuild": "^0.25.12",
     "globals": "^16.5.0",
     "husky": "9.1.7",
-    "lint-staged": "16.2.6",
+    "lint-staged": "16.4.0",
     "rollup-plugin-visualizer": "^6.0.5",
     "tailwind-merge": "3.3.1",
     "tailwindcss": "4.1.16",

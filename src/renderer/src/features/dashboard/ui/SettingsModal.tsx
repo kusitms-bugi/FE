@@ -141,8 +141,7 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
       setIsStartupSupported(result.supported)
 
       if (!result.success) {
-        const message =
-          result.error ?? '자동 실행 설정을 변경하지 못했습니다.'
+        const message = result.error ?? '자동 실행 설정을 변경하지 못했습니다.'
         setStartupError(message)
         alert(message)
       }

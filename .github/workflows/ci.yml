@@ -111,6 +111,28 @@ jobs:
             dist/renderer/
           retention-days: 7
 
+  release-automation:
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Validate release automation contracts
+        run: pnpm run release:validate
+
   # ============================================
   # 의존성 취약점 스캔 - 독립 실행
   # ============================================

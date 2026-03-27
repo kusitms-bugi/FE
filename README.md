@@ -87,6 +87,14 @@
 - **Animation**: `framer-motion`
 - **Routing**: `react-router-dom`
 
+## 📐 개발 규약
+
+- 프로젝트 헌법: `.specify/memory/constitution.md`
+- Renderer는 Node/Electron API에 직접 접근하지 않고, preload `contextBridge` 계약을 통해서만 시스템 기능을 사용합니다.
+- Renderer 구조는 FSD 레이어 규칙을 따르며, 클라이언트 상태는 `Zustand`, 서버 상태는 `TanStack Query`로 분리합니다.
+- 머지 기준은 `Biome check`, `TypeScript typecheck`, `build` 검증 통과입니다.
+- 태그 릴리즈는 `vX.Y.Z` 규칙을 사용하며 macOS/Windows 빌드와 업데이트 메타데이터 업로드가 모두 완료되어야 합니다.
+
 ---
 
 ## 📈 Google Analytics (GA4)
@@ -202,6 +210,21 @@ pnpm build:mac    # macOS 빌드
 pnpm build:win    # Windows 빌드
 pnpm build:all    # 모든 플랫폼 빌드
 ```
+
+## 🚢 Release Flow
+
+- 기본 배포 경로는 `main` PR merge -> `.github/workflows/auto-release.yml` -> `vX.Y.Z` tag push -> `Electron Release` / `Release Notes` 순서입니다.
+- 버전 증가는 PR label `release:major`, `release:minor`, `release:patch` 중 정확히 하나로만 결정됩니다.
+- 자동 릴리즈 시작 전 `lint`, `typecheck`, `build` 체크가 모두 성공해야 합니다.
+- `package.json` 버전과 Git tag는 같은 release prepare 커밋에서 함께 동기화됩니다.
+- 수동 `workflow_dispatch` 릴리즈는 `auto_release_recovery`, `approved_hotfix`, `operator_intervention` 예외 사유가 있을 때만 사용합니다.
+
+### 운영자 체크포인트
+
+- Auto Release summary에서 HEAD SHA, 계산된 버전, duplicate guard 상태를 확인합니다.
+- Electron Release summary에서 `mac_release`, `win_release`, `updater_metadata` 단계를 확인합니다.
+- `partial_platform_release` 또는 `updater_metadata_incomplete`가 나오면 마지막 안정 태그 기준으로 rollback 여부를 판단합니다.
+- 릴리즈 회귀 검증은 `pnpm run release:validate`로 수행합니다.
 
 ---
 

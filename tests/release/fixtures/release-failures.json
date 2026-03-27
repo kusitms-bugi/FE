@@ -1,0 +1,42 @@
+{
+  "partialPlatformFailure": {
+    "execution_id": "release-partial-1",
+    "version": "1.2.0",
+    "stage_statuses": [
+      { "stage_name": "quality_gate", "status": "success" },
+      { "stage_name": "version_decision", "status": "success" },
+      { "stage_name": "version_sync", "status": "success" },
+      { "stage_name": "tag_push", "status": "success" },
+      { "stage_name": "release_notes", "status": "success" },
+      {
+        "stage_name": "mac_release",
+        "status": "success",
+        "summary": "macOS artifacts uploaded."
+      },
+      {
+        "stage_name": "win_release",
+        "status": "failure",
+        "summary": "Windows signing failed."
+      },
+      { "stage_name": "updater_metadata", "status": "skipped" }
+    ]
+  },
+  "metadataFailure": {
+    "execution_id": "release-metadata-1",
+    "version": "1.2.1",
+    "stage_statuses": [
+      { "stage_name": "quality_gate", "status": "success" },
+      { "stage_name": "version_decision", "status": "success" },
+      { "stage_name": "version_sync", "status": "success" },
+      { "stage_name": "tag_push", "status": "success" },
+      { "stage_name": "release_notes", "status": "success" },
+      { "stage_name": "mac_release", "status": "success" },
+      { "stage_name": "win_release", "status": "success" },
+      {
+        "stage_name": "updater_metadata",
+        "status": "failure",
+        "summary": "latest.yml upload failed."
+      }
+    ]
+  }
+}

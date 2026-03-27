@@ -40,7 +40,11 @@
     "typecheck:preload": "tsc --noEmit -p src/preload/tsconfig.json",
     "typecheck:renderer": "tsc --noEmit -p src/renderer/tsconfig.json",
     "typecheck": "pnpm run typecheck:main && pnpm run typecheck:preload && pnpm run typecheck:renderer",
-    "analyze": "pnpm run build:renderer"
+    "analyze": "pnpm run build:renderer",
+    "test": "pnpm run test:release",
+    "test:release": "node --test tests/release/*.test.mjs",
+    "release:smoke": "node --test tests/release/auto-release-workflow.test.mjs",
+    "release:validate": "pnpm run test:release"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",

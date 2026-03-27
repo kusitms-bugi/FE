@@ -3,34 +3,52 @@ name: Electron Release
 on:
   push:
     tags:
-      - 'v*'  # v1.0.0, v1.0.1 등 태그가 푸시되면 릴리즈
-  workflow_dispatch:  # 수동 실행도 가능
+      - 'v*'
+  workflow_dispatch:
     inputs:
       version:
         description: 'Version to release (e.g., 1.0.0)'
         required: true
         type: string
+      reason:
+        description: 'Approved manual release reason'
+        required: true
+        type: choice
+        options:
+          - auto_release_recovery
+          - approved_hotfix
+          - operator_intervention
+      approval_reference:
+        description: 'Ticket, runbook, or approval reference for the exception'
+        required: true
+        type: string
 
 permissions:
-  contents: write  # Releases 생성 및 업로드를 위해 필수
+  contents: write
 
-# 병렬 실행 방지 (동일 태그/브랜치)
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  # ============================================
-  # 의존성 설치 및 캐싱 Job
-  # ============================================
   setup:
     runs-on: ubuntu-latest
     outputs:
       cache-key: ${{ steps.cache-keys.outputs.key }}
       node-version: ${{ steps.node-version.outputs.version }}
+      version: ${{ steps.release-meta.outputs.version }}
+      tag: ${{ steps.release-meta.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate manual release exception
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "Manual exception reason: ${{ github.event.inputs.reason }}"
+          echo "Approval reference: ${{ github.event.inputs.approval_reference }}"
 
       - name: Generate cache keys
         id: cache-keys
@@ -43,6 +61,24 @@ jobs:
           VERSION=$(node -p "require('./package.json').engines.node.replace('>=', '')")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Resolve release metadata
+        id: release-meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          fi
+          VERSION="${VERSION#v}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid version: $VERSION"
+            exit 1
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
@@ -53,9 +89,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile --ignore-scripts
-          echo "✅ Dependencies installed"
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Cache node_modules
         uses: actions/cache/save@v4
@@ -65,21 +99,11 @@ jobs:
             .pnpm-store
           key: ${{ steps.cache-keys.outputs.key }}
 
-  # ============================================
-  # 빌드 및 릴리즈 Job (병렬 실행)
-  # ============================================
-  build-and-release:
+  release-mac:
     needs: setup
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: macos-latest
-            os_short: mac
-          - os: windows-latest
-            os_short: win
-
+    runs-on: macos-latest
+    outputs:
+      stage_name: mac_release
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -106,33 +130,8 @@ jobs:
 
       - name: Install dependencies (cache miss fallback)
         run: pnpm install --frozen-lockfile --ignore-scripts
-        if: steps.cache.outputs.cache-hit != 'true'
 
-      - name: Extract version from tag
-        id: get_version
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            VERSION="${{ github.event.inputs.version }}"
-          else
-            VERSION="${GITHUB_REF#refs/tags/v}"
-          fi
-
-          VERSION="${VERSION#v}"
-
-          # semver 검증
-          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
-            echo "❌ Invalid version: $VERSION"
-            exit 1
-          fi
-
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "📦 Version: $VERSION"
-
-      # macOS 코드 사이닝
       - name: Import Apple code-signing certificate
-        if: matrix.os_short == 'mac'
         shell: bash
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -144,28 +143,13 @@ jobs:
           KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
 
           echo "$BUILD_CERTIFICATE_BASE64" | base64 --decode > "$CERT_PATH"
-
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-
-          security import "$CERT_PATH" \
-            -P "$P12_PASSWORD" \
-            -A \
-            -t cert \
-            -f pkcs12 \
-            -k "$KEYCHAIN_PATH"
-
+          security import "$CERT_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
           security list-keychains -d user -s "$KEYCHAIN_PATH"
           security default-keychain -d user -s "$KEYCHAIN_PATH"
-          security set-key-partition-list \
-            -S apple-tool:,apple:,codesign: \
-            -s \
-            -k "$KEYCHAIN_PASSWORD" \
-            "$KEYCHAIN_PATH"
-
-          echo "=== Available identities ==="
-          security find-identity -v -p codesigning "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 
       - name: Create runtime env for packaged app
         shell: bash
@@ -176,56 +160,130 @@ jobs:
           GA4_API_SECRET=${{ secrets.GA4_API_SECRET }}
           GA4_DEBUG_MP=false
           EOF
-          echo "runtime.env generated"
 
-      - name: Build and publish to GitHub Releases
+      - name: Build and publish macOS artifacts
         env:
-          VITE_APP_VERSION: ${{ steps.get_version.outputs.version }}
+          VITE_APP_VERSION: ${{ needs.setup.outputs.version }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_IDENTITY: ${{ secrets.APPLE_IDENTITY }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Build target: ${{ matrix.os_short }}"
-          echo "VITE_APP_VERSION=$VITE_APP_VERSION"
-          pnpm run build:${{ matrix.os_short }} --publish always
+        run: pnpm run build:mac --publish always
 
-      # 업데이터 메타데이터 보장
-      - name: Ensure mac updater metadata uploaded
-        if: matrix.os_short == 'mac'
+      - name: Upload macOS updater metadata
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          TAG="v${{ steps.get_version.outputs.version }}"
           FILE="electron-dist/latest-mac.yml"
           if [ -f "$FILE" ]; then
-            gh release upload "$TAG" "$FILE" --clobber
+            gh release upload "${{ needs.setup.outputs.tag }}" "$FILE" --clobber
           else
-            echo "No $FILE found; skip."
+            echo "No $FILE found"
+            exit 1
           fi
 
-      - name: Ensure windows updater metadata uploaded
-        if: matrix.os_short == 'win'
+  release-win:
+    needs: setup
+    runs-on: windows-latest
+    outputs:
+      stage_name: win_release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+          cache: 'pnpm'
+
+      - name: Restore node_modules cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            .pnpm-store
+          key: ${{ needs.setup.outputs.cache-key }}
+          fail-on-cache-miss: false
+
+      - name: Install dependencies (cache miss fallback)
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Create runtime env for packaged app
+        shell: bash
+        run: |
+          mkdir -p .secrets
+          cat > .secrets/runtime.env << EOF
+          GA4_MEASUREMENT_ID=${{ secrets.GA4_MEASUREMENT_ID }}
+          GA4_API_SECRET=${{ secrets.GA4_API_SECRET }}
+          GA4_DEBUG_MP=false
+          EOF
+
+      - name: Build and publish Windows artifacts
+        env:
+          VITE_APP_VERSION: ${{ needs.setup.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm run build:win --publish always
+
+      - name: Upload Windows updater metadata
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          TAG="v${{ steps.get_version.outputs.version }}"
           FILE="electron-dist/latest.yml"
           if [ -f "$FILE" ]; then
-            gh release upload "$TAG" "$FILE" --clobber
+            gh release upload "${{ needs.setup.outputs.tag }}" "$FILE" --clobber
           else
-            echo "No $FILE found; skip."
+            echo "No $FILE found"
+            exit 1
           fi
 
-      # 빌드 실패 시 Slack 알림 (선택사항)
-      - name: Notify build failure
-        if: failure() && matrix.os_short == 'mac'
+  summarize:
+    if: always()
+    needs: [setup, release-mac, release-win]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Summarize release outcome
+        env:
+          EXECUTION_ID: ${{ github.run_id }}
+          VERSION: ${{ needs.setup.outputs.version }}
+          TAG: ${{ needs.setup.outputs.tag }}
+          MAC_RESULT: ${{ needs.release-mac.result }}
+          WIN_RESULT: ${{ needs.release-win.result }}
         run: |
-          echo "❌ Build failed for ${{ matrix.os_short }}"
-          echo "🔗 Check logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          # 여기에 Slack/Discord 웹훅 추가 가능
+          export RELEASE_SUMMARY_INPUT_JSON="$(node - <<'NODE'
+          const macStatus = process.env.MAC_RESULT === 'success' ? 'success' : 'failure';
+          const winStatus = process.env.WIN_RESULT === 'success' ? 'success' : 'failure';
+          const metadataStatus = macStatus === 'success' && winStatus === 'success' ? 'success' : 'failure';
+          console.log(JSON.stringify({
+            execution_id: process.env.EXECUTION_ID,
+            version: process.env.VERSION,
+            stage_statuses: [
+              { stage_name: 'quality_gate', status: 'success', summary: 'Release setup completed.' },
+              { stage_name: 'version_sync', status: 'success', summary: `Tagged version ${process.env.VERSION} was resolved.` },
+              { stage_name: 'tag_push', status: 'success', summary: `Release started from tag ${process.env.TAG}.` },
+              { stage_name: 'mac_release', status: macStatus, summary: `macOS build job result: ${process.env.MAC_RESULT}.` },
+              { stage_name: 'win_release', status: winStatus, summary: `Windows build job result: ${process.env.WIN_RESULT}.` },
+              { stage_name: 'updater_metadata', status: metadataStatus, summary: 'Updater metadata is only healthy when both platform jobs pass.' },
+            ],
+          }));
+          NODE
+          )"
+          node scripts/release/summarize-release-failure.mjs

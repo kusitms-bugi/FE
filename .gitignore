@@ -42,6 +42,7 @@ lerna-debug.log*
 
 # local env files
 .env
+.env*
 .secrets/
 .env.local
 .env.development.local
@@ -71,5 +72,6 @@ Thumbs.db
 # misc
 *.pem
 *.log
+*.tmp
 
 .vscode/

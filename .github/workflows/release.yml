@@ -35,13 +35,13 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Generate release notes
+        id: release_notes
         uses: actions/github-script@v7
         with:
           script: |
             const version = '${{ steps.get_version.outputs.version }}';
             const { owner, repo } = context.repo;
 
-            // 이전 태그 찾기
             const { data: tags } = await github.rest.repos.listTags({
               owner,
               repo,
@@ -49,13 +49,10 @@ jobs:
             });
 
             const currentTagIndex = tags.findIndex(t => t.name === `v${version}`);
-            const previousTag = currentTagIndex > 0 ? tags[currentTagIndex + 1] : null;
-
-            // 커밋 비교
-            const base = previousTag ? previousTag.commit.sha : 'HEAD~10';
+            const previousTag = currentTagIndex >= 0 ? tags[currentTagIndex + 1] : null;
+            const base = previousTag ? previousTag.name : 'HEAD~10';
             const head = `v${version}`;
 
-            // 커밋 목록 가져오기
             const { data: commits } = await github.rest.repos.compareCommits({
               owner,
               repo,
@@ -63,93 +60,48 @@ jobs:
               head,
             });
 
-            // 커밋을 카테고리로 분류
             const categories = {
-              '✨ 새로운 기능 (Features)': [],
-              '🐛 버그 수정 (Bug Fixes)': [],
-              '♻️ 리팩토링 (Refactoring)': [],
-              '🎨 스타일 (Styles)': [],
-              '📝 문서 (Docs)': [],
-              '⚡ 성능 (Performance)': [],
-              '🧪 테스트 (Tests)': [],
-              '🔧 빌드/CI/CD (Build)': [],
+              'Features': [],
+              'Bug Fixes': [],
+              'Refactoring': [],
+              'Docs': [],
+              'Build': [],
+              'Other': [],
             };
 
-            commits.files.forEach(file => {
-              // 커밋 메시지 분석
-              const message = file.filename || '';
-              // 각 파일의 커밋 정보를 확인하여 분류
-            });
-
-            // 커밋 메시지에서 컨벤션 추출
             const commitMessages = commits.commits.map(c => c.commit.message.split('\n')[0]);
+            for (const msg of commitMessages) {
+              if (msg.startsWith('feat(') || msg.startsWith('feat:')) categories['Features'].push(msg);
+              else if (msg.startsWith('fix(') || msg.startsWith('fix:')) categories['Bug Fixes'].push(msg);
+              else if (msg.startsWith('refactor(') || msg.startsWith('refactor:')) categories['Refactoring'].push(msg);
+              else if (msg.startsWith('docs(') || msg.startsWith('docs:')) categories['Docs'].push(msg);
+              else if (msg.startsWith('chore(') || msg.startsWith('build(') || msg.startsWith('ci(')) categories['Build'].push(msg);
+              else categories['Other'].push(msg);
+            }
 
-            commitMessages.forEach(msg => {
-              if (msg.startsWith('feat(') || msg.startsWith('feat:')) {
-                categories['✨ 새로운 기능 (Features)'].push(msg);
-              } else if (msg.startsWith('fix(') || msg.startsWith('fix:')) {
-                categories['🐛 버그 수정 (Bug Fixes)'].push(msg);
-              } else if (msg.startsWith('refactor(') || msg.startsWith('refactor:')) {
-                categories['♻️ 리팩토링 (Refactoring)'].push(msg);
-              } else if (msg.startsWith('style(') || msg.startsWith('style:')) {
-                categories['🎨 스타일 (Styles)'].push(msg);
-              } else if (msg.startsWith('docs(') || msg.startsWith('docs:')) {
-                categories['📝 문서 (Docs)'].push(msg);
-              } else if (msg.startsWith('perf(') || msg.startsWith('perf:')) {
-                categories['⚡ 성능 (Performance)'].push(msg);
-              } else if (msg.startsWith('test(') || msg.startsWith('test:')) {
-                categories['🧪 테스트 (Tests)'].push(msg);
-              } else if (msg.startsWith('chore(') || msg.startsWith('build(') || msg.startsWith('ci(')) {
-                categories['🔧 빌드/CI/CD (Build)'].push(msg);
-              }
-            });
+            let notes = `## Release ${version}\n\n`;
+            notes += `### Automated Release Policy\n\n`;
+            notes += `- main merge path is the default release entry point.\n`;
+            notes += `- Exactly one of release:major, release:minor, or release:patch decides the semver bump.\n`;
+            notes += `- Manual workflow_dispatch releases are reserved for approved exception flows.\n\n`;
+            notes += `### Change Summary\n\n`;
 
-            // 릴리즈 노트 생성
-            let releaseNotes = `## 🎉 Release ${version}\n\n`;
-            releaseNotes += `📅 릴리즈 날짜: ${new Date().toLocaleDateString('ko-KR')}\n\n`;
-
-            // 변경사항 요약
-            const totalChanges = commits.commits.length;
-            releaseNotes += `📊 **총 ${totalChanges}개의 변경사항**\n\n`;
-
-            // 카테고리별 출력
-            let hasChanges = false;
             for (const [category, items] of Object.entries(categories)) {
-              if (items.length > 0) {
-                hasChanges = true;
-                releaseNotes += `### ${category}\n\n`;
-                items.forEach(item => {
-                  // 커밋 메시지에서 컨벤션 제거하고 깔끔하게 출력
-                  const cleanMsg = item.replace(/^(feat|fix|refactor|style|docs|perf|test|chore|build|ci)\([^)]+\):\s*/, '');
-                  releaseNotes += `- ${cleanMsg}\n`;
-                });
-                releaseNotes += '\n';
+              if (items.length === 0) continue;
+              notes += `#### ${category}\n`;
+              for (const item of items) {
+                const cleaned = item.replace(/^(feat|fix|refactor|docs|chore|build|ci)(\([^)]+\))?:\s*/, '');
+                notes += `- ${cleaned}\n`;
               }
+              notes += '\n';
             }
 
-            if (!hasChanges) {
-              releaseNotes += '### 📝 변경사항\n\n';
-              commits.commits.slice(0, 10).forEach(commit => {
-                releaseNotes += `- ${commit.commit.message.split('\n')[0]}\n`;
-              });
+            if (commitMessages.length === 0) {
+              notes += '- No commits were found for this tag range.\n';
             }
 
-            // 기여자
-            const contributors = new Set();
-            commits.commits.forEach(commit => {
-              if (commit.author) {
-                contributors.add(`@${commit.author.login}`);
-              }
-            });
-            if (contributors.size > 0) {
-              releaseNotes += `\n### 👥 기여자\n\n`;
-              releaseNotes += Array.from(contributors).join(', ');
-            }
-
-            // GitHub Release에 출력
-            core.setOutput('notes', releaseNotes);
-
-            return releaseNotes;
+            core.setOutput('notes', notes);
+            return notes;
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1

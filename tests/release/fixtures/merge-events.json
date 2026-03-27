@@ -1,0 +1,29 @@
+{
+  "successfulMerge": {
+    "pull_request": {
+      "number": 101,
+      "merged": true,
+      "merge_commit_sha": "abc123merge",
+      "base": { "ref": "main" },
+      "labels": [{ "name": "release:minor" }]
+    }
+  },
+  "missingLabelMerge": {
+    "pull_request": {
+      "number": 102,
+      "merged": true,
+      "merge_commit_sha": "def456merge",
+      "base": { "ref": "main" },
+      "labels": []
+    }
+  },
+  "duplicateLabelMerge": {
+    "pull_request": {
+      "number": 103,
+      "merged": true,
+      "merge_commit_sha": "ghi789merge",
+      "base": { "ref": "main" },
+      "labels": [{ "name": "release:major" }, { "name": "release:patch" }]
+    }
+  }
+}

@@ -33,6 +33,13 @@ type WriteLogResult = {
   error?: string
 }
 
+type StartupSettingsResult = {
+  success: boolean
+  enabled: boolean
+  supported: boolean
+  error?: string
+}
+
 // 시스템 테마 타입 (예시)
 type SystemTheme = 'light' | 'dark' | 'system'
 
@@ -103,6 +110,11 @@ interface ElectronAPI {
     open: () => Promise<void>
     close: () => Promise<void>
     isOpen: () => Promise<boolean>
+  }
+
+  startup: {
+    get: () => Promise<StartupSettingsResult>
+    set: (enabled: boolean) => Promise<StartupSettingsResult>
   }
 
   // 시스템 테마 조회
@@ -233,6 +245,17 @@ const electronAPI: ElectronAPI = {
     isOpen: () =>
       ipcRenderer.invoke('widget:isOpen') as ReturnType<
         ElectronAPI['widget']['isOpen']
+      >,
+  },
+
+  startup: {
+    get: () =>
+      ipcRenderer.invoke('startup:get') as ReturnType<
+        ElectronAPI['startup']['get']
+      >,
+    set: (enabled: boolean) =>
+      ipcRenderer.invoke('startup:set', enabled) as ReturnType<
+        ElectronAPI['startup']['set']
       >,
   },
 

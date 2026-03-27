@@ -1,5 +1,5 @@
 import { appendFile, mkdir } from 'node:fs/promises'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { config as loadDotenv } from 'dotenv'
 import { app, ipcMain, nativeTheme } from 'electron'
 import { autoUpdater } from 'electron-updater'
@@ -13,6 +13,58 @@ import {
   isWidgetWindowOpen,
   openWidgetWindow,
 } from '/@/widgetWindow'
+
+type StartupSettingsResponse = {
+  success: boolean
+  enabled: boolean
+  supported: boolean
+  error?: string
+}
+
+const isStartupSupported = () =>
+  process.platform === 'darwin' || process.platform === 'win32'
+
+const getLoginItemSettingsOptions = (openAtLogin: boolean) => {
+  const options: Parameters<typeof app.setLoginItemSettings>[0] = {
+    openAtLogin,
+  }
+
+  if (process.defaultApp && process.argv[1]) {
+    options.path = process.execPath
+    options.args = [resolve(process.argv[1])]
+  }
+
+  return options
+}
+
+const getStartupSettings = (): StartupSettingsResponse => {
+  if (!isStartupSupported()) {
+    return {
+      success: true,
+      enabled: false,
+      supported: false,
+    }
+  }
+
+  try {
+    const settings = app.getLoginItemSettings()
+
+    return {
+      success: true,
+      enabled: settings.openAtLogin,
+      supported: true,
+    }
+  } catch (error) {
+    console.error('Failed to get startup settings:', error)
+
+    return {
+      success: false,
+      enabled: false,
+      supported: true,
+      error: '자동 실행 상태를 불러오지 못했습니다.',
+    }
+  }
+}
 
 // 개발 환경: 루트 .env, 패키징 환경: resources/config/runtime.env
 loadDotenv({ path: join(process.cwd(), '.env') })
@@ -76,6 +128,35 @@ function setupAPIHandlers() {
   ipcMain.handle('theme:getSystemTheme', () => {
     return nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
   })
+
+  ipcMain.handle('startup:get', () => {
+    return getStartupSettings()
+  })
+
+  ipcMain.handle('startup:set', (_event, enabled: boolean) => {
+    if (!isStartupSupported()) {
+      return {
+        success: true,
+        enabled: false,
+        supported: false,
+      } satisfies StartupSettingsResponse
+    }
+
+    try {
+      app.setLoginItemSettings(getLoginItemSettingsOptions(enabled))
+      return getStartupSettings()
+    } catch (error) {
+      console.error('Failed to update startup settings:', error)
+
+      const currentSettings = getStartupSettings()
+      return {
+        ...currentSettings,
+        success: false,
+        error: '자동 실행 설정을 변경하지 못했습니다.',
+      } satisfies StartupSettingsResponse
+    }
+  })
+
   /* Notification 핸들러 설정 */
   setupNotificationHandlers()
 

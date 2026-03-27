@@ -10,6 +10,8 @@ import {
 import { parseErrorMessage } from '@shared/lib/error/parse-error'
 import { Button } from '@shared/ui/button'
 import { ModalPortal } from '@shared/ui/modal'
+import { NotificationToggleSwitch } from '@shared/ui/toggle-switch'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface SettingsModalProps {
@@ -19,6 +21,53 @@ interface SettingsModalProps {
 const SettingsModal = ({ onClose }: SettingsModalProps) => {
   const navigate = useNavigate()
   const withdrawMutation = useWithdrawMutation()
+  const [isStartupEnabled, setIsStartupEnabled] = useState(false)
+  const [isStartupSupported, setIsStartupSupported] = useState(true)
+  const [isStartupLoading, setIsStartupLoading] = useState(true)
+  const [isStartupSaving, setIsStartupSaving] = useState(false)
+  const [startupError, setStartupError] = useState('')
+
+  useEffect(() => {
+    let isMounted = true
+
+    const syncStartupSettings = async () => {
+      if (!window.electronAPI?.startup) {
+        if (!isMounted) return
+
+        setIsStartupEnabled(false)
+        setIsStartupSupported(false)
+        setStartupError('')
+        setIsStartupLoading(false)
+        setIsStartupSaving(false)
+        return
+      }
+
+      try {
+        const result = await window.electronAPI.startup.get()
+        if (!isMounted) return
+
+        setIsStartupEnabled(result.enabled)
+        setIsStartupSupported(result.supported)
+        setStartupError(result.success ? '' : (result.error ?? ''))
+      } catch (error: unknown) {
+        if (!isMounted) return
+
+        setIsStartupEnabled(false)
+        setIsStartupSupported(true)
+        setStartupError(parseErrorMessage(error))
+      } finally {
+        if (!isMounted) return
+        setIsStartupLoading(false)
+        setIsStartupSaving(false)
+      }
+    }
+
+    void syncStartupSettings()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const clearLocalAuthData = (
     userId: string | null,
@@ -78,6 +127,42 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
     navigate('/onboarding/init')
   }
 
+  const handleStartupToggle = async (nextEnabled: boolean) => {
+    if (isStartupLoading || isStartupSaving || !isStartupSupported) return
+
+    setIsStartupEnabled(nextEnabled)
+    setIsStartupSaving(true)
+    setStartupError('')
+
+    try {
+      const result = await window.electronAPI.startup.set(nextEnabled)
+
+      setIsStartupEnabled(result.enabled)
+      setIsStartupSupported(result.supported)
+
+      if (!result.success) {
+        const message = result.error ?? '자동 실행 설정을 변경하지 못했습니다.'
+        setStartupError(message)
+        alert(message)
+      }
+    } catch (error: unknown) {
+      const message = parseErrorMessage(error)
+      setStartupError(message)
+      setIsStartupEnabled(!nextEnabled)
+      alert(message)
+    } finally {
+      setIsStartupSaving(false)
+    }
+  }
+
+  const startupDescription = isStartupLoading
+    ? '현재 상태를 확인하고 있어요.'
+    : !isStartupSupported
+      ? '현재 운영체제에서는 지원하지 않아요.'
+      : isStartupSaving
+        ? '설정을 적용하고 있어요.'
+        : '컴퓨터 로그인 후 거부기린을 자동으로 실행해요.'
+
   const actionItems = [
     { label: '로그아웃', icon: <LogoutIcon />, onClick: handleLogout },
     {
@@ -105,6 +190,30 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
         >
           <div className="bg-surface-modal-container rounded-[12px] p-3">
             <h2 className="text-body-lg-semibold text-grey-900">설정</h2>
+          </div>
+
+          <div className="bg-surface-modal-container flex items-center justify-between gap-3 rounded-[12px] p-3">
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="text-body-md-medium text-grey-900">
+                OS 시작 시 자동 실행
+              </span>
+              <span className="font-['Pretendard'] text-[11px] leading-[150%] text-grey-500">
+                {startupDescription}
+              </span>
+              {startupError ? (
+                <span className="font-['Pretendard'] text-[11px] leading-[150%] text-red-500">
+                  {startupError}
+                </span>
+              ) : null}
+            </div>
+
+            <NotificationToggleSwitch
+              checked={isStartupEnabled}
+              onChange={handleStartupToggle}
+              isDisabled={
+                isStartupLoading || isStartupSaving || !isStartupSupported
+              }
+            />
           </div>
 
           <div className="bg-surface-modal-container flex flex-col overflow-hidden rounded-[12px]">

@@ -55,14 +55,11 @@ const ExitPanel = () => {
   ) /* 오늘 이동거리 */
 
   // CSS 변수에서 색상 가져오기 (다크모드 변경 시 재계산)
-  const colors = useMemo(
-    () => ({
-      time: getColor('--color-yellow-400', '#ffcb31'),
-      background: getColor('--color-grey-25', '#e5e7eb'),
-      score: getColor('--color-yellow-400', '#fbbf24'),
-    }),
-    [],
-  )
+  const colors = {
+    time: getColor('--color-yellow-400', '#ffcb31'),
+    background: getColor('--color-grey-25', '#e5e7eb'),
+    score: getColor('--color-yellow-400', '#fbbf24'),
+  }
 
   // 안쪽 링 배경 데이터 (회색) - 전체를 회색으로 채움
   const innerBackgroundData = useMemo(

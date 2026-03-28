@@ -97,6 +97,13 @@ const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
     ...(Array(trailing).fill(null) as (number | null)[]),
   ]
+  const calendarCells = calendarDays.map((day, slotIndex) => ({
+    day,
+    key:
+      day === null
+        ? `empty-${Math.floor(slotIndex / 7)}-${slotIndex % 7}`
+        : `day-${day}`,
+  }))
 
   // 오늘 정보
   const today = new Date()
@@ -148,8 +155,8 @@ const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
 
       {/* 이번 달 칸만 동그라미 */}
       <div className="mt-[5px] grid h-full grid-cols-7 gap-x-1 gap-y-1 text-center">
-        {calendarDays.map((day, index) => (
-          <div key={index} className="flex items-center justify-center">
+        {calendarCells.map(({ day, key }) => (
+          <div key={key} className="flex items-center justify-center">
             {day !== null && (
               <Circle
                 level={getLevelForDay(day)}

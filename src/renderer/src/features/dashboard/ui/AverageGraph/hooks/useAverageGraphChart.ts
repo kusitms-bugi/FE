@@ -21,7 +21,7 @@ type ChartConfig = {
 
 export function useAverageGraphChart(activePeriod: AverageGraphPeriod) {
   const { data: apiData } = usePostureGraphQuery()
-  const isDarkApplied = useThemeApplied()
+  useThemeApplied()
 
   /* 그래프 색상 */
   const chartConfig = useMemo<ChartConfig>(() => {
@@ -74,7 +74,7 @@ export function useAverageGraphChart(activePeriod: AverageGraphPeriod) {
       gridColor: gridColorValue,
       yAxisTicks: ticks,
     }
-  }, [activePeriod, apiData, isDarkApplied])
+  }, [activePeriod, apiData])
 
   return chartConfig
 }

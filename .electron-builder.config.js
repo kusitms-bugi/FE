@@ -93,9 +93,9 @@ const config = {
   ],
   asar: true,
   // 빌드 전에 필요한 파일들이 존재하는지 확인
-  beforeBuild: async context => {
+  beforeBuild: async _context => {
     const fs = require('node:fs')
-    const path = require('node:path')
+    const _path = require('node:path')
 
     const requiredFiles = [
       'dist/main/index.cjs',

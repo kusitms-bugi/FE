@@ -26,7 +26,7 @@ export class EmaSmoother {
 
 // PI 지표 계산 함수
 export function calculatePI(
-  landmarks: PoseLandmark[],
+  _landmarks: PoseLandmark[],
   worldLandmarks: WorldLandmark[],
 ): PIResult | null {
   if (!worldLandmarks) return null

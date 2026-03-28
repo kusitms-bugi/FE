@@ -52,13 +52,11 @@ const PoseVisualizer = ({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const smootherRef = useRef<LandmarkSmoother>(new LandmarkSmoother())
 
-  // 랜드마크가 완전히 바뀔 때 스무더 리셋
   useEffect(() => {
-    smootherRef.current.reset()
-  }, [landmarks.length])
-
-  useEffect(() => {
-    if (!isVisible || landmarks.length === 0) return
+    if (!isVisible || landmarks.length === 0) {
+      smootherRef.current.reset()
+      return
+    }
 
     const canvas = canvasRef.current
     if (!canvas) return

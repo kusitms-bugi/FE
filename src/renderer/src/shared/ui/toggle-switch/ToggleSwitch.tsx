@@ -39,7 +39,7 @@ const ToggleSwitch = React.forwardRef<HTMLButtonElement, ToggleSwitchProps>(
       // 레이아웃 완료 후 재계산
       const timeoutId = setTimeout(updateIndicator, 0)
       return () => clearTimeout(timeoutId)
-    }, [uncheckedLabel, checkedLabel, checked])
+    }, [checked])
 
     return (
       <button

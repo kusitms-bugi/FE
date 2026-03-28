@@ -1,7 +1,7 @@
 import DashboardIcon from '@assets/common/icons/dashboard.svg?react'
 import Logo from '@assets/common/icons/logo.svg?react'
 import SettingIcon from '@assets/common/icons/setting.svg?react'
-import Symbol from '@assets/common/icons/symbol.svg?react'
+import SymbolIcon from '@assets/common/icons/symbol.svg?react'
 import TipOff from '@assets/common/icons/tip-off.svg?react'
 import NotificationIcon from '@assets/main/bell_icon.svg?react'
 import { Button } from '@shared/ui/button'
@@ -81,7 +81,7 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
         {/* 타이틀 영역 */}
         <div className="flex items-center gap-10">
           <div className="ml-3 flex items-center gap-[10px]">
-            <Symbol className="flex h-[27px] w-[27px]" />
+            <SymbolIcon className="flex h-[27px] w-[27px]" />
             <Logo className="hbp:h-[27px] hbp:w-[115px] [&>path]:fill-logo-fill flex h-[22px] w-[92px]" />
           </div>
 

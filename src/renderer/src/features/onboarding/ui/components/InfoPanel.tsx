@@ -7,6 +7,7 @@ import { Button } from '@shared/ui/button'
 
 // 단계별 아이콘
 const STEP_ICONS = [FirstIcon, SecondIcon, ThirdIcon, FourthIcon, FifthIcon]
+const STEP_PROGRESS_KEYS = [1, 2, 3, 4, 5]
 
 // 단계별 데이터 (userName은 컴포넌트에서 주입)
 const getStepData = (userName: string) => [
@@ -58,11 +59,11 @@ const InfoPanel = ({ currentStep, onNext, direction }: InfoPanelProps) => {
         {/* 현재 단계 프로그레스바 */}
         <div className="mb-[91px]">
           <div className="flex gap-1">
-            {Array.from({ length: 5 }).map((_, index) => (
+            {STEP_PROGRESS_KEYS.map(step => (
               <span
-                key={index}
+                key={step}
                 className={`bg-sementic-brand-primary h-[6px] flex-[1_0_0] rounded-full ${
-                  index < currentStep ? 'opacity-100' : 'opacity-20'
+                  step <= currentStep ? 'opacity-100' : 'opacity-20'
                 }`}
               />
             ))}
@@ -88,8 +89,8 @@ const InfoPanel = ({ currentStep, onNext, direction }: InfoPanelProps) => {
             </span>
             {Array.isArray(stepData.description) ? (
               <span className="text-body-md-meidum text-grey-400 flex flex-col gap-6">
-                {stepData.description.map((desc, index) => (
-                  <span key={index}>{desc}</span>
+                {stepData.description.map(desc => (
+                  <span key={desc}>{desc}</span>
                 ))}
               </span>
             ) : (

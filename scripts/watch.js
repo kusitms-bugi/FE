@@ -7,7 +7,8 @@
   const { generateAsync } = await import('dts-for-context-bridge')
 
   /** @type 'production' | 'development'' */
-  const mode = (process.env.MODE = process.env.MODE || 'development')
+  process.env.MODE = process.env.MODE || 'development'
+  const mode = process.env.MODE
 
   /** @type {import('vite').LogLevel} */
   const LOG_LEVEL = 'info'

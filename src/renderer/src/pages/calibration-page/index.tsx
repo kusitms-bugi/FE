@@ -90,9 +90,9 @@ const CalibrationPage = () => {
   }, [step1Error])
 
   // 캘리브레이션 중단
-  const stopCalibration = () => {
+  const stopCalibration = useCallback(() => {
     setIsCalibrating(false)
-  }
+  }, [])
 
   // 캘리브레이션 취소
 
@@ -281,7 +281,7 @@ const CalibrationPage = () => {
       clearInterval(timerInterval)
       clearInterval(dataInterval)
     }
-  }, [isCalibrating, navigate])
+  }, [isCalibrating, navigate, stopCalibration])
 
   // 상태에 따른 패딩 클래스
   const paddingClass = isCalibrating

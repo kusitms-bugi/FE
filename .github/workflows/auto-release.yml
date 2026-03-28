@@ -97,6 +97,7 @@ jobs:
         id: prepare
         env:
           RELEASE_CHECKS_JSON: ${{ steps.checks.outputs.json }}
+          GITHUB_EVENT_JSON: ${{ github.event_name == 'workflow_dispatch' && steps.replay-pr.outputs.payload || '' }}
         run: node scripts/release/prepare-release.mjs
 
       - name: Configure git identity

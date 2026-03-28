@@ -8,6 +8,7 @@ import {
   getPullRequestFromEvent,
   getTagSha,
   loadEventPayloadFromEnv,
+  loadEventPayloadFromEnv,
   normalizePullRequest,
   normalizeTag,
   parseJson,

@@ -8,6 +8,7 @@ import {
   getTagSha,
   loadEventPayloadFromEnv,
   normalizeTag,
+  normalizePullRequest,
   parseJson,
   readPackageJson,
   writeGithubOutputs,
@@ -37,7 +38,7 @@ export async function prepareRelease({
   eventPayload,
 } = {}) {
   const payload = eventPayload ?? (await loadEventPayloadFromEnv())
-  const pullRequest = getPullRequestFromEvent(payload)
+  const pullRequest = normalizePullRequest(getPullRequestFromEvent(payload))
   const packageJson = await readPackageJson(cwd)
   const currentVersion = packageJson.version
   const headSha =

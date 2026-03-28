@@ -41,6 +41,20 @@ export function getPullRequestFromEvent(eventPayload) {
   )
 }
 
+export function normalizePullRequest(pullRequest) {
+  if (!pullRequest) {
+    return null
+  }
+
+  return {
+    ...pullRequest,
+    merged:
+      typeof pullRequest.merged === 'boolean'
+        ? pullRequest.merged
+        : Boolean(pullRequest.merged_at),
+  }
+}
+
 export function getLabelNames(labels = []) {
   return labels
     .map(label => (typeof label === 'string' ? label : label?.name))

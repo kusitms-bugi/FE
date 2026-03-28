@@ -180,7 +180,15 @@ export function writeGithubOutputs(outputs) {
 
   const lines = []
   for (const [key, value] of Object.entries(outputs)) {
-    lines.push(`${key}=${String(value)}`)
+    const normalizedValue = String(value ?? '')
+    if (normalizedValue.includes('\n')) {
+      lines.push(`${key}<<__BUGI_OUTPUT__`)
+      lines.push(normalizedValue)
+      lines.push('__BUGI_OUTPUT__')
+      continue
+    }
+
+    lines.push(`${key}=${normalizedValue}`)
   }
 
   return fs.appendFile(outputPath, `${lines.join('\n')}\n`, 'utf8')

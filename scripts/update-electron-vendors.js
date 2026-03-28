@@ -2,6 +2,8 @@ const { writeFile } = require('node:fs/promises')
 const { execSync } = require('node:child_process')
 const electron = require('electron')
 const path = require('node:path')
+const vendorsCachePath = path.resolve(process.cwd(), '.electron-vendors.cache.json')
+const browserslistrcPath = path.resolve(process.cwd(), '.browserslistrc')
 
 /**
  * Returns versions of electron vendors
@@ -20,17 +22,22 @@ function getVendors() {
 }
 
 function updateVendors() {
+  if (process.env.VERCEL) {
+    console.warn(
+      'Skipping Electron vendor refresh on Vercel; using committed cache files.',
+    )
+    return Promise.resolve()
+  }
+
   const electronRelease = getVendors()
 
   const nodeMajorVersion = electronRelease.node.split('.')[0]
   const chromeMajorVersion =
     electronRelease.v8.split('.')[0] + electronRelease.v8.split('.')[1]
 
-  const browserslistrcPath = path.resolve(process.cwd(), '.browserslistrc')
-
   return Promise.all([
     writeFile(
-      './.electron-vendors.cache.json',
+      vendorsCachePath,
       `${JSON.stringify(
         {
           chrome: chromeMajorVersion,

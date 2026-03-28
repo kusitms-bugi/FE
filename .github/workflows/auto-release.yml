@@ -44,6 +44,7 @@ jobs:
 
       - name: Resolve replay PR payload
         if: github.event_name == 'workflow_dispatch'
+        id: replay-pr
         uses: actions/github-script@v7
         with:
           script: |
@@ -59,17 +60,24 @@ jobs:
               repo,
               pull_number: prNumber,
             });
-            const payload = { pull_request: data };
-            require('node:fs').writeFileSync(process.env.GITHUB_EVENT_PATH, JSON.stringify(payload, null, 2));
+            core.setOutput('payload', JSON.stringify({ pull_request: data }));
+            core.setOutput('merge_sha', data.merge_commit_sha ?? '');
 
       - name: Collect required check runs
         id: checks
         uses: actions/github-script@v7
+        env:
+          REPLAY_PR_PAYLOAD: ${{ steps.replay-pr.outputs.payload }}
         with:
           script: |
-            const fs = require('node:fs');
-            const eventPayload = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
-            const pullRequest = eventPayload.pull_request;
+            const pullRequest =
+              context.eventName === 'workflow_dispatch'
+                ? JSON.parse(process.env.REPLAY_PR_PAYLOAD).pull_request
+                : context.payload.pull_request;
+            if (!pullRequest?.merge_commit_sha) {
+              core.setFailed('Unable to resolve merge_commit_sha from the replayed PR payload.');
+              return;
+            }
             const sha = pullRequest.merge_commit_sha;
             const { owner, repo } = context.repo;
             const { data } = await github.rest.checks.listForRef({

@@ -10,7 +10,8 @@ dist/
 build/
 out/
 electron-dist/
-renderer/
+/renderer/
+/src/renderer/renderer/
 
 # Electron
 *.dmg

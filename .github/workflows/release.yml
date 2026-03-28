@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Tag to generate release notes for'
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       tag:
@@ -28,6 +34,8 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             VERSION="${{ github.event.inputs.tag }}"
+          elif [ "${{ github.event_name }}" == "workflow_call" ]; then
+            VERSION="${{ inputs.tag }}"
           else
             VERSION="${GITHUB_REF#refs/tags/v}"
           fi

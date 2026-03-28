@@ -24,6 +24,12 @@ jobs:
   orchestrate:
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.prepare.outputs.should_release }}
+      status: ${{ steps.prepare.outputs.status }}
+      current_version: ${{ steps.prepare.outputs.current_version }}
+      next_version: ${{ steps.prepare.outputs.next_version }}
+      tag: ${{ steps.prepare.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -158,3 +164,19 @@ jobs:
             echo "## Auto Release Duplicate Guard"
             echo "- Message: ${{ steps.prepare.outputs.message }}"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  release-electron:
+    needs: orchestrate
+    if: needs.orchestrate.outputs.should_release == 'true'
+    uses: ./.github/workflows/electron-release.yml
+    with:
+      version: ${{ needs.orchestrate.outputs.next_version }}
+    secrets: inherit
+
+  release-notes:
+    needs: [orchestrate, release-electron]
+    if: needs.orchestrate.outputs.should_release == 'true' && needs.release-electron.result == 'success'
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.orchestrate.outputs.tag }}
+    secrets: inherit

@@ -91,6 +91,37 @@ export function normalizeTag(version) {
   return version.startsWith('v') ? version : `v${version}`
 }
 
+export function stripTagPrefix(versionOrTag) {
+  return versionOrTag?.startsWith('v') ? versionOrTag.slice(1) : versionOrTag
+}
+
+export function compareSemverVersions(leftVersion, rightVersion) {
+  const left = stripTagPrefix(leftVersion)
+  const right = stripTagPrefix(rightVersion)
+  const leftMatch = /^(\d+)\.(\d+)\.(\d+)$/.exec(left ?? '')
+  const rightMatch = /^(\d+)\.(\d+)\.(\d+)$/.exec(right ?? '')
+
+  if (!leftMatch || !rightMatch) {
+    throw new Error(
+      `Unable to compare versions: ${leftVersion ?? 'undefined'} vs ${rightVersion ?? 'undefined'}`,
+    )
+  }
+
+  const leftParts = leftMatch.slice(1).map(Number)
+  const rightParts = rightMatch.slice(1).map(Number)
+
+  for (let index = 0; index < leftParts.length; index += 1) {
+    if (leftParts[index] > rightParts[index]) {
+      return 1
+    }
+    if (leftParts[index] < rightParts[index]) {
+      return -1
+    }
+  }
+
+  return 0
+}
+
 export function assessRequiredChecks(
   checkRuns = [],
   requiredChecks = REQUIRED_CHECKS,
@@ -218,14 +249,14 @@ export async function appendStepSummary(markdown) {
 }
 
 export async function loadEventPayloadFromEnv() {
-  const eventPath = process.env.GITHUB_EVENT_PATH
-  if (eventPath) {
-    return readJsonFile(eventPath)
-  }
-
   const payload = parseJson(process.env.GITHUB_EVENT_JSON)
   if (payload) {
     return payload
+  }
+
+  const eventPath = process.env.GITHUB_EVENT_PATH
+  if (eventPath) {
+    return readJsonFile(eventPath)
   }
 
   throw new Error(

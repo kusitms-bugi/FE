@@ -2,6 +2,7 @@ import { determineVersion } from './determine-version.mjs'
 import {
   appendStepSummary,
   assessRequiredChecks,
+  compareSemverVersions,
   getHeadSha,
   getLatestStableTag,
   getPullRequestFromEvent,
@@ -11,6 +12,7 @@ import {
   normalizePullRequest,
   parseJson,
   readPackageJson,
+  stripTagPrefix,
   writeGithubOutputs,
   writePackageVersion,
 } from './shared.mjs'
@@ -40,11 +42,16 @@ export async function prepareRelease({
   const payload = eventPayload ?? (await loadEventPayloadFromEnv())
   const pullRequest = normalizePullRequest(getPullRequestFromEvent(payload))
   const packageJson = await readPackageJson(cwd)
-  const currentVersion = packageJson.version
   const headSha =
     pullRequest?.merge_commit_sha ?? payload?.after ?? (await getHeadSha(cwd))
   const lastReleasedTag = await getLatestStableTag(cwd)
   const lastReleasedSha = await getTagSha(lastReleasedTag, cwd)
+  const lastReleasedVersion = stripTagPrefix(lastReleasedTag)
+  const currentVersion =
+    lastReleasedVersion &&
+    compareSemverVersions(lastReleasedVersion, packageJson.version) > 0
+      ? lastReleasedVersion
+      : packageJson.version
 
   if (!pullRequest?.merged) {
     return {

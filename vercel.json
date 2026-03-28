@@ -2,8 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm build:renderer",
-  "outputDirectory": "dist/renderer",
+  "buildCommand": "pnpm build:renderer && rm -rf renderer && cp -R dist/renderer renderer",
+  "outputDirectory": "renderer",
   "rewrites": [
     {
       "source": "/(.*)",

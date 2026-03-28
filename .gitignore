@@ -10,6 +10,7 @@ dist/
 build/
 out/
 electron-dist/
+renderer/
 
 # Electron
 *.dmg
@@ -75,3 +76,4 @@ Thumbs.db
 *.tmp
 
 .vscode/
+.vercel

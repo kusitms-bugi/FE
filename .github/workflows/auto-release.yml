@@ -47,11 +47,17 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const rawPrNumber = context.payload.inputs?.pr_number;
+            const prNumber = Number(rawPrNumber);
+            if (!rawPrNumber || Number.isNaN(prNumber) || prNumber <= 0) {
+              core.setFailed(`Invalid pr_number input: ${rawPrNumber ?? 'undefined'}`);
+              return;
+            }
             const { owner, repo } = context.repo;
             const { data } = await github.rest.pulls.get({
               owner,
               repo,
-              pull_number: Number(core.getInput('pr_number')),
+              pull_number: prNumber,
             });
             const payload = { pull_request: data };
             require('node:fs').writeFileSync(process.env.GITHUB_EVENT_PATH, JSON.stringify(payload, null, 2));

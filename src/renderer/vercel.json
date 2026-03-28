@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
-  "installCommand": "cd ../path0 && pnpm install --frozen-lockfile",
-  "buildCommand": "cd ../path0 && pnpm build:renderer && rm -rf src/renderer/renderer && cp -R dist/renderer src/renderer/renderer",
+  "installCommand": "cd ../path0 && corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install --frozen-lockfile",
+  "buildCommand": "cd ../path0 && corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm build:renderer && rm -rf src/renderer/renderer && cp -R dist/renderer src/renderer/renderer",
   "outputDirectory": "renderer",
   "rewrites": [
     {

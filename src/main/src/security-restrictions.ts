@@ -162,62 +162,52 @@ app.on('web-contents-created', (_, contents) => {
   })
 
   /**
-   * Prevent page reload (F5, Ctrl+R, Cmd+R) and DevTools (F12, Ctrl+Shift+I)
-   * 개발 모드에서는 허용하고 프로덕션에서만 막기
+   * Prevent page reload (F5, Ctrl+R, Cmd+R).
+   * In production, block common DevTools shortcuts and allow only a hidden one.
    */
   contents.on('before-input-event', (event, input) => {
-    // 개발 모드에서는 새로고침 및 DevTools 허용
     if (import.meta.env.DEV) {
       return
     }
 
     const key = input.key.toLowerCase()
     const withCtrlOrCmd = input.control || input.meta
-    const withCtrlOrCmdShift = withCtrlOrCmd && input.shift
+    const withAlt = input.alt
+    const withShift = input.shift
 
-    // F5 또는 새로고침 단축키 (Ctrl+R, Cmd+R) 막기
     const isReloadShortcut =
       input.key === 'F5' || (key === 'r' && withCtrlOrCmd)
-    // DevTools 단축키 (F12, Ctrl/Cmd+Shift+I/J) 막기
-    const isDevToolsShortcut =
+    const isDefaultDevToolsShortcut =
       input.key === 'F12' ||
-      (withCtrlOrCmdShift && (key === 'i' || key === 'j'))
+      ((key === 'i' || key === 'j') && withCtrlOrCmd && withShift)
+    const isHiddenDevToolsShortcut =
+      key === 'd' && withCtrlOrCmd && withAlt && withShift
 
-    if (isReloadShortcut || isDevToolsShortcut) {
+    if (isReloadShortcut) {
       event.preventDefault()
+      return
     }
 
-    // F12 또는 DevTools 단축키 (Ctrl+Shift+I, Cmd+Option+I) 막기
-    if (
-      input.key === 'F12' ||
-      (input.key === 'I' && input.shift && (input.control || input.meta))
-    ) {
+    if (isHiddenDevToolsShortcut) {
+      event.preventDefault()
+      if (contents.isDevToolsOpened()) {
+        contents.closeDevTools()
+      } else {
+        contents.openDevTools({ mode: 'detach' })
+      }
+      return
+    }
+
+    if (isDefaultDevToolsShortcut) {
       event.preventDefault()
     }
   })
-
-  /**
-   * Prevent DevTools from opening even if triggered by other means
-   * 프로덕션에서 DevTools가 열리면 즉시 닫기
-   */
-  if (import.meta.env.PROD) {
-    contents.on('devtools-opened', () => {
-      contents.closeDevTools()
-    })
-  }
 
   /**
    * Prevent programmatic reload
    * 개발 모드에서는 허용하고 프로덕션에서만 막기
    */
   if (import.meta.env.PROD) {
-    contents.openDevTools = () => {
-      console.warn('DevTools is disabled in production mode')
-    }
-    contents.toggleDevTools = () => {
-      console.warn('DevTools is disabled in production mode')
-    }
-
     contents.reload = () => {
       console.warn('Page reload is disabled in production mode')
       // 새로고침 실행하지 않음

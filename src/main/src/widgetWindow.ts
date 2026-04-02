@@ -1,6 +1,12 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs'
 import { dirname, join } from 'node:path'
-import { BrowserWindow, app } from 'electron'
+import { BrowserWindow, app, screen } from 'electron'
 import { WIDGET_CONFIG } from './widgetConfig'
 
 /*위젯 관리 변수*/
@@ -9,6 +15,7 @@ let widgetWindow: BrowserWindow | null = null
 const PROD_WIDGET_URL = 'https://app.bugi.co.kr/widget'
 const WIDGET_STATE_FILE_NAME = 'widget-window-state.json'
 const WIDGET_STATE_SAVE_DELAY_MS = 120
+const DEFAULT_WIDGET_MARGIN = 24
 
 type WidgetWindowState = {
   x: number
@@ -21,6 +28,99 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 const getWidgetStateFilePath = () =>
   join(app.getPath('userData'), WIDGET_STATE_FILE_NAME)
+
+const clearWidgetWindowState = () => {
+  try {
+    const filePath = getWidgetStateFilePath()
+    if (existsSync(filePath)) {
+      rmSync(filePath)
+    }
+  } catch (error) {
+    console.warn('[widget] Failed to clear widget window state:', error)
+  }
+}
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max)
+
+const getDefaultWidgetBounds = (
+  display: Electron.Display,
+  width: number,
+  height: number,
+): WidgetWindowState => {
+  const { x, y, width: workAreaWidth, height: workAreaHeight } = display.workArea
+  const safeWidth = Math.min(width, workAreaWidth)
+  const safeHeight = Math.min(height, workAreaHeight)
+
+  return {
+    width: safeWidth,
+    height: safeHeight,
+    x: x + Math.max(workAreaWidth - safeWidth - DEFAULT_WIDGET_MARGIN, 0),
+    y: y + Math.max(DEFAULT_WIDGET_MARGIN, 0),
+  }
+}
+
+const getIntersectionArea = (
+  first: WidgetWindowState,
+  second: Electron.Rectangle,
+) => {
+  const overlapWidth =
+    Math.min(first.x + first.width, second.x + second.width) -
+    Math.max(first.x, second.x)
+  const overlapHeight =
+    Math.min(first.y + first.height, second.y + second.height) -
+    Math.max(first.y, second.y)
+
+  if (overlapWidth <= 0 || overlapHeight <= 0) {
+    return 0
+  }
+
+  return overlapWidth * overlapHeight
+}
+
+const normalizeWidgetWindowState = (
+  state: WidgetWindowState,
+): WidgetWindowState => {
+  const requestedWidth = clamp(
+    state.width,
+    WIDGET_CONFIG.minWidth,
+    WIDGET_CONFIG.maxWidth,
+  )
+  const requestedHeight = clamp(
+    state.height,
+    WIDGET_CONFIG.minHeight,
+    WIDGET_CONFIG.maxHeight,
+  )
+  const matchingDisplay = screen.getDisplayMatching({
+    x: state.x,
+    y: state.y,
+    width: requestedWidth,
+    height: requestedHeight,
+  })
+  const { x, y, width: workAreaWidth, height: workAreaHeight } =
+    matchingDisplay.workArea
+  const width = Math.min(requestedWidth, workAreaWidth)
+  const height = Math.min(requestedHeight, workAreaHeight)
+  const candidate = {
+    x: state.x,
+    y: state.y,
+    width,
+    height,
+  }
+
+  // Saved bounds may point outside the visible work area after monitor/DPI changes.
+  if (getIntersectionArea(candidate, matchingDisplay.workArea) <= 0) {
+    clearWidgetWindowState()
+    return getDefaultWidgetBounds(matchingDisplay, width, height)
+  }
+
+  return {
+    width,
+    height,
+    x: clamp(candidate.x, x, x + workAreaWidth - width),
+    y: clamp(candidate.y, y, y + workAreaHeight - height),
+  }
+}
 
 const loadWidgetWindowState = (): WidgetWindowState | null => {
   try {
@@ -35,17 +135,19 @@ const loadWidgetWindowState = (): WidgetWindowState | null => {
       typeof parsed.width !== 'number' ||
       typeof parsed.height !== 'number'
     ) {
+      clearWidgetWindowState()
       return null
     }
 
-    return {
+    return normalizeWidgetWindowState({
       x: parsed.x,
       y: parsed.y,
       width: parsed.width,
       height: parsed.height,
-    }
+    })
   } catch (error) {
     console.warn('[widget] Failed to load widget window state:', error)
+    clearWidgetWindowState()
     return null
   }
 }
@@ -98,13 +200,20 @@ async function createWidgetWindow() {
   }
 
   const savedState = loadWidgetWindowState()
+  const initialBounds =
+    savedState ??
+    getDefaultWidgetBounds(
+      screen.getPrimaryDisplay(),
+      WIDGET_CONFIG.defaultWidth,
+      WIDGET_CONFIG.defaultHeight,
+    )
 
   /* 위젯 속성 - 반응형 크기 조절 가능 */
   widgetWindow = new BrowserWindow({
-    x: savedState?.x,
-    y: savedState?.y,
-    width: savedState?.width ?? WIDGET_CONFIG.defaultWidth,
-    height: savedState?.height ?? WIDGET_CONFIG.defaultHeight,
+    x: initialBounds.x,
+    y: initialBounds.y,
+    width: initialBounds.width,
+    height: initialBounds.height,
     minWidth: WIDGET_CONFIG.minWidth,
     minHeight: WIDGET_CONFIG.minHeight,
     maxWidth: WIDGET_CONFIG.maxWidth,

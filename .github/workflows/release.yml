@@ -1,9 +1,6 @@
 name: Release Notes
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_call:
     inputs:
       tag:
@@ -36,8 +33,6 @@ jobs:
             VERSION="${{ github.event.inputs.tag }}"
           elif [ "${{ github.event_name }}" == "workflow_call" ]; then
             VERSION="${{ inputs.tag }}"
-          else
-            VERSION="${GITHUB_REF#refs/tags/v}"
           fi
           VERSION="${VERSION#v}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT

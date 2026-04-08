@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { type ChangeEvent, type FocusEvent, forwardRef } from 'react'
 
 interface TextFieldProps {
@@ -19,7 +20,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     {
       id,
       type = 'text',
-      placeholder = '이름을 입력하세요',
+      placeholder,
       value,
       maxLength,
       disabled,
@@ -31,13 +32,15 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     },
     ref,
   ) => {
+    const { t } = useTranslation('common')
+    const resolvedPlaceholder = placeholder ?? t('이름을 입력하세요')
     return (
       <input
         ref={ref}
         id={id}
         name={name}
         type={type}
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         value={value}
         maxLength={maxLength}
         disabled={disabled}

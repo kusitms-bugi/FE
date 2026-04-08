@@ -9,11 +9,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@shared/ui/button'
 import { TextField } from '@shared/ui/input-field'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import PasswordField from '../../login/components/PasswordField'
 import { type SignUpFormData, signUpSchema } from '../utils/SignupSchemas'
 
 const SignUpForm = () => {
+  const { t } = useTranslation('auth')
   const { mutate: checkDuplicateEmail } = useDuplicatedEmailMutation()
   const signupMutation = useSignupMutation()
   const [duplicateMessage, setDuplicateMessage] = useState<string | null>(null)
@@ -48,16 +50,16 @@ const SignUpForm = () => {
         if (data?.data?.isDuplicate) {
           console.log(data)
           setDuplicateSuccess(false)
-          setDuplicateMessage('이미 가입된 이메일입니다.')
+          setDuplicateMessage(t('이미 가입된 이메일입니다.'))
         } else {
           console.log(data)
           setDuplicateSuccess(true)
-          setDuplicateMessage('사용 가능한 이메일입니다')
+          setDuplicateMessage(t('사용 가능한 이메일입니다'))
         }
       },
       onError: () => {
         setDuplicateSuccess(false)
-        setDuplicateMessage('이미 가입된 이메일입니다.')
+        setDuplicateMessage(t('이미 가입된 이메일입니다.'))
       },
     })
   }
@@ -65,7 +67,7 @@ const SignUpForm = () => {
   /* 회원가입 */
   const onSubmit = (data: SignUpFormData) => {
     if (duplicateSuccess !== true) {
-      setDuplicateMessage('이메일 중복확인을 완료해주세요')
+      setDuplicateMessage(t('이메일 중복확인을 완료해주세요'))
       setDuplicateSuccess(false)
       return
     }
@@ -92,13 +94,13 @@ const SignUpForm = () => {
           htmlFor="email"
           className="text-body-lg-semibold hbp:text-headline-2xl-semibold text-grey-600"
         >
-          이메일 <span className="text-error">*</span>
+          {t('이메일')} <span className="text-error">*</span>
         </label>
         <div className="hbp:gap-[12.5px] flex w-full flex-row items-center justify-center gap-[10px]">
           <TextField
             id="email"
             type="email"
-            placeholder="이메일을 입력해주세요."
+            placeholder={t('이메일을 입력해주세요.')}
             {...register('email', {
               onChange: () => {
                 // 이메일 값이 바뀌면 중복확인 상태 초기화
@@ -120,7 +122,7 @@ const SignUpForm = () => {
           />
           <Button
             onClick={handleDuplicateCheck}
-            text="중복확인"
+            text={t('중복확인')}
             size="sm"
             disabled={duplicateSuccess === true}
             className="hbp:w-[115px] hbp:h-[50px] hbp:text-body-xl-medium w-[92px] whitespace-nowrap"
@@ -152,10 +154,10 @@ const SignUpForm = () => {
           htmlFor="password"
           className="text-body-lg-semibold hbp:text-headline-2xl-semibold text-grey-600"
         >
-          비밀번호 <span className="text-error">*</span>
+          {t('비밀번호')} <span className="text-error">*</span>
         </label>
         <p className="hbp:mb-[7.5px] text-caption-sm-medium hbp:text-body-md-medium text-grey-300 mb-[6px]">
-          영문, 숫자, 특수문자를 조합하여 8-16글자로 입력해주세요.
+          {t('영문, 숫자, 특수문자를 조합하여 8-16글자로 입력해주세요.')}
         </p>
         <PasswordField
           {...register('password')}
@@ -167,7 +169,7 @@ const SignUpForm = () => {
         <PasswordField
           {...register('confirmPassword')}
           hasValue={!!formValues.confirmPassword}
-          placeholder="비밀번호를 재입력해주세요."
+          placeholder={t('비밀번호를 재입력해주세요.')}
           className={
             !formValues.confirmPassword
               ? '' // 아무 입력 없으면 기본
@@ -190,8 +192,8 @@ const SignUpForm = () => {
               const colorClass = isError ? 'text-error' : 'text-success'
               const Icon = isError ? FailIcon : SuccessIcon
               const message = isError
-                ? errors.password?.message || '비밀번호가 일치하지 않습니다.'
-                : '비밀번호가 일치합니다.'
+                ? errors.password?.message || t('비밀번호가 일치하지 않습니다.')
+                : t('비밀번호가 일치합니다.')
 
               return (
                 <div className={`mt-1 flex gap-1.5 ${colorClass}`}>
@@ -209,15 +211,15 @@ const SignUpForm = () => {
           htmlFor="name"
           className="text-body-lg-semibold hbp:text-headline-2xl-semibold text-grey-600"
         >
-          이름 <span className="text-error">*</span>
+          {t('이름')} <span className="text-error">*</span>
         </label>
         <p className="hbp:mb-[7.5px] text-caption-sm-medium hbp:text-body-md-medium text-grey-300 mb-[6px]">
-          최대 10글자 이내로 작성해주세요.
+          {t('최대 10글자 이내로 작성해주세요.')}
         </p>
         <TextField
           id="name"
           type="text"
-          placeholder="이름을 입력해주세요."
+          placeholder={t('이름을 입력해주세요.')}
           {...register('name')}
           className={`hbp:text-body-xl-regular ${errors.name ? '!border-error' : formValues.name ? '!border-success' : ''}`}
         />
@@ -230,7 +232,7 @@ const SignUpForm = () => {
           >
             {errors.name ? <FailIcon /> : <SuccessIcon />}
             <p className="text-caption-sm-regular">
-              {errors.name ? errors.name.message : '사용 가능한 이름입니다.'}
+              {errors.name ? errors.name.message : t('사용 가능한 이름입니다.')}
             </p>
           </div>
         )}
@@ -239,7 +241,7 @@ const SignUpForm = () => {
       {/* 완료 버튼 */}
       <Button
         type="submit"
-        text="완료"
+        text={t('완료')}
         size="xl"
         disabled={!isValid || signupMutation.isPending}
       />

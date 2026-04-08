@@ -1,6 +1,7 @@
 import InvisibleIcon from '@assets/auth/invisible_icon.svg?react'
 import VisibleIcon from '@assets/auth/visible_icon.svg?react'
 import { TextField as TextInput } from '@shared/ui/input-field'
+import { useTranslation } from 'react-i18next'
 import { type ChangeEvent, forwardRef, useState } from 'react'
 
 interface PasswordFieldProps {
@@ -13,9 +14,11 @@ interface PasswordFieldProps {
 
 const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
   (
-    { hasValue, onChange, placeholder = '비밀번호', className = '', name },
+    { hasValue, onChange, placeholder, className = '', name },
     ref,
   ) => {
+    const { t } = useTranslation('auth')
+    const resolvedPlaceholder = placeholder ?? t('비밀번호')
     /* 비밀번호 보이기/숨기기 */
     const [isVisible, setIsVisible] = useState(false)
 
@@ -28,7 +31,7 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
           id="password"
           name={name}
           type={isVisible ? 'text' : 'password'}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           onChange={onChange}
           maxLength={16}
           className={`hbp:text-body-lg-regular aspect-[44/6] ${className}`}

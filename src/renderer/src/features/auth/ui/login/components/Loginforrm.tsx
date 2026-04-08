@@ -3,6 +3,7 @@ import SaveIdIcon from '@assets/auth/saveid_icon.svg?react'
 import { useLoginMutation } from '@entities/user'
 import { TextField as TextInput } from '@shared/ui/input-field'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import LoginButton from './LoginButton'
@@ -17,6 +18,7 @@ interface LoginFormData {
 const SAVED_EMAIL_KEY = 'savedEmail'
 
 const LoginForm = () => {
+  const { t } = useTranslation('auth')
   const { register, handleSubmit, watch, setValue } = useForm<LoginFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -47,7 +49,7 @@ const LoginForm = () => {
   }
 
   const onSubmit = (data: LoginFormData) => {
-    console.log('로그인 시도:', data)
+    console.log(t('로그인 시도:'), data)
 
     loginMutation.mutate(
       {
@@ -76,7 +78,7 @@ const LoginForm = () => {
         {/* 이메일 */}
         <TextInput
           type="text"
-          placeholder="이메일"
+          placeholder={t('이메일')}
           {...register('email')}
           className="hbp:text-body-lg-regular aspect-[44/6]"
         />
@@ -86,7 +88,7 @@ const LoginForm = () => {
         {loginMutation.isError && (
           <div className="text-caption-sm-regular text-error flex gap-1 self-start">
             <FailIcon />
-            <span>이메일 또는 비밀번호가 올바르지 않습니다.</span>
+            <span>{t('이메일 또는 비밀번호가 올바르지 않습니다.')}</span>
           </div>
         )}
 
@@ -106,7 +108,7 @@ const LoginForm = () => {
                   : '[&>path]:stroke-check-stroke [&>rect]:fill-check-fill [&_path]:fill-none'
               }
             />
-            <span>아이디 저장</span>
+            <span>{t('아이디 저장')}</span>
           </label>
         </div>
 
@@ -120,10 +122,10 @@ const LoginForm = () => {
           onClick={() => navigate('/auth/signup')}
           className="cursor-pointer"
         >
-          회원가입
+          {t('회원가입')}
         </span>
         <span>|</span>
-        <span className="cursor-pointer">비밀번호 찾기</span>
+        <span className="cursor-pointer">{t('비밀번호 찾기')}</span>
       </div>
     </>
   )

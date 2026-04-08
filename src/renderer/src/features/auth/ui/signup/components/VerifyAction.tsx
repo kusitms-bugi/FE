@@ -1,8 +1,10 @@
 import { Button } from '@shared/ui/button'
 import { TextField } from '@shared/ui/input-field'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 export default function VerifyAction({ email }: { email: string }) {
+  const { t } = useTranslation('auth')
   const navigate = useNavigate()
 
   return (
@@ -13,7 +15,7 @@ export default function VerifyAction({ email }: { email: string }) {
         disabled={true}
       />
       <Button
-        text="로그인"
+        text={t('로그인')}
         className="text-body-xl-medium h-[49px]"
         onClick={() => navigate('/auth/login')}
       />

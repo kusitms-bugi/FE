@@ -1,4 +1,5 @@
 import { Button } from '@shared/ui/button'
+import { useTranslation } from 'react-i18next'
 
 interface LoginButtonProps {
   text?: string
@@ -15,9 +16,10 @@ export default function LoginButton({
   disabled = true,
   className = '',
 }: LoginButtonProps) {
+  const { t } = useTranslation('auth')
   return (
     <Button
-      text="로그인"
+      text={t('로그인')}
       type={type}
       onClick={onClick}
       disabled={disabled}
@@ -25,7 +27,7 @@ export default function LoginButton({
       size="xl"
       className={`hbp:mt-7 mt-5 w-full ${className} hbp:h-[74px] text-headline-2xl-medium`}
     >
-      로그인
+      {t('로그인')}
     </Button>
   )
 }

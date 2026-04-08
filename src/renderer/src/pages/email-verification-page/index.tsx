@@ -2,9 +2,11 @@ import { useEmailStore, useResendVerifyEmailMuation } from '@entities/user'
 import EmailHeroSection from '@features/auth/ui/signup/components/EmailHeroSection'
 import ResendSection from '@features/auth/ui/signup/components/ResendSection'
 import { Button } from '@shared/ui/button'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 const EmailVerificationPage = () => {
+  const { t } = useTranslation('auth')
   const resendverifyEmailMutation = useResendVerifyEmailMuation()
   const email = useEmailStore(state => state.email)
   const navigate = useNavigate()
@@ -23,7 +25,7 @@ const EmailVerificationPage = () => {
           <EmailHeroSection />
           <Button
             onClick={() => navigate('/auth/login')}
-            text="로그인"
+            text={t('로그인')}
             className="text-body-xl-medium h-[49px] w-[440px]"
           />
           <ResendSection onClick={onResendClick} />

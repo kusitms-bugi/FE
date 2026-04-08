@@ -1,5 +1,6 @@
 import LoadingVideo from '@assets/video/Loading.mov'
 import { cn } from '@shared/lib/cn'
+import { useTranslation } from 'react-i18next'
 
 interface LoadingSpinnerProps {
   className?: string
@@ -18,6 +19,7 @@ export const LoadingSpinner = ({
   size = 'md',
   text,
 }: LoadingSpinnerProps) => {
+  const { t } = useTranslation('common')
   return (
     <div
       className={cn(
@@ -25,7 +27,7 @@ export const LoadingSpinner = ({
         className,
       )}
       role="status"
-      aria-label="로딩 중"
+      aria-label={t('로딩 중')}
     >
       <video
         className={cn(
@@ -38,7 +40,7 @@ export const LoadingSpinner = ({
         muted
         playsInline
       />
-      <span className="sr-only">로딩 중...</span>
+      <span className="sr-only">{t('로딩 중...')}</span>
       {text && <p className="text-body-md-medium text-grey-400">{text}</p>}
     </div>
   )

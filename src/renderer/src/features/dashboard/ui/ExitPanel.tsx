@@ -1,10 +1,12 @@
 import { useLevelQuery } from '@entities/dashboard'
 import { useSessionReportQuery } from '@entities/session'
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 
 const ExitPanel = () => {
   const [sessionId, setSessionId] = useState<string | null>(null)
+  const { t } = useTranslation('dashboard')
 
   // localStorage에서 sessionId 가져오기 (없으면 lastSessionId 사용)
   /* eslint-disable react-hooks/set-state-in-effect */
@@ -85,7 +87,7 @@ const ExitPanel = () => {
   const formatTime = (minutes: number) => {
     const hours = Math.floor(minutes / 60)
     const mins = minutes % 60
-    return `${hours}시간 ${mins}분`
+    return t('{{hours}}시간 {{mins}}분', { hours, mins })
   }
 
   // 로딩 중
@@ -95,7 +97,7 @@ const ExitPanel = () => {
         <div className="dark:bg-grey-100 rounded-xl bg-white p-6">
           <div className="flex h-[400px] items-center justify-center">
             <p className="text-body-lg-medium text-grey-400">
-              리포트를 불러오는 중...
+              {t('리포트를 불러오는 중...')}
             </p>
           </div>
         </div>
@@ -110,7 +112,7 @@ const ExitPanel = () => {
         <div className="dark:bg-grey-100 rounded-xl bg-white p-6">
           <div className="flex h-[400px] items-center justify-center">
             <p className="text-body-lg-medium text-error-500">
-              리포트를 불러올 수 없습니다
+              {t('리포트를 불러올 수 없습니다')}
             </p>
           </div>
         </div>
@@ -125,7 +127,7 @@ const ExitPanel = () => {
         <div className="dark:bg-grey-100 rounded-xl bg-white p-6">
           <div className="flex h-[400px] items-center justify-center">
             <p className="text-body-lg-medium text-grey-400">
-              세션 데이터가 없습니다
+              {t('세션 데이터가 없습니다')}
             </p>
           </div>
         </div>
@@ -138,10 +140,10 @@ const ExitPanel = () => {
       <div className="dark:bg-grey- bg-grey-0 rounded-xl py-6">
         <div className="mb-12 flex flex-col">
           <h2 className="text-caption-sm-medium text-grey-400">
-            오늘의 리포트
+            {t('오늘의 리포트')}
           </h2>
           <p className="text-headline-3xl-semibold text-grey-700">
-            오늘 총 {sessionDistance.toLocaleString()}m 이동했어요
+            {t('오늘 총 {{distance}}m 이동했어요', { distance: sessionDistance.toLocaleString() })}
           </p>
         </div>
 
@@ -186,7 +188,7 @@ const ExitPanel = () => {
 
           {/* 중앙 텍스트 */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-caption-sm-regular text-grey-500">사용시간</p>
+            <p className="text-caption-sm-regular text-grey-500">{t('사용시간')}</p>
             <p className="text-headline-2xl-semibold text-grey-600">
               {formatTime(totalTime)}
             </p>
@@ -202,7 +204,7 @@ const ExitPanel = () => {
             />
             <p className="ml-1 flex flex-1 items-center justify-between">
               <span className="text-body-md-medium text-grey-400">
-                바른 자세 시간
+                {t('바른 자세 시간')}
               </span>
               <span className="text-headline-2xl-semibold text-grey-600">
                 {correctPosturePercentage}%
@@ -213,10 +215,10 @@ const ExitPanel = () => {
           <div className="bg-grey-25 flex flex-col rounded-[24px] p-5">
             <p className="flex flex-col gap-2 px-5">
               <span className="text-body-sm-medium text-grey-400">
-                바른 자세 점수
+                {t('바른 자세 점수')}
               </span>
               <span className="text-body-xl-semibold text-grey-600">
-                {score}점
+                {t('{{score}}점', { score })}
               </span>
             </p>
           </div>

@@ -3,10 +3,12 @@ import { useLevelQuery } from '@entities/dashboard'
 import { useCreateSessionMutation } from '@entities/session'
 import { Button } from '@shared/ui/button'
 import { useCameraStore } from '@widgets/camera'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 const OnboardingCompletionPage = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation('onboarding')
   const { mutate: createSession, isPending } = useCreateSessionMutation()
   const { setShow } = useCameraStore()
   const { data: levelData } = useLevelQuery()
@@ -34,9 +36,9 @@ const OnboardingCompletionPage = () => {
 
         {/* 텍스트 영역 */}
         <div className="mb-12 flex flex-col items-center gap-4">
-          <h1 className="text-title-4xl-bold text-grey-700">자세 등록 완료</h1>
+          <h1 className="text-title-4xl-bold text-grey-700">{t('자세 등록 완료')}</h1>
           <p className="text-headline-2xl-regular text-grey-500 text-center">
-            이제부터 거부기린과 함께 거북목을 개선해볼까요?
+            {t('이제부터 거부기린과 함께 거북목을 개선해볼까요?')}
           </p>
         </div>
 
@@ -46,7 +48,7 @@ const OnboardingCompletionPage = () => {
             variant="primary"
             size="xl"
             className="w-[440px]"
-            text={isPending ? '세션 생성 중...' : '시작하기'}
+            text={isPending ? t('세션 생성 중...') : t('시작하기')}
             onClick={handleStart}
             disabled={isPending}
           />

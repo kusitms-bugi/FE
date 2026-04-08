@@ -18,10 +18,12 @@ import { cn } from '@shared/lib/cn'
 import { getScoreLevel } from '@shared/lib/get-score-level'
 import { useCameraStore } from '@widgets/camera'
 import { useEffect, useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const RunningPanel = () => {
   const score = usePostureStore(state => state.score)
   const cameraState = useCameraStore(state => state.cameraState)
+  const { t } = useTranslation('dashboard')
   const isCameraShow = cameraState === 'show'
   const backgroundVideoRef = useRef<HTMLVideoElement>(null)
 
@@ -94,15 +96,15 @@ const RunningPanel = () => {
   // 레벨에 따른 상태 텍스트
   const runningStatus = useMemo(() => {
     const statusMap: Record<number, string> = {
-      1: '최고 속도로 가는 중!', // 가장 좋음
-      2: '빠르게 가는 중!',
-      3: '씽씽 가는 중!',
-      4: '천천히 가는 중',
-      5: '느릿느릿 가는중..',
-      6: '엉금엉금 가는중..', // 가장 나쁨
+      1: t('최고 속도로 가는 중!'), // 가장 좋음
+      2: t('빠르게 가는 중!'),
+      3: t('씽씽 가는 중!'),
+      4: t('천천히 가는 중'),
+      5: t('느릿느릿 가는중..'),
+      6: t('엉금엉금 가는중..'), // 가장 나쁨
     }
-    return statusMap[levelInfo.level] || '가는 중'
-  }, [levelInfo.level])
+    return statusMap[levelInfo.level] || t('가는 중')
+  }, [levelInfo.level, t])
 
   // 카메라 상태에 따라 배경 영상 재생/멈춤 제어
   useEffect(() => {
@@ -171,7 +173,7 @@ const RunningPanel = () => {
           ) : (
             <img
               src={levelSvgSrc}
-              alt="레벨 이미지"
+              alt={t('레벨 이미지')}
               className="h-auto max-h-[320px] w-full rounded-lg bg-transparent object-contain"
             />
           )}

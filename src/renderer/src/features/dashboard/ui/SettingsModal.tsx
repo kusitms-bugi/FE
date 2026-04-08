@@ -11,7 +11,9 @@ import { parseErrorMessage } from '@shared/lib/error/parse-error'
 import { Button } from '@shared/ui/button'
 import { ModalPortal } from '@shared/ui/modal'
 import { NotificationToggleSwitch } from '@shared/ui/toggle-switch'
+import { ToggleSwitch } from '@shared/ui/toggle-switch'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 interface SettingsModalProps {
@@ -20,6 +22,8 @@ interface SettingsModalProps {
 
 const SettingsModal = ({ onClose }: SettingsModalProps) => {
   const navigate = useNavigate()
+  const { t } = useTranslation('settings')
+  const { i18n } = useTranslation()
   const withdrawMutation = useWithdrawMutation()
   const [isStartupEnabled, setIsStartupEnabled] = useState(false)
   const [isStartupSupported, setIsStartupSupported] = useState(true)
@@ -103,7 +107,7 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
   const handleWithdraw = async () => {
     if (withdrawMutation.isPending) return
 
-    const shouldProceed = window.confirm('정말 회원탈퇴 하시겠어요?')
+    const shouldProceed = window.confirm(t('정말 회원탈퇴 하시겠어요?'))
     if (!shouldProceed) return
 
     try {
@@ -113,9 +117,9 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
       clearLocalAuthData(userId, true)
       onClose()
       navigate('/auth/signup', { replace: true })
-      alert('회원탈퇴가 완료되었습니다.')
+      alert(t('회원탈퇴가 완료되었습니다.'))
     } catch (error: unknown) {
-      console.error('회원탈퇴 실패:', error)
+      console.error(t('회원탈퇴 실패:'), error)
       alert(parseErrorMessage(error))
     }
   }
@@ -141,7 +145,7 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
       setIsStartupSupported(result.supported)
 
       if (!result.success) {
-        const message = result.error ?? '자동 실행 설정을 변경하지 못했습니다.'
+        const message = result.error ?? t('자동 실행 설정을 변경하지 못했습니다.')
         setStartupError(message)
         alert(message)
       }
@@ -156,23 +160,23 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
   }
 
   const startupDescription = isStartupLoading
-    ? '현재 상태를 확인하고 있어요.'
+    ? t('현재 상태를 확인하고 있어요.')
     : !isStartupSupported
-      ? '현재 운영체제에서는 지원하지 않아요.'
+      ? t('현재 운영체제에서는 지원하지 않아요.')
       : isStartupSaving
-        ? '설정을 적용하고 있어요.'
-        : '컴퓨터 로그인 후 거부기린을 자동으로 실행해요.'
+        ? t('설정을 적용하고 있어요.')
+        : t('컴퓨터 로그인 후 거부기린을 자동으로 실행해요.')
 
   const actionItems = [
-    { label: '로그아웃', icon: <LogoutIcon />, onClick: handleLogout },
+    { label: t('로그아웃'), icon: <LogoutIcon />, onClick: handleLogout },
     {
-      label: '회원탈퇴',
+      label: t('회원탈퇴'),
       icon: <WithdrawIcon />,
       onClick: handleWithdraw,
       disabled: withdrawMutation.isPending,
     },
     {
-      label: '캘리브레이션 재설정',
+      label: t('캘리브레이션 재설정'),
       icon: <CalibrationResetIcon />,
       onClick: handleCalibrationReset,
     },
@@ -189,13 +193,13 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
           onClick={e => e.stopPropagation()}
         >
           <div className="bg-surface-modal-container rounded-[12px] p-3">
-            <h2 className="text-body-lg-semibold text-grey-900">설정</h2>
+            <h2 className="text-body-lg-semibold text-grey-900">{t('설정')}</h2>
           </div>
 
           <div className="bg-surface-modal-container flex items-center justify-between gap-3 rounded-[12px] p-3">
             <div className="flex min-w-0 flex-1 flex-col gap-1">
               <span className="text-body-md-medium text-grey-900">
-                OS 시작 시 자동 실행
+                {t('OS 시작 시 자동 실행')}
               </span>
               <span className="font-['Pretendard'] text-[11px] leading-[150%] text-grey-500">
                 {startupDescription}
@@ -213,6 +217,26 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
               isDisabled={
                 isStartupLoading || isStartupSaving || !isStartupSupported
               }
+            />
+          </div>
+
+          <div className="bg-surface-modal-container flex items-center justify-between gap-3 rounded-[12px] p-3">
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="text-body-md-medium text-grey-900">
+                {t('언어')}
+              </span>
+              <span className="font-['Pretendard'] text-[11px] leading-[150%] text-grey-500">
+                {t('한국어와 영어를 지원해요.')}
+              </span>
+            </div>
+
+            <ToggleSwitch
+              checked={i18n.language === 'en'}
+              onChange={(isEnglish) => {
+                i18n.changeLanguage(isEnglish ? 'en' : 'ko')
+              }}
+              uncheckedLabel="한국어"
+              checkedLabel="English"
             />
           </div>
 
@@ -241,7 +265,7 @@ const SettingsModal = ({ onClose }: SettingsModalProps) => {
 
           <Button
             onClick={onClose}
-            text="닫기"
+            text={t('닫기')}
             variant="primary"
             size="md"
             className="text-body-md-medium h-[43px] w-full"

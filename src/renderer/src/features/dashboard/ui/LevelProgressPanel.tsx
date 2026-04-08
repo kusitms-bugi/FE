@@ -1,10 +1,13 @@
+import { useTranslation } from 'react-i18next'
+
 const LevelProgressPanel = () => {
+  const { t } = useTranslation('dashboard')
   return (
     <div className="border-grey-100 col-span-12 rounded-2xl border bg-white p-5">
       <div className="mb-3 flex items-end justify-between">
         <div>
           <p className="text-body-lg-medium text-grey-500 mb-1">
-            LV.2 거부기까지
+            {t('LV.2 거부기까지')}
           </p>
           <p className="text-title-2xl-bold text-grey-900">400 / 1,000m</p>
         </div>

@@ -1,0 +1,18 @@
+{
+  "설정": "Settings",
+  "OS 시작 시 자동 실행": "Launch at Startup",
+  "현재 상태를 확인하고 있어요.": "Checking current status.",
+  "현재 운영체제에서는 지원하지 않아요.": "Not supported on your current operating system.",
+  "설정을 적용하고 있어요.": "Applying settings.",
+  "컴퓨터 로그인 후 거부기린을 자동으로 실행해요.": "Automatically launches Bugirin after you log in to your computer.",
+  "자동 실행 설정을 변경하지 못했습니다.": "Failed to change auto-launch setting.",
+  "로그아웃": "Log Out",
+  "회원탈퇴": "Delete Account",
+  "캘리브레이션 재설정": "Reset Calibration",
+  "정말 회원탈퇴 하시겠어요?": "Are you sure you want to delete your account?",
+  "회원탈퇴가 완료되었습니다.": "Your account has been deleted.",
+  "회원탈퇴 실패:": "Account deletion failed:",
+  "닫기": "Close",
+  "언어": "Language",
+  "한국어와 영어를 지원해요.": "Korean and English are supported."
+}

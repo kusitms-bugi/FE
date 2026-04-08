@@ -129,6 +129,11 @@ function setupAPIHandlers() {
     return nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
   })
 
+  /* 시스템 언어 조회 핸들러 */
+  ipcMain.handle('api:getLocale', () => {
+    return app.getLocale()
+  })
+
   ipcMain.handle('startup:get', () => {
     return getStartupSettings()
   })

@@ -172,13 +172,15 @@ const config = {
       },
     ],
     icon: 'buildResources/icon.png',
-    artifactName: '거부기린.${ext}',
+    artifactName: '${productName}-${version}-${arch}.${ext}',
   },
   nsis: {
     oneClick: false,
     allowToChangeInstallationDirectory: true,
     createDesktopShortcut: true,
     createStartMenuShortcut: true,
+    multiLanguageInstaller: true,
+    displayLanguageSelector: true,
   },
   // DMG 설정: 루트 레벨에 설정 (mac 객체 안이 아님)
   dmg: {

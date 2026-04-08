@@ -13,6 +13,7 @@ import { WebcamView } from '@features/calibration/ui'
 import { Button } from '@shared/ui/button'
 import { useCameraStore } from '@widgets/camera'
 import { useWidget } from '@widgets/widget'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
   onUserMediaError: (e: string | DOMException) => void
@@ -30,6 +31,7 @@ const WebcamPanel = ({
   onSendMetrics,
 }: Props) => {
   const { cameraState, setShow, setHide, setExit } = useCameraStore()
+  const { t } = useTranslation('dashboard')
   const { toggleWidget, isWidgetOpen } = useWidget()
   const isWebcamOn = cameraState === 'show'
   const isExit = cameraState === 'exit'
@@ -142,12 +144,12 @@ const WebcamPanel = ({
           variant={'primary'}
           text={
             isCreatingSession
-              ? '세션 생성 중...'
+              ? t('세션 생성 중...')
               : isStoppingSession
-                ? '세션 종료 중...'
+                ? t('세션 종료 중...')
                 : isExit
-                  ? '시작하기'
-                  : '종료하기'
+                  ? t('시작하기')
+                  : t('종료하기')
           }
           className="labtop:max-w-[260px] h-11 w-full max-w-[196px]"
           onClick={handleStartStop}
@@ -162,7 +164,7 @@ const WebcamPanel = ({
           text={
             <div className="text-body-md-medium flex items-center gap-1 text-yellow-500">
               <WidgetIcon className="h-6 w-6" />
-              위젯
+              {t('위젯')}
             </div>
           }
         />

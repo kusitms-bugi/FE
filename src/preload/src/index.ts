@@ -120,6 +120,9 @@ interface ElectronAPI {
   // 시스템 테마 조회
   getSystemTheme: () => Promise<SystemTheme>
 
+  // 시스템 언어 조회
+  getLocale: () => Promise<string>
+
   // 알림 API
   notification: {
     show: (
@@ -263,6 +266,12 @@ const electronAPI: ElectronAPI = {
   getSystemTheme: () =>
     ipcRenderer.invoke('theme:getSystemTheme') as ReturnType<
       ElectronAPI['getSystemTheme']
+    >,
+
+  // 시스템 언어 조회
+  getLocale: () =>
+    ipcRenderer.invoke('api:getLocale') as ReturnType<
+      ElectronAPI['getLocale']
     >,
 
   // 알림 API

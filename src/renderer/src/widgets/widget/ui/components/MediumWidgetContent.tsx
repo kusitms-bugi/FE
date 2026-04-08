@@ -1,6 +1,7 @@
 import MediumGiraffe from '@assets/widget/medium_giraffe.svg?react'
 import MediumTurtle from '@assets/widget/medium_turtle.svg?react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import messages from '../data.json'
 
 /* 실시간 자세 판별 */
@@ -8,8 +9,8 @@ type PostureState = 0 | 1 | 2 | 3 | 4 | 5 | 6
 
 interface Message {
   level: number
-  mainTitle: string
-  subTitles: string[]
+  mainTitleKey: string
+  subTitleKeys: string[]
 }
 
 interface MediumWidgetContentProps {
@@ -18,24 +19,25 @@ interface MediumWidgetContentProps {
 
 /* 미디엄 위젯 레이아웃 */
 export function MediumWidgetContent({ posture }: MediumWidgetContentProps) {
-  const [mainTitle, setMainTitle] = useState('자세를 측정하고 있어요')
-  const [subTitle, setSubTitle] = useState('잠시만 기다려주세요...')
+  const { t } = useTranslation('widget')
+  const [mainTitle, setMainTitle] = useState(t('자세를 측정하고 있어요'))
+  const [subTitle, setSubTitle] = useState(t('잠시만 기다려주세요...'))
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const messageData = messages.find((m: Message) => m.level === posture)
 
     if (messageData) {
-      setMainTitle(messageData.mainTitle)
-      const { subTitles } = messageData
-      const randomIndex = Math.floor(Math.random() * subTitles.length)
-      setSubTitle(subTitles[randomIndex])
+      setMainTitle(t(messageData.mainTitleKey))
+      const { subTitleKeys } = messageData
+      const randomIndex = Math.floor(Math.random() * subTitleKeys.length)
+      setSubTitle(t(subTitleKeys[randomIndex]))
     } else {
       // posture가 0이거나 유효하지 않은 경우 기본 메시지 설정
-      setMainTitle('자세를 측정하고 있어요')
-      setSubTitle('잠시만 기다려주세요...')
+      setMainTitle(t('자세를 측정하고 있어요'))
+      setSubTitle(t('잠시만 기다려주세요...'))
     }
-  }, [posture])
+  }, [posture, t])
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const isGiraffe = [1, 2, 3].includes(posture)

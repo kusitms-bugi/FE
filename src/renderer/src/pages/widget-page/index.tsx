@@ -11,6 +11,7 @@ import {
 import { WebcamView } from '@features/calibration/ui'
 import { useCameraStore } from '@widgets/camera'
 import { usePostureSyncWithLocalStorage } from '@widgets/widget/ui/hooks/usePostureSyncWithLocalStorage'
+import { useLocaleSync } from '@widgets/widget/ui/hooks/useLocaleSync'
 import { useThemeSync } from '@widgets/widget/ui/hooks/useThemeSync'
 import { useEffect, useRef, useState } from 'react'
 import { WidgetTitleBar } from './WidgetTitleBar/WidgetTitleBar'
@@ -141,6 +142,9 @@ const WidgetPage = () => {
 
   /* 위젯 라이트/다크 모드 */
   useThemeSync()
+
+  /* 메인 창과 언어 설정 동기화 */
+  useLocaleSync()
 
   /* 위젯 페이지 로드 시 로그 */
   useEffect(() => {

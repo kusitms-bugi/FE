@@ -1,5 +1,6 @@
 import MediumDragIcon from '@assets/widget/drag_icon.svg?react'
 import MiniDragIcon from '@assets/widget/mini_drag_icon.svg?react'
+import { useTranslation } from 'react-i18next'
 
 interface WidgetTitleBarProps {
   onClose?: () => void
@@ -11,6 +12,8 @@ export function WidgetTitleBar({
   onClose,
   isMini = true,
 }: WidgetTitleBarProps) {
+  const { t } = useTranslation('widget')
+
   // 위젯 닫기
   const handleClose = async () => {
     try {
@@ -58,7 +61,7 @@ export function WidgetTitleBar({
           // @ts-expect-error: electronAPI 타입 정의 없음
           WebkitAppRegion: 'no-drag',
         }}
-        aria-label="닫기"
+        aria-label={t('닫기')}
       />
       {isMini ? (
         <MiniDragIcon className="my-auto" />

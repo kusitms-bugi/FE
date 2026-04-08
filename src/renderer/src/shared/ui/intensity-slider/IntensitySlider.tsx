@@ -23,8 +23,8 @@ const IntensitySlider = React.forwardRef<HTMLDivElement, IntensitySliderProps>(
         </span>
 
         <div className="flex items-center gap-1">
-          {LEVEL_COLORS.map((color, index) => (
-            <div key={index} className={cn('h-2 w-2 rounded-full', color)} />
+          {LEVEL_COLORS.map(color => (
+            <div key={color} className={cn('h-2 w-2 rounded-full', color)} />
           ))}
         </div>
 

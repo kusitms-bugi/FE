@@ -36,7 +36,13 @@ export const useSessionReportQuery = (
 ) => {
   return useQuery({
     queryKey: ['sessionReport', sessionId],
-    queryFn: () => fetchSessionReport(sessionId!),
+    queryFn: () => {
+      if (!sessionId) {
+        throw new Error('sessionId is required')
+      }
+
+      return fetchSessionReport(sessionId)
+    },
     enabled: enabled && !!sessionId, // sessionId가 있을 때만 실행
     staleTime: 1000 * 60 * 5, // 5분간 데이터 신선하게 유지
     retry: 1, // 실패 시 1번만 재시도

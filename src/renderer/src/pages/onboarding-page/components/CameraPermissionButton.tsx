@@ -1,8 +1,10 @@
 import { Button } from '@shared/ui/button'
 import { useCameraStore } from '@widgets/camera'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 const CameraPermissionButton = () => {
+  const { t } = useTranslation('onboarding')
   const navigate = useNavigate()
   const { setShow } = useCameraStore()
 
@@ -75,7 +77,7 @@ const CameraPermissionButton = () => {
       variant="primary"
       size="xl"
       className="w-[440px]"
-      text="카메라 권한 허용"
+      text={t('카메라 권한 허용')}
       onClick={requestCameraPermission}
     />
   )

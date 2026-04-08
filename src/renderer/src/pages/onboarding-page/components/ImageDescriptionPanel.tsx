@@ -9,6 +9,7 @@ import secondImage from '@assets/onboarding/second_image.png'
 import thirdDarkImage from '@assets/onboarding/third_dark_image.png'
 import thirdImage from '@assets/onboarding/third_image.png'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import FirstImageDescription from './FirstImageDescription'
 
 /* 단계별 이미지 (1단계는 null, 2~5단계는 이미지) */
@@ -38,6 +39,7 @@ const ImageDescriptionPannel = ({
   onPrev,
   direction,
 }: ImageDescriptionPannelProps) => {
+  const { t } = useTranslation('onboarding')
   const [isDark, setIsDark] = useState(() =>
     document.documentElement.classList.contains('dark'),
   )
@@ -106,8 +108,7 @@ const ImageDescriptionPannel = ({
         <p className="text-body-xl-semibold text-grey-300 absolute bottom-6 flex items-center gap-1">
           <RockIcon />
           <span>
-            영상은 사용자의 PC에서만 처리되며, 어디에도 저장되거나 전송되지
-            않으니 안심하세요.
+            {t('영상은 사용자의 PC에서만 처리되며, 어디에도 저장되거나 전송되지 않으니 안심하세요.')}
           </span>
         </p>
       </div>

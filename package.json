@@ -86,7 +86,7 @@
     "typescript": "5.9.3",
     "vite": "7.1.12",
     "vite-plugin-svgr": "4.5.0",
-    "zod": "4.1.12"
+    "zod": "4.3.6"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,css,md}": [

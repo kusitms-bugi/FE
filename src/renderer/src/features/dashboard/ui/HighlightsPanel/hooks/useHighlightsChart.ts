@@ -2,6 +2,7 @@ import { useHighlightQuery } from '@entities/dashboard'
 import { useThemeApplied } from '@shared/hooks/use-theme-applied'
 import { getColor } from '@shared/lib/get-color'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { HighlightDatum } from '../data'
 
 export type HighlightPeriod = 'weekly' | 'monthly'
@@ -35,6 +36,7 @@ type ChartConfig = {
 
 export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
   const isDarkApplied = useThemeApplied()
+  const { t } = useTranslation('dashboard')
 
   // 현재 날짜 기준으로 year, month 계산
   const now = new Date()
@@ -52,8 +54,8 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
   const chartData = useMemo<HighlightDatum[]>(() => {
     const periodLabel =
       activePeriod === 'weekly'
-        ? ['저번 주', '이번 주']
-        : ['저번 달', '이번 달']
+        ? [t('저번 주'), t('이번 주')]
+        : [t('저번 달'), t('이번 달')]
 
     // 데이터가 없거나 로딩 중일 때 기본값 반환
     if (!highlightData?.data || isLoading) {
@@ -87,7 +89,7 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
         barKey: 'current',
       },
     ]
-  }, [highlightData, activePeriod, isLoading])
+  }, [highlightData, activePeriod, isLoading, t])
 
   // CSS 변수에서 색상 가져오기 (다크모드 변경 시 재계산)
   const chartColors = useMemo<ChartColors>(
@@ -107,7 +109,7 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
 
     // 공통 스타일
     const baseConfig = {
-      unitLabel: '단위: 분/일',
+      unitLabel: t('단위: 분/일'),
       barSize: 130,
       barRadius: [8, 8, 0, 0] as [number, number, number, number],
       categoryGap: 64,
@@ -144,7 +146,7 @@ export function useHighlightsChart(activePeriod: HighlightPeriod): ChartConfig {
       maxDomain: maxValue,
       yAxisTicks: ticks,
     }
-  }, [chartColors, chartData, isDarkApplied])
+  }, [chartColors, chartData, isDarkApplied, t])
 
   return chartConfig
 }

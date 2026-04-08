@@ -1,8 +1,10 @@
 import { useAverageScoreQuery } from '@entities/dashboard'
+import { useTranslation } from 'react-i18next'
 import { LEVEL_INFO, getLevel } from './levelConfig'
 
 const AveragePosturePanel = () => {
   const { data, isLoading } = useAverageScoreQuery()
+  const { t } = useTranslation('dashboard')
   const score = data?.data.score ?? 0
   const level = getLevel(score)
   const levelInfo = LEVEL_INFO[level - 1]
@@ -19,23 +21,23 @@ const AveragePosturePanel = () => {
     >
       <div className="items center flex h-full justify-between">
         <p className="text-caption-sm-medium flex min-w-[120px] flex-col text-yellow-100">
-          <span>평균 자세 점수</span>
+          <span>{t('평균 자세 점수')}</span>
           <span className="text-title-4xl-bold text-grey-0 mb-4">
-            {isLoading ? '-' : `${score}점`}
+            {isLoading ? '-' : t('{{score}}점', { score })}
           </span>
           <span className="text-caption-xs-meidum whitespace-nowrap text-yellow-50">
-            목 평균 기울기 {levelInfo.tilt}
+            {t('목 평균 기울기 {{tilt}}', { tilt: levelInfo.tilt })}
             <br />
-            예상 하중 {levelInfo.weight}
+            {t('예상 하중 {{weight}}', { weight: levelInfo.weight })}
           </span>
         </p>
         <p className="flex flex-col items-end gap-1">
           <span className="text-caption-xs-meidum h-[26px] rounded-full bg-yellow-50 px-2 py-1 whitespace-nowrap text-yellow-500">
-            {levelInfo.name}
+            {t(levelInfo.name)}
           </span>
           <img
             src={levelInfo.character}
-            alt={levelInfo.name}
+            alt={t(levelInfo.name)}
             className="mt-auto max-h-[208px] w-full max-w-[196px] object-contain pb-6"
           />
         </p>

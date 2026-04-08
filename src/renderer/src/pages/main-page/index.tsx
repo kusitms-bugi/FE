@@ -26,6 +26,7 @@ import { LoadingSpinner } from '@shared/ui/loading'
 import { ModalPortal } from '@shared/ui/modal'
 import { useCameraStore } from '@widgets/camera'
 import { Suspense, lazy, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 // Recharts를 사용하는 컴포넌트들을 lazy import
 const AverageGraphPannel = lazy(
@@ -44,6 +45,7 @@ const LOCAL_STORAGE_KEY = 'calibration_result_v1'
 const MAIN_WINDOW_ACTIVE_KEY = 'main-window-active'
 
 const MainPage = () => {
+  const { t } = useTranslation('dashboard')
   const setStatus = usePostureStore(state => state.setStatus)
   const { cameraState, setHide, setShow, setExit } = useCameraStore()
   const badPostureStartAtRef = useRef<number | null>(null)
@@ -257,7 +259,7 @@ const MainPage = () => {
               <MainHeader onClickNotification={handleOpenModal} />
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="text-caption-xs-regular text-grey-200 mr-4 flex shrink-0 items-end justify-end">
-                  마지막 갱신일: 2025.10.22(수) 17:52
+                  {t('마지막 갱신일: 2025.10.22(수) 17:52')}
                 </div>
 
                 {/* 스크롤 영역 래퍼 */}

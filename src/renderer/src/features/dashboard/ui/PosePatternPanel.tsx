@@ -7,25 +7,27 @@ import GlassHourIcon from '@assets/common/icons/hourglass.svg?react'
 import TumbupIcon from '@assets/common/icons/thumbup.svg?react'
 import { usePosturePatternQuery } from '@entities/dashboard'
 import { PannelHeader } from '@shared/ui/panel-header'
+import { useTranslation } from 'react-i18next'
 
 // 시간 형식 변환: "14:00:00" -> "오후 2시"
-const formatTime = (timeStr: string): string => {
+const formatTime = (timeStr: string, t: (key: string, options?: Record<string, unknown>) => string): string => {
   const [hours] = timeStr.split(':').map(Number)
   const hour12 = hours % 12 || 12
-  const period = hours < 12 ? '오전' : '오후'
-  return `${period} ${hour12}시`
+  return hours < 12
+    ? t('오전 {{hour12}}시', { hour12 })
+    : t('오후 {{hour12}}시', { hour12 })
 }
 
 // 요일 변환: "FRIDAY" -> "금요일"
-const formatDay = (dayStr: string): string => {
+const formatDay = (dayStr: string, t: (key: string) => string): string => {
   const dayMap: Record<string, string> = {
-    MONDAY: '월요일',
-    TUESDAY: '화요일',
-    WEDNESDAY: '수요일',
-    THURSDAY: '목요일',
-    FRIDAY: '금요일',
-    SATURDAY: '토요일',
-    SUNDAY: '일요일',
+    MONDAY: t('월요일'),
+    TUESDAY: t('화요일'),
+    WEDNESDAY: t('수요일'),
+    THURSDAY: t('목요일'),
+    FRIDAY: t('금요일'),
+    SATURDAY: t('토요일'),
+    SUNDAY: t('일요일'),
   }
   return dayMap[dayStr] || dayStr
 }
@@ -77,34 +79,34 @@ PatternHeader.displayName = 'PatternHeader'
 
 const PosePatternPanel = () => {
   const { data: patternData } = usePosturePatternQuery()
+  const { t } = useTranslation('dashboard')
 
   const worstTime = patternData?.data.worstTime
-    ? formatTime(patternData.data.worstTime)
-    : '오후 2시'
+    ? formatTime(patternData.data.worstTime, t)
+    : t('오후 {{hour12}}시', { hour12: 2 })
   const worstDay = patternData?.data.worstDay
-    ? formatDay(patternData.data.worstDay)
-    : '수요일'
+    ? formatDay(patternData.data.worstDay, t)
+    : t('수요일')
   const recovery = patternData?.data.recovery ?? 18
   const stretching = patternData?.data.stretching ?? '목돌리기'
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-3 p-4">
-      <PannelHeader>자세 패턴 분석</PannelHeader>
+      <PannelHeader>{t('자세 패턴 분석')}</PannelHeader>
 
       <div className="bg-grey-25 flex shrink-0 flex-col gap-3 rounded-2xl p-3">
         <div className="text-caption-sm-medium flex items-center justify-between text-yellow-400">
           TIP <ChevronRigthIcon className="stroke-current" />
         </div>
         <div className="text-grey-600 text-caption-sm-medium">
-          {worstDay} {worstTime}에 자세가 급격히 나빠져요! 이 시간대에 맞춰{' '}
-          스트레칭 알림을 설정해드릴까요?
+          {t('{{worstDay}} {{worstTime}}에 자세가 급격히 나빠져요! 이 시간대에 맞춰 스트레칭 알림을 설정해드릴까요?', { worstDay, worstTime })}
         </div>
       </div>
 
       <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-2 gap-2">
         <div className="bg-grey-25 flex h-full flex-col justify-between rounded-xl p-3">
           <PatternHeader icon="clock" className="mb-1">
-            안좋은 시간
+            {t('안좋은 시간')}
           </PatternHeader>
           <div className="text-grey-600 text-headline-2xl-semibold">
             {worstTime}
@@ -113,7 +115,7 @@ const PosePatternPanel = () => {
 
         <div className="bg-grey-25 flex h-full flex-col justify-between rounded-xl p-3">
           <PatternHeader icon="calendar" className="mb-1">
-            안좋은 요일
+            {t('안좋은 요일')}
           </PatternHeader>
           <div className="text-grey-600 text-headline-2xl-semibold">
             {worstDay}
@@ -122,16 +124,16 @@ const PosePatternPanel = () => {
 
         <div className="bg-grey-25 flex h-full flex-col justify-between rounded-xl p-3">
           <PatternHeader icon="hourglass" className="mb-1">
-            회복까지 평균
+            {t('회복까지 평균')}
           </PatternHeader>
           <div className="text-grey-600 text-headline-2xl-semibold">
-            {recovery}분
+            {t('{{recovery}}분', { recovery })}
           </div>
         </div>
 
         <div className="bg-grey-25 flex h-full flex-col justify-between rounded-xl p-3">
           <PatternHeader icon="thumb" className="mb-1">
-            추천 스트레칭
+            {t('추천 스트레칭')}
           </PatternHeader>
           <div className="text-grey-600 text-headline-2xl-semibold">
             {stretching}

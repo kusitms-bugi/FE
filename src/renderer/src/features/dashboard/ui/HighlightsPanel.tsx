@@ -12,6 +12,7 @@ import {
 
 import { PannelHeader } from '@shared/ui/panel-header'
 import { ToggleSwitch } from '@shared/ui/toggle-switch'
+import { useTranslation } from 'react-i18next'
 import type { HighlightDatum } from './HighlightsPanel/data'
 import {
   type HighlightPeriod,
@@ -19,6 +20,7 @@ import {
 } from './HighlightsPanel/hooks/useHighlightsChart'
 
 const HighlightsPanel = () => {
+  const { t } = useTranslation('dashboard')
   const [activePeriod, setActivePeriod] = useState<HighlightPeriod>('weekly')
 
   const {
@@ -44,10 +46,10 @@ const HighlightsPanel = () => {
   return (
     <div className="flex h-full flex-col rounded-2xl p-5">
       <div className="mb-4 flex items-center justify-between">
-        <PannelHeader>하이라이트</PannelHeader>
+        <PannelHeader>{t('하이라이트')}</PannelHeader>
         <ToggleSwitch
-          uncheckedLabel="주간"
-          checkedLabel="월간"
+          uncheckedLabel={t('주간')}
+          checkedLabel={t('월간')}
           checked={activePeriod === 'monthly'}
           onChange={handleToggleChange}
         />

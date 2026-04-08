@@ -4,14 +4,14 @@ import SettingIcon from '@assets/common/icons/setting.svg?react'
 import Symbol from '@assets/common/icons/symbol.svg?react'
 import TipOff from '@assets/common/icons/tip-off.svg?react'
 import NotificationIcon from '@assets/main/bell_icon.svg?react'
-import { Button } from '@shared/ui/button'
-import type { ComponentType, SVGProps } from 'react'
-import { useNavigate } from 'react-router-dom'
-
 import { useModal } from '@shared/hooks/use-modal'
 import { useThemePreference } from '@shared/hooks/use-theme-preference'
 import { cn } from '@shared/lib/cn'
+import { Button } from '@shared/ui/button'
 import { ThemeToggleSwitch } from '@shared/ui/theme-toggle-switch'
+import type { ComponentType, SVGProps } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import SettingsModal from './SettingsModal'
 
 type TabType = 'dashboard' | 'settings' | 'report' | 'review'
@@ -37,6 +37,7 @@ const REVIEW_FORM_URL =
 const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
   const [isDark, setIsDark] = useThemePreference()
   const navigate = useNavigate()
+  const { t } = useTranslation('dashboard')
   const {
     isOpen: isSettingsOpen,
     open: openSettings,
@@ -47,28 +48,28 @@ const MainHeader = ({ onClickNotification }: MainHeaderProps) => {
   const tabs: TabItem[] = [
     {
       id: 'dashboard',
-      label: '대시보드',
+      label: t('대시보드'),
       icon: DashboardIcon,
       disabled: false,
       path: '/main',
     },
     {
       id: 'settings',
-      label: '설정',
+      label: t('설정'),
       icon: SettingIcon,
       disabled: false,
       path: '/main',
     },
     {
       id: 'report',
-      label: '오류 제보',
+      label: t('오류 제보'),
       icon: TipOff,
       disabled: false,
       path: '/main',
     },
     {
       id: 'review',
-      label: '후기 등록',
+      label: t('후기 등록'),
       disabled: false,
       path: '/main',
     },

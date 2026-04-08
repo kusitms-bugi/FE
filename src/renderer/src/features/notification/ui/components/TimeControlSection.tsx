@@ -1,6 +1,7 @@
 import MinusIcon from '@assets/main/minus_icon.svg?react'
 import PlusIcon from '@assets/main/plus_icon.svg?react'
 import { NotificationToggleSwitch } from '@shared/ui/toggle-switch'
+import { useTranslation } from 'react-i18next'
 import type { useTimeEditor } from '../hooks/useTimeEditor'
 
 interface TimeControlSectionProps {
@@ -20,6 +21,7 @@ export const TimeControlSection = ({
   isDisabled = false,
   timeEditor,
 }: TimeControlSectionProps) => {
+  const { t } = useTranslation('notification')
   return (
     <div
       className={`bg-surface-modal-container flex flex-col gap-1 rounded-[12px] p-3 ${isDisabled ? 'pointer-events-none' : ''}`}
@@ -73,7 +75,7 @@ export const TimeControlSection = ({
             onClick={timeEditor.handlers.handleTimeClick}
             className="bg-surface-modal text-body-md-meidum text-grey-900 aria-disabled:bg-surface-modal aria-disabled:text-modal-disabled flex h-10 flex-1 cursor-pointer items-center justify-center"
           >
-            {timeEditor.time}분
+            {t('{{time}}분', { time: timeEditor.time })}
           </div>
         )}
 

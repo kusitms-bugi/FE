@@ -6,6 +6,7 @@ import { PageMoveButton } from '@shared/ui/page-move-button'
 import { PannelHeader } from '@shared/ui/panel-header'
 import { ToggleSwitch } from '@shared/ui/toggle-switch'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type CalendarProps = {
   year: number
@@ -83,7 +84,8 @@ const Circle = ({ level, today, future }: CircleProps) => {
 }
 
 const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
-  const days = ['일', '월', '화', '수', '목', '금', '토']
+  const { t } = useTranslation('dashboard')
+  const days = [t('일'), t('월'), t('화'), t('수'), t('목'), t('금'), t('토')]
 
   const firstDayOfMonth = new Date(year, month, 1).getDay()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
@@ -170,22 +172,24 @@ const Calendar = ({ year, month, attendances = {} }: CalendarProps) => {
 
 // subContent 값에 따른 메시지 매핑
 const getSubContentMessage = (subContent?: string): string => {
+  const { t } = useTranslation('dashboard')
   if (!subContent) {
-    return '당신은 매일 골든리트리버 한 마리를 목에 업고 작업한 것과 같아요 🥺'
+    return t('당신은 매일 골든리트리버 한 마리를 목에 업고 작업한 것과 같아요 🥺')
   }
 
   const messageMap: Record<string, string> = {
-    뽀각거부기: '뚠뚠한 골든리트리버 한 마리를 매일 목에 업고 있어요 🐶',
-    꾸부정거부기: '기내용 캐리어를 목 위에 올려두고 앉아 있는 셈이에요 🧳',
-    아기기린: '무거운 볼링공을 목에 걸고 일하는 중이에요 🎳',
-    쑥쑥기린: '작은 수박 한 통 정도를 목에 얹은 상태예요 🍉',
-    꽃꼿기린: '머리 본연의 무게만 딱! 지금 아주 좋아요 🌸',
+    뽀각거부기: t('뚠뚠한 골든리트리버 한 마리를 매일 목에 업고 있어요 🐶'),
+    꾸부정거부기: t('기내용 캐리어를 목 위에 올려두고 앉아 있는 셈이에요 🧳'),
+    아기기린: t('무거운 볼링공을 목에 걸고 일하는 중이에요 🎳'),
+    쑥쑥기린: t('작은 수박 한 통 정도를 목에 얹은 상태예요 🍉'),
+    꽃꼿기린: t('머리 본연의 무게만 딱! 지금 아주 좋아요 🌸'),
   }
 
   return messageMap[subContent] || subContent
 }
 
 const AttendacePanel = () => {
+  const { t } = useTranslation('dashboard')
   // 오늘 월(1일)로 정규화
   const today = new Date()
   const todayYm = new Date(today.getFullYear(), today.getMonth(), 1)
@@ -219,9 +223,9 @@ const AttendacePanel = () => {
   return (
     <div className="grid h-full w-full grid-cols-4 grid-rows-[57px_1fr_1fr_1fr] gap-2 p-4">
       <div className="flex flex-col">
-        <PannelHeader>출석 현황</PannelHeader>
+        <PannelHeader>{t('출석 현황')}</PannelHeader>
         <div className="text-headline-3xl-semibold text-grey-700">
-          {viewMonth + 1}월
+          {t('{{month}}월', { month: viewMonth + 1 })}
         </div>
       </div>
 
@@ -244,8 +248,8 @@ const AttendacePanel = () => {
 
       <div className="flex flex-col items-end justify-end gap-3">
         <ToggleSwitch
-          uncheckedLabel="월간"
-          checkedLabel="연간"
+          uncheckedLabel={t('월간')}
+          checkedLabel={t('연간')}
           checked={false}
           onChange={() => {}}
         />
@@ -263,7 +267,7 @@ const AttendacePanel = () => {
       <div className="bg-grey-25 col-span-2 row-span-3 rounded-xl p-3">
         <div className="mb-2 flex h-[76px] flex-col gap-3">
           <div className="text-grey-700 text-body-md-semibold">
-            {attendanceData?.data.title || '잘하고 있어요!'}
+            {attendanceData?.data.title || t('잘하고 있어요!')}
           </div>
           <div className="text-caption-xs-regular text-grey-600 flex flex-col gap-1">
             {attendanceData?.data.content1 && (

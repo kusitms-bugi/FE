@@ -4,6 +4,7 @@ import PmRiniModal from '@assets/modal/pm-rini-modal.svg?react'
 import RiniModal from '@assets/modal/rini-modal.svg?react'
 import StoneBugiModal from '@assets/modal/stone-bugi-modal.svg?react'
 import TireBugiModal from '@assets/modal/tire-bugi-modal.svg?react'
+import i18n from '@shared/lib/i18n/i18n'
 import type * as React from 'react'
 
 interface CharacterSpeedRowProps {
@@ -25,12 +26,12 @@ export const CHARACTER_COMPONENTS: Record<
 }
 
 export const CHARACTER_NAMES: Record<number, string> = {
-  1: '타이어 맨 거부기',
-  2: '돌덩이 거부기',
-  3: '거부기',
-  4: '기린',
-  5: '씽씽이 기린',
-  6: '천사기린',
+  1: i18n.t('타이어 맨 거부기', { ns: 'dashboard' }),
+  2: i18n.t('돌덩이 거부기', { ns: 'dashboard' }),
+  3: i18n.t('거부기', { ns: 'dashboard' }),
+  4: i18n.t('기린', { ns: 'dashboard' }),
+  5: i18n.t('씽씽이 기린', { ns: 'dashboard' }),
+  6: i18n.t('천사기린', { ns: 'dashboard' }),
 }
 
 export const CHARACTER_SPEED_DATA: CharacterSpeedRowProps[] = [

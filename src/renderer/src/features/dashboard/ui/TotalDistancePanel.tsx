@@ -4,6 +4,7 @@ import { useModal } from '@shared/hooks/use-modal'
 import { LoadingSpinner } from '@shared/ui/loading'
 import { PannelHeader } from '@shared/ui/panel-header'
 import { Suspense, lazy } from 'react'
+import { useTranslation } from 'react-i18next'
 
 // TotalDistanceModal을 lazy import
 const TotalDistanceModal = lazy(() => import('./TotalDistanceModal'))
@@ -11,6 +12,7 @@ const TotalDistanceModal = lazy(() => import('./TotalDistanceModal'))
 const TotalDistance = () => {
   const { data, isLoading } = useLevelQuery()
   const { isOpen, open, close } = useModal()
+  const { t } = useTranslation('dashboard')
 
   const level = data?.data.level ?? 1
   const current = data?.data.current ?? 0
@@ -22,13 +24,13 @@ const TotalDistance = () => {
       <div className="flex flex-col pl-3">
         <div className="flex justify-between">
           <PannelHeader>
-            {isLoading ? '로딩 중...' : `Level.${level + 1}  `}
+            {isLoading ? t('로딩 중...') : `Level.${level + 1}  `}
           </PannelHeader>
           <button
             onClick={open}
             className="text-caption-xs-meidum cursor-pointer text-yellow-400"
           >
-            자세히 보기 &gt;
+            {t('자세히 보기 >')}
           </button>
         </div>
         <p className="flex items-center gap-2">
@@ -36,7 +38,7 @@ const TotalDistance = () => {
             {isLoading ? '-' : current.toLocaleString()}
           </span>
           <span className="text-body-lg-meidum text-grey-500">
-            / {isLoading ? '-' : required.toLocaleString()}m
+            {isLoading ? '-' : t('/ {{required}}m', { required: required.toLocaleString() })}
           </span>
         </p>
         {/*게이지 바*/}

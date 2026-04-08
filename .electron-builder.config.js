@@ -179,7 +179,8 @@ const config = {
     allowToChangeInstallationDirectory: true,
     createDesktopShortcut: true,
     createStartMenuShortcut: true,
-    languages: ['Korean', 'English'],
+    multiLanguageInstaller: true,
+    displayLanguageSelector: true,
   },
   // DMG 설정: 루트 레벨에 설정 (mac 객체 안이 아님)
   dmg: {

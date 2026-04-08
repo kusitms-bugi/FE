@@ -77,7 +77,7 @@
     "electron-builder": "26.0.12",
     "electron-devtools-installer": "4.0.0",
     "esbuild": "^0.25.12",
-    "globals": "^16.5.0",
+    "globals": "^17.4.0",
     "husky": "9.1.7",
     "lint-staged": "16.2.6",
     "rollup-plugin-visualizer": "^6.0.5",
